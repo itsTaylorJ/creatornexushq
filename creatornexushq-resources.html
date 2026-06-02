@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorNexusHQ — Resources</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #07070f;
+  --surface: #0e0e1a;
+  --surface2: #13131f;
+  --border: #1a1a2e;
+  --border2: #252540;
+  --text: #eeeeff;
+  --muted: #5a5a90;
+  --accent: #7c3aed;
+  --accent2: #a855f7;
+  --accent3: #c084fc;
+  --gold: #f59e0b;
+  --green: #10b981;
+  --red: #ef4444;
+  --cyan: #06b6d4;
+  --orange: #f97316;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 15%, rgba(124,58,237,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 85%, rgba(6,182,212,0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+* { position: relative; z-index: 1; }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* SIDEBAR */
+.app-layout { display: flex; min-height: 100vh; }
+
+.app-sidebar {
+  width: 280px;
+  min-width: 280px;
+  background: #0a0a14;
+  border-right: 1px solid #1a1a2e;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 12px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 300;
+}
+
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+
+.sidebar-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 18px;
+  white-space: nowrap;
+  overflow: visible;
+  background: linear-gradient(135deg, #c084fc, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+  padding: 0 8px;
+}
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+
+.sidebar-plan {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #5a5a90;
+  padding: 0 8px;
+  margin-bottom: 16px;
+}
+
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+
+.sidebar-label {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #3a3a60;
+  padding: 4px 8px;
+  margin-bottom: 4px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #5a5a90;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+  margin-bottom: 2px;
+  border: 1px solid transparent;
+}
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+
+.sidebar-upgrade {
+  background: rgba(124,58,237,0.08);
+  border: 1px solid rgba(124,58,237,0.2);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 16px;
+}
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0; color: white;
+}
+.sidebar-upgrade-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+
+/* MOBILE */
+.mobile-topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: rgba(7,7,15,0.95);
+  border-bottom: 1px solid #1a1a2e;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.mobile-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  background: linear-gradient(135deg, #c084fc, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: #5a5a90;
+  text-decoration: none;
+  padding: 5px 8px;
+  border-radius: 6px;
+  transition: all 0.15s;
+}
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; }
+  .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; }
+  .mobile-topbar { display: flex !important; }
+  .content { padding: 16px !important; }
+  .resources-grid { grid-template-columns: 1fr !important; }
+  .category-grid { grid-template-columns: 1fr !important; }
+}
+
+/* MAIN CONTENT */
+.content {
+  padding: 32px 28px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.page-header h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 600px;
+}
+
+/* FILTER PILLS */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.filter-pill {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--muted);
+  font-family: 'Syne', sans-serif;
+}
+.filter-pill:hover { border-color: var(--accent); color: var(--text); }
+.filter-pill.active { border-color: var(--accent); background: rgba(124,58,237,0.1); color: var(--accent3); }
+
+/* CATEGORY */
+.category {
+  margin-bottom: 36px;
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.category-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.category-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.category-count {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: auto;
+  font-family: 'Syne', sans-serif;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* RESOURCE CARD */
+.resource-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text);
+  cursor: pointer;
+}
+.resource-card:hover {
+  border-color: var(--accent);
+  background: var(--surface2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(124,58,237,0.1);
+}
+
+.resource-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.resource-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.resource-badges { display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0; }
+
+.badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.badge.free { background: rgba(16,185,129,0.12); color: var(--green); border: 1px solid rgba(16,185,129,0.25); }
+.badge.freemium { background: rgba(245,158,11,0.1); color: var(--gold); border: 1px solid rgba(245,158,11,0.25); }
+.badge.paid { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+.badge.recommended { background: rgba(124,58,237,0.12); color: var(--accent3); border: 1px solid rgba(124,58,237,0.25); }
+
+.resource-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.resource-link {
+  font-size: 11px;
+  color: var(--accent3);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  text-decoration: none;
+}
+.resource-link:hover { color: var(--accent2); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 13px;
+  z-index: 9999;
+  transition: transform 0.3s ease;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="app-layout">
+
+<!-- MOBILE TOP BAR -->
+<div class="mobile-topbar">
+  <div class="mobile-logo">Creator<span>NexusHQ</span></div>
+  <div class="mobile-nav">
+    <a href="index.html">Tools</a>
+    <a href="creatornexushq-platforms.html">Platforms</a>
+    <a href="creatornexushq-analyze.html">Analyze</a>
+    <a href="creatornexushq-resources.html" class="active">Resources</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="app-sidebar">
+  <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
+  <div class="sidebar-plan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item">
+    <span class="sidebar-icon">🎯</span>Tools
+  </a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item">
+    <span class="sidebar-icon">🔗</span>Platforms
+  </a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item">
+    <span class="sidebar-icon">📊</span>Analyze
+  </a>
+  <a href="creatornexushq-resources.html" class="sidebar-item active">
+    <span class="sidebar-icon">📚</span>Resources
+  </a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles & Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="app-main">
+<div class="content">
+
+  <div class="page-header">
+    <h1>📚 Creator Resources</h1>
+    <p>The best free and freemium tools for creators and streamers — handpicked and organized so you don't have to go searching. Everything here is trusted, creator-tested, and worth your time.</p>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filter-row">
+    <div class="filter-pill active" onclick="filterCategory('all', this)">All</div>
+    <div class="filter-pill" onclick="filterCategory('editing', this)">Editing</div>
+    <div class="filter-pill" onclick="filterCategory('design', this)">Design</div>
+    <div class="filter-pill" onclick="filterCategory('music', this)">Music</div>
+    <div class="filter-pill" onclick="filterCategory('analytics', this)">Analytics</div>
+    <div class="filter-pill" onclick="filterCategory('streaming', this)">Streaming</div>
+    <div class="filter-pill" onclick="filterCategory('learning', this)">Learning</div>
+    <div class="filter-pill" onclick="filterCategory('assets', this)">Assets</div>
+  </div>
+
+  <!-- EDITING -->
+  <div class="category" data-category="editing">
+    <div class="category-header">
+      <div class="category-icon" style="background:rgba(124,58,237,0.12)">🎬</div>
+      <div class="category-title">Editing & Production</div>
+      <div class="category-count">6 tools</div>
+    </div>
+    <div class="category-grid">
+
+      <a href="https://www.streamladder.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">StreamLadder</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">Convert your Twitch, YouTube, and Kick streams into vertical clips for TikTok, Reels, and Shorts automatically. Huge time saver for repurposing content.</div>
+        <div class="resource-link">Visit StreamLadder →</div>
+      </a>
+
+      <a href="https://www.blackmagicdesign.com/products/davinciresolve" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">DaVinci Resolve</div>
+          <div class="resource-badges"><span class="badge free">Free</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">Professional-grade video editor used by Hollywood studios — completely free. The most powerful free editing software available for creators at any level.</div>
+        <div class="resource-link">Visit DaVinci Resolve →</div>
+      </a>
+
+      <a href="https://obsproject.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">OBS Studio</div>
+          <div class="resource-badges"><span class="badge free">Free</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">The gold standard for free streaming and screen recording. Works with Twitch, YouTube, Kick, Facebook, and more. Highly customizable and completely free forever.</div>
+        <div class="resource-link">Visit OBS Studio →</div>
+      </a>
+
+      <a href="https://aitum.tv" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Aitum</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">Stream vertically on Kick, TikTok Live, and YouTube Shorts simultaneously alongside your main horizontal stream. Essential for multi-platform streamers going vertical.</div>
+        <div class="resource-link">Visit Aitum →</div>
+      </a>
+
+      <a href="https://kdenlive.org" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Kdenlive</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">Lightweight, open source video editor. Great for creators who find DaVinci Resolve overwhelming — simpler interface, still powerful enough for YouTube and Shorts editing.</div>
+        <div class="resource-link">Visit Kdenlive →</div>
+      </a>
+
+      <a href="https://www.capcut.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">CapCut</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">The go-to mobile and desktop editor for Shorts and Reels. Auto captions, trending templates, and easy vertical editing make it perfect for short form content.</div>
+        <div class="resource-link">Visit CapCut →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- DESIGN -->
+  <div class="category" data-category="design">
+    <div class="category-header">
+      <div class="category-icon" style="background:rgba(236,72,153,0.1)">🎨</div>
+      <div class="category-title">Design & Thumbnails</div>
+      <div class="category-count">4 tools</div>
+    </div>
+    <div class="category-grid">
+
+      <a href="https://www.canva.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Canva</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">The easiest way to make thumbnails, channel art, and social graphics. Tons of creator-specific templates and a free tier that covers most of what you need.</div>
+        <div class="resource-link">Visit Canva →</div>
+      </a>
+
+      <a href="https://www.photopea.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Photopea</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">A free, browser-based Photoshop alternative. Works with PSD files, supports layers, and has all the tools you need for professional thumbnail design — no install required.</div>
+        <div class="resource-link">Visit Photopea →</div>
+      </a>
+
+      <a href="https://www.remove.bg" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Remove.bg</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span></div>
+        </div>
+        <div class="resource-desc">Instantly remove backgrounds from images for thumbnails. Drag in a photo of yourself and get a clean cutout in seconds — no Photoshop skills needed.</div>
+        <div class="resource-link">Visit Remove.bg →</div>
+      </a>
+
+      <a href="https://www.adobe.com/express" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Adobe Express</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span></div>
+        </div>
+        <div class="resource-desc">Adobe's free quick-design tool. Great for channel banners, thumbnails, and social posts. More polished than Canva for certain styles and integrates with Creative Cloud.</div>
+        <div class="resource-link">Visit Adobe Express →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- MUSIC -->
+  <div class="category" data-category="music">
+    <div class="category-header">
+      <div class="category-icon" style="background:rgba(16,185,129,0.1)">🎵</div>
+      <div class="category-title">Music & Audio</div>
+      <div class="category-count">4 tools</div>
+    </div>
+    <div class="category-grid">
+
+      <a href="https://open.spotify.com/artist/5ksRONqssiq1fFDn6MXQE4" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">StreamBeats by Harris Heller</div>
+          <div class="resource-badges"><span class="badge free">Free</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">Copyright-free lo-fi, synthwave, and chill music made specifically for streamers. Safe for Twitch, YouTube, and Kick. On Spotify and free to use in streams and videos.</div>
+        <div class="resource-link">Listen on Spotify →</div>
+      </a>
+
+      <a href="https://www.youtube.com/audiolibrary" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">YouTube Audio Library</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">YouTube's own library of free music and sound effects. Everything here is safe to use in YouTube videos without copyright claims — searchable by mood, genre, and duration.</div>
+        <div class="resource-link">Visit Audio Library →</div>
+      </a>
+
+      <a href="https://pixabay.com/music" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Pixabay Music</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">Completely free, royalty-free music with no attribution required. Good variety of genres — great for background music in YouTube videos, Shorts, and Reels.</div>
+        <div class="resource-link">Visit Pixabay Music →</div>
+      </a>
+
+      <a href="https://www.epidemicsound.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Epidemic Sound</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span></div>
+        </div>
+        <div class="resource-desc">The best premium music library for creators. Free 30-day trial gives you access to 40,000+ tracks. Used by the biggest YouTubers. Worth it when you're ready to invest.</div>
+        <div class="resource-link">Visit Epidemic Sound →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="category" data-category="analytics">
+    <div class="category-header">
+      <div class="category-icon" style="background:rgba(6,182,212,0.1)">📊</div>
+      <div class="category-title">Analytics & Growth</div>
+      <div class="category-count">3 tools</div>
+    </div>
+    <div class="category-grid">
+
+      <a href="https://www.tubebuddy.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">TubeBuddy</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">Browser extension that shows you tag rankings, SEO scores, competitor data, and best time to publish — right inside YouTube Studio. Free tier is genuinely useful for small channels.</div>
+        <div class="resource-link">Visit TubeBuddy →</div>
+      </a>
+
+      <a href="https://socialblade.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Social Blade</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">Track any channel's growth over time — yours or competitors. Shows subscriber and view trends, estimated earnings, and growth projections. Great for competitive research.</div>
+        <div class="resource-link">Visit Social Blade →</div>
+      </a>
+
+      <a href="https://vidiq.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">vidIQ</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">Real-time keyword research, competitor tracking, and video scoring directly in YouTube. The free tier gives you keyword scores and basic analytics — upgrade for deeper insights.</div>
+        <div class="resource-link">Visit vidIQ →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- STREAMING -->
+  <div class="category" data-category="streaming">
+    <div class="category-header">
+      <div class="category-icon" style="background:rgba(145,70,255,0.12)">🟣</div>
+      <div class="category-title">Streaming Tools</div>
+      <div class="category-count">3 tools</div>
+    </div>
+    <div class="category-grid">
+
+      <a href="https://aitum.tv" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Aitum Vertical</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">Stream vertically to TikTok Live, Kick, and YouTube Shorts at the same time as your main stream. No second PC needed — runs as an OBS plugin.</div>
+        <div class="resource-link">Visit Aitum →</div>
+      </a>
+
+      <a href="https://streamelements.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">StreamElements</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">Free overlays, alerts, chatbot, loyalty points, and stream tipping — all in one. One of the most complete free streaming toolkits available for Twitch, YouTube, and Kick.</div>
+        <div class="resource-link">Visit StreamElements →</div>
+      </a>
+
+      <a href="https://streamlabs.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Streamlabs</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span></div>
+        </div>
+        <div class="resource-desc">All-in-one streaming software with built-in alerts, overlays, and donation tools. Great alternative to OBS for beginners — easier setup with most features free.</div>
+        <div class="resource-link">Visit Streamlabs →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- LEARNING -->
+  <div class="category" data-category="learning">
+    <div class="category-header">
+      <div class="category-icon" style="background:rgba(245,158,11,0.1)">🎓</div>
+      <div class="category-title">Learning & Community</div>
+      <div class="category-count">4 resources</div>
+    </div>
+    <div class="category-grid">
+
+      <a href="https://www.youtube.com/@ThinkMediaTV" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Think Media</div>
+          <div class="resource-badges"><span class="badge free">Free</span><span class="badge recommended">Recommended</span></div>
+        </div>
+        <div class="resource-desc">The best free YouTube education channel for creators. Covers gear, strategy, algorithm, and growth — consistently practical advice that actually works for small channels.</div>
+        <div class="resource-link">Visit Think Media →</div>
+      </a>
+
+      <a href="https://www.reddit.com/r/NewTubers" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">r/NewTubers</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">The most active community for growing YouTube channels. Get feedback on your videos, ask questions, and learn from other creators going through the same journey.</div>
+        <div class="resource-link">Visit r/NewTubers →</div>
+      </a>
+
+      <a href="https://www.reddit.com/r/Twitch" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">r/Twitch</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">The main Twitch community on Reddit. Good for keeping up with platform changes, finding collab partners, and getting stream feedback from real viewers and streamers.</div>
+        <div class="resource-link">Visit r/Twitch →</div>
+      </a>
+
+      <a href="https://creatorsnow.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Creator Now</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span></div>
+        </div>
+        <div class="resource-desc">Free creator courses and community focused on YouTube growth. More structured than Reddit — good if you want a step-by-step learning path rather than forum browsing.</div>
+        <div class="resource-link">Visit Creator Now →</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ASSETS -->
+  <div class="category" data-category="assets">
+    <div class="category-header">
+      <div class="category-icon" style="background:rgba(249,115,22,0.1)">🖼️</div>
+      <div class="category-title">Free Assets</div>
+      <div class="category-count">3 resources</div>
+    </div>
+    <div class="category-grid">
+
+      <a href="https://unsplash.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Unsplash</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">High quality, completely free stock photos. Great for thumbnail backgrounds, channel art, and social graphics. No attribution required — just download and use.</div>
+        <div class="resource-link">Visit Unsplash →</div>
+      </a>
+
+      <a href="https://www.pexels.com/videos" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Pexels Videos</div>
+          <div class="resource-badges"><span class="badge free">Free</span></div>
+        </div>
+        <div class="resource-desc">Free stock video footage for intros, b-roll, and background clips. All videos are free to use in YouTube, Shorts, and social content without licensing issues.</div>
+        <div class="resource-link">Visit Pexels →</div>
+      </a>
+
+      <a href="https://www.flaticon.com" target="_blank" class="resource-card">
+        <div class="resource-top">
+          <div class="resource-name">Flaticon</div>
+          <div class="resource-badges"><span class="badge freemium">Freemium</span></div>
+        </div>
+        <div class="resource-desc">Millions of free icons for thumbnails, overlays, and graphics. Free with attribution or small fee to remove it. Huge library covering every gaming and creator style.</div>
+        <div class="resource-link">Visit Flaticon →</div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function filterCategory(cat, pill) {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+
+    document.querySelectorAll('.category').forEach(c => {
+      if (cat === 'all' || c.dataset.category === cat) {
+        c.style.display = 'block';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>
