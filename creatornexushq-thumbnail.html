@@ -314,9 +314,18 @@ body::before {
 <div class="content">
 
   <div class="page-header">
-    <h1>🖼️ Thumbnail Analyzer</h1>
-    <p>Upload your thumbnail and get a detailed score, specific feedback, and actionable improvements to boost your click-through rate.</p>
+    <h1>🖼️ Thumbnail Tools</h1>
+    <p>Analyze your thumbnails for click-through potential or generate AI prompts to create stunning thumbnails without design skills.</p>
   </div>
+
+  <!-- PAGE TABS -->
+  <div style="display:flex;gap:8px;margin-bottom:24px;border-bottom:1px solid var(--border);padding-bottom:0">
+    <button id="tab-btn-analyzer" onclick="switchThumbTab('analyzer')" style="background:none;border:none;border-bottom:2px solid var(--accent);color:var(--accent3);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:10px 18px;cursor:pointer;margin-bottom:-1px">🖼️ Thumbnail Analyzer</button>
+    <button id="tab-btn-prompt" onclick="switchThumbTab('prompt')" style="background:none;border:none;border-bottom:2px solid transparent;color:var(--muted);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;padding:10px 18px;cursor:pointer;margin-bottom:-1px">✨ AI Prompt Generator</button>
+  </div>
+
+  <!-- ANALYZER TAB -->
+  <div id="thumb-tab-analyzer">
 
   <!-- USAGE -->
   <div class="usage-row">
@@ -448,6 +457,143 @@ body::before {
     </div>
   </div>
 
+  </div> <!-- end thumb-tab-analyzer -->
+
+  <!-- AI PROMPT GENERATOR TAB -->
+  <div id="thumb-tab-prompt" style="display:none">
+
+    <div class="two-col">
+      <!-- LEFT: FORM -->
+      <div>
+        <div class="upload-card">
+          <h2>✨ AI Thumbnail Prompt Generator</h2>
+          <p>Tell us about your video and style. We'll write an optimized AI image prompt you can paste directly into Midjourney, DALL-E, Adobe Firefly, or any AI image tool.</p>
+
+          <div class="field">
+            <label>Video Title</label>
+            <input type="text" id="pt-title" placeholder="e.g. 4 Players, 0 Brain Cells 💀 Warzone">
+          </div>
+
+          <div class="field">
+            <label>Content Niche</label>
+            <input type="text" id="pt-niche" placeholder="e.g. Warzone gaming clips, funny moments">
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>Thumbnail Style</label>
+              <select id="pt-style">
+                <option>Hype / action shot</option>
+                <option>Reaction face / emotion</option>
+                <option>Cinematic / dramatic</option>
+                <option>Minimalist / clean</option>
+                <option>Colorful / bold</option>
+                <option>Dark / moody</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Main Subject</label>
+              <select id="pt-subject">
+                <option>Person / creator face</option>
+                <option>Game characters</option>
+                <option>Gameplay screenshot</option>
+                <option>Object / item</option>
+                <option>Text only</option>
+                <option>Abstract / background only</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label>Color Scheme</label>
+              <select id="pt-colors">
+                <option>Red and black (urgency)</option>
+                <option>Blue and white (trust)</option>
+                <option>Yellow and black (energy)</option>
+                <option>Purple and cyan (gaming)</option>
+                <option>Orange and dark (warmth)</option>
+                <option>Green and black (success)</option>
+                <option>Match my brand colors</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>AI Tool You'll Use</label>
+              <select id="pt-tool">
+                <option>Midjourney</option>
+                <option>DALL-E 3 (ChatGPT)</option>
+                <option>Adobe Firefly</option>
+                <option>Stable Diffusion</option>
+                <option>Leonardo AI</option>
+                <option>Any / Universal</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Emotion / Reaction you want viewers to feel</label>
+            <select id="pt-emotion">
+              <option>Curiosity / FOMO</option>
+              <option>Hype / excitement</option>
+              <option>Humor / laughter</option>
+              <option>Shock / disbelief</option>
+              <option>Relatability</option>
+              <option>Awe / impressive</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Any specific elements to include?</label>
+            <textarea id="pt-elements" rows="2" placeholder="e.g. explosion in background, character with shocked face, game logo, neon lights..."></textarea>
+          </div>
+
+          <button class="analyze-btn" id="pt-btn" onclick="generatePrompt()" style="background:linear-gradient(135deg,var(--cyan),#0891b2)">
+            <span>✨</span> Generate AI Thumbnail Prompt
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT: RESULTS -->
+      <div>
+        <div class="results-card" id="pt-results">
+          <div class="results-label">✨ Your AI Thumbnail Prompts</div>
+          <div id="pt-results-content"></div>
+        </div>
+        <div id="pt-placeholder" style="background:var(--surface);border:1px dashed var(--border2);border-radius:16px;padding:60px 24px;text-align:center;color:var(--muted);font-size:13px;line-height:1.8">
+          Fill in your details and we'll generate<br>ready-to-use AI image prompts
+        </div>
+      </div>
+    </div>
+
+    <!-- AI TOOL GUIDE -->
+    <div style="margin-top:28px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px">
+      <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;margin-bottom:16px">🛠️ Which AI Tool Should You Use?</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:6px">MIDJOURNEY</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Best overall quality. Cinematic, dramatic results. Requires Discord. Best for hype and action thumbnails.</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:6px">DALL-E 3</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Easiest to use via ChatGPT. Great for clean, clear concepts. Best for reaction and emotion-based thumbnails.</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:6px">ADOBE FIREFLY</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Commercially safe, great for clean graphics. Best for minimalist and professional thumbnail styles.</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:6px">LEONARDO AI</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Free tier available, great for gaming and character art. Best for game-themed thumbnails and characters.</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:6px">PRO TIP</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6">Generate a background in AI, then add your face cutout using Remove.bg + Canva on top. Best of both worlds.</div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- end thumb-tab-prompt -->
+
 </div>
 </div>
 </div>
@@ -458,6 +604,145 @@ body::before {
   let usageLeft = 3;
   let currentImageBase64 = null;
   let currentImageType = null;
+
+  function switchThumbTab(tab) {
+    document.getElementById('thumb-tab-analyzer').style.display = tab === 'analyzer' ? 'block' : 'none';
+    document.getElementById('thumb-tab-prompt').style.display = tab === 'prompt' ? 'block' : 'none';
+    document.getElementById('tab-btn-analyzer').style.borderBottomColor = tab === 'analyzer' ? 'var(--accent)' : 'transparent';
+    document.getElementById('tab-btn-analyzer').style.color = tab === 'analyzer' ? 'var(--accent3)' : 'var(--muted)';
+    document.getElementById('tab-btn-prompt').style.borderBottomColor = tab === 'prompt' ? 'var(--accent)' : 'transparent';
+    document.getElementById('tab-btn-prompt').style.color = tab === 'prompt' ? 'var(--accent3)' : 'var(--muted)';
+  }
+
+  async function generatePrompt() {
+    const title = document.getElementById('pt-title').value;
+    const niche = document.getElementById('pt-niche').value;
+    const style = document.getElementById('pt-style').value;
+    const subject = document.getElementById('pt-subject').value;
+    const colors = document.getElementById('pt-colors').value;
+    const tool = document.getElementById('pt-tool').value;
+    const emotion = document.getElementById('pt-emotion').value;
+    const elements = document.getElementById('pt-elements').value;
+
+    if (!title.trim() && !niche.trim()) { showToast('Please enter your video title or niche first.'); return; }
+
+    const btn = document.getElementById('pt-btn');
+    const resultsCard = document.getElementById('pt-results');
+    const resultsContent = document.getElementById('pt-results-content');
+    const placeholder = document.getElementById('pt-placeholder');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Generating prompts...';
+
+    placeholder.style.display = 'none';
+    resultsCard.className = 'results-card visible';
+    resultsContent.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Writing your prompts...</div>';
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are CreatorNexusHQ's AI thumbnail prompt specialist. You write highly detailed, optimized AI image generation prompts specifically for YouTube thumbnails. You know how to write prompts for Midjourney, DALL-E, Adobe Firefly, and other tools. Your prompts always include: composition details, lighting, color palette, mood, style references, aspect ratio (16:9 for thumbnails), and negative prompts to avoid bad results. Always make prompts specific to gaming/creator content. Write prompts that will generate thumbnail backgrounds and scenes — not final thumbnails with text overlay (text is added in Canva after).`,
+          messages: [{
+            role: 'user',
+            content: `Generate AI image prompts for a YouTube thumbnail.
+
+Video details:
+- Title: ${title || 'Not specified'}
+- Niche: ${niche || 'Gaming / content creation'}
+- Thumbnail style: ${style}
+- Main subject: ${subject}
+- Color scheme: ${colors}
+- AI tool: ${tool}
+- Target emotion: ${emotion}
+- Specific elements: ${elements || 'None specified'}
+
+Generate 3 prompts optimized for ${tool}. Format EXACTLY like this:
+
+PROMPT 1 NAME: [short descriptive name e.g. "Dramatic Action Shot"]
+PROMPT 1:
+[The full detailed prompt ready to paste — be very specific about composition, lighting, colors, style, mood, aspect ratio 16:9]
+
+NEGATIVE PROMPT 1: [things to exclude — blurry, text, watermark, etc]
+
+---
+
+PROMPT 2 NAME: [name]
+PROMPT 2:
+[Full prompt — different angle or style approach]
+
+NEGATIVE PROMPT 2: [exclusions]
+
+---
+
+PROMPT 3 NAME: [Background only version]
+PROMPT 3:
+[A background-only version they can use behind their face cutout — no people, just environment/scene]
+
+NEGATIVE PROMPT 3: [exclusions]
+
+---
+
+BEST PICK: Prompt [number] — [one sentence on why]
+PRO TIP: [one specific tip for getting the best results in ${tool}]
+CANVA TIP: [one tip on how to finish the thumbnail in Canva after generating the image]`
+          }]
+        })
+      });
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text || 'Something went wrong.';
+      renderPrompts(text, resultsContent);
+
+    } catch(err) {
+      resultsContent.innerHTML = '<p style="color:var(--red);font-size:13px">Error connecting to AI. Please try again.</p>';
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<span>✨</span> Generate AI Thumbnail Prompt';
+  }
+
+  function renderPrompts(text, el) {
+    el.innerHTML = '';
+    const blocks = text.split('---').filter(b => b.trim());
+
+    blocks.forEach((block, i) => {
+      if (i >= 3) return;
+      const nameMatch = block.match(/PROMPT \d+ NAME:\s*(.+)/);
+      const promptMatch = block.match(/PROMPT \d+:\s*([\s\S]+?)(?=NEGATIVE PROMPT|$)/);
+      const negMatch = block.match(/NEGATIVE PROMPT \d+:\s*(.+)/);
+
+      const name = nameMatch?.[1]?.trim() || `Prompt ${i+1}`;
+      const prompt = promptMatch?.[1]?.trim() || '';
+      const neg = negMatch?.[1]?.trim() || '';
+
+      el.innerHTML += `
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent3)">${name}</div>
+            <button class="copy-btn" onclick="copyText(this,\`${prompt.replace(/`/g,'\\`')}\`)">Copy Prompt</button>
+          </div>
+          <div style="font-size:12px;line-height:1.7;color:var(--text);background:var(--surface);border-radius:8px;padding:12px;font-family:monospace;white-space:pre-wrap;word-break:break-word">${prompt}</div>
+          ${neg ? `<div style="margin-top:10px"><div style="font-size:10px;font-weight:700;color:var(--red);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:4px">Negative Prompt</div><div style="font-size:11px;color:var(--muted);font-family:monospace">${neg}</div><button class="copy-btn" style="margin-top:6px" onclick="copyText(this,\`${neg.replace(/`/g,'\\`')}\`)">Copy Negative</button></div>` : ''}
+        </div>`;
+    });
+
+    // Best pick and tips
+    const bestMatch = text.match(/BEST PICK:\s*(.+?)(?=PRO TIP:|$)/s);
+    const proTip = text.match(/PRO TIP:\s*(.+?)(?=CANVA TIP:|$)/s);
+    const canvaTip = text.match(/CANVA TIP:\s*(.+?)$/s);
+
+    if (bestMatch || proTip || canvaTip) {
+      el.innerHTML += '<div style="margin-top:4px">';
+      if (bestMatch) el.innerHTML += `<div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px"><strong style="color:var(--accent3)">★ Best Pick: </strong>${bestMatch[1].trim()}</div>`;
+      if (proTip) el.innerHTML += `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;font-size:13px;color:var(--muted)"><strong style="color:var(--text)">💡 Pro Tip: </strong>${proTip[1].trim()}</div>`;
+      if (canvaTip) el.innerHTML += `<div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;color:var(--muted)"><strong style="color:var(--text)">🎨 Canva Tip: </strong>${canvaTip[1].trim()}</div>`;
+      el.innerHTML += '</div>';
+    }
+  }
 
   function selectPill(pill) {
     pill.closest('.platform-pills').querySelectorAll('.ppill').forEach(p => p.classList.remove('selected'));

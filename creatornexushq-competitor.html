@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorNexusHQ — Competitor Research</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07070f; --surface: #0e0e1a; --surface2: #13131f;
+  --border: #1a1a2e; --border2: #252540; --text: #eeeeff;
+  --muted: #5a5a90; --accent: #7c3aed; --accent2: #a855f7;
+  --accent3: #c084fc; --gold: #f59e0b; --green: #10b981;
+  --red: #ef4444; --cyan: #06b6d4; --orange: #f97316;
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 15% 15%, rgba(124,58,237,0.07) 0%, transparent 50%), radial-gradient(ellipse at 85% 85%, rgba(6,182,212,0.05) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+* { position: relative; z-index: 1; }
+::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* SIDEBAR */
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+.sidebar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+.sidebar-plan { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+.sidebar-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
+.sidebar-upgrade-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+
+/* MOBILE */
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; }
+.mobile-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; }
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; } .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; } .mobile-topbar { display: flex !important; }
+  .content { padding: 16px !important; } .two-col { grid-template-columns: 1fr !important; }
+  .search-tabs { flex-wrap: wrap; } .results-grid { grid-template-columns: 1fr !important; }
+}
+
+/* CONTENT */
+.content { padding: 32px 28px; max-width: 1100px; margin: 0 auto; }
+.page-header { margin-bottom: 28px; }
+.page-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+.page-header p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* USAGE */
+.usage-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-bottom: 24px; font-size: 12px; color: var(--muted); }
+.usage-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.usage-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 2px; transition: width 0.4s; }
+.upgrade-link { color: var(--gold); font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; }
+
+/* SEARCH TABS */
+.search-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+.search-tab { background: var(--surface); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 20px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; color: var(--muted); }
+.search-tab:hover { color: var(--text); border-color: var(--accent); }
+.search-tab.active { color: var(--accent3); background: rgba(124,58,237,0.1); border-color: var(--accent); }
+
+/* SEARCH CARD */
+.search-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+.search-card h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.search-card p { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
+
+/* FIELDS */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+.field input, .field select, .field textarea { width: 100%; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; resize: none; }
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.field select option { background: var(--surface2); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ANALYZE BTN */
+.analyze-btn { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; padding: 13px; color: white; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; }
+.analyze-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+.analyze-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* RESULTS */
+.results-section { display: none; }
+.results-section.visible { display: block; animation: fadeUp 0.3s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.results-header h2 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; }
+.results-header p { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+/* RESULT TABS */
+.result-tabs { display: flex; gap: 6px; margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
+.result-tabs::-webkit-scrollbar { display: none; }
+.result-tab { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; color: var(--muted); white-space: nowrap; transition: all 0.15s; }
+.result-tab:hover { color: var(--text); }
+.result-tab.active { color: var(--accent3); border-color: var(--accent); background: rgba(124,58,237,0.1); }
+
+.result-panel { display: none; }
+.result-panel.active { display: block; animation: fadeUp 0.2s ease both; }
+
+/* CARDS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 12px; transition: border-color 0.2s; }
+.card:hover { border-color: var(--border2); }
+.card-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--accent3); text-transform: uppercase; margin-bottom: 8px; }
+.card-text { font-size: 13px; line-height: 1.7; color: var(--text); }
+
+.video-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start; }
+.video-rank { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--border2); flex-shrink: 0; width: 28px; }
+.video-info { flex: 1; }
+.video-title { font-size: 14px; font-weight: 600; line-height: 1.4; margin-bottom: 6px; }
+.video-meta { font-size: 11px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+.video-tag { background: rgba(124,58,237,0.1); color: var(--accent3); border: 1px solid rgba(124,58,237,0.2); border-radius: 4px; padding: 1px 7px; font-size: 10px; font-weight: 600; }
+
+.copy-btn { background: none; border: 1px solid var(--border2); border-radius: 6px; padding: 3px 10px; color: var(--muted); font-size: 11px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; float: right; margin-left: 8px; }
+.copy-btn:hover { border-color: var(--accent); color: var(--accent3); }
+.copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px; }
+.stat-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center; }
+.stat-box-val { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 4px; }
+.stat-box-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* LOADING */
+.loading { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; padding: 40px 0; justify-content: center; }
+.dots { display: flex; gap: 4px; }
+.dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: bounce 1.2s ease infinite; }
+.dot:nth-child(2) { animation-delay: 0.2s; } .dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+/* PLATFORM PILLS */
+.platform-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.ppill { background: var(--bg); border: 1px solid var(--border2); border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; color: var(--muted); }
+.ppill:hover { border-color: var(--accent); color: var(--text); }
+.ppill.selected { border-color: var(--accent); background: rgba(124,58,237,0.1); color: var(--accent3); }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; padding: 12px 20px; font-size: 13px; z-index: 9999; transition: transform 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="app-layout">
+
+<!-- MOBILE -->
+<div class="mobile-topbar">
+  <div class="mobile-logo">Creator<span>NexusHQ</span></div>
+  <div class="mobile-nav">
+    <a href="index.html">Tools</a>
+    <a href="creatornexushq-platforms.html">Platforms</a>
+    <a href="creatornexushq-analyze.html">Analyze</a>
+    <a href="creatornexushq-resources.html">Resources</a>
+    <a href="creatornexushq-competitor.html" class="active">Research</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+<div class="app-sidebar">
+  <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
+  <div class="sidebar-plan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item"><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item"><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item active"><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles & Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="app-main">
+<div class="content">
+
+  <div class="page-header">
+    <h1>🔍 Competitor Research</h1>
+    <p>Reverse engineer what's working for channels in your niche. Find competitors by name or let us find them for you by niche.</p>
+  </div>
+
+  <div class="usage-row">
+    <span><strong id="usageCount">3</strong> / 3 free researches left today</span>
+    <div class="usage-track"><div class="usage-fill" id="usageFill" style="width:100%"></div></div>
+    <span class="upgrade-link">Upgrade for unlimited →</span>
+  </div>
+
+  <!-- SEARCH TABS -->
+  <div class="search-tabs">
+    <div class="search-tab active" onclick="switchSearchTab('channel', this)">🔎 Research a Channel</div>
+    <div class="search-tab" onclick="switchSearchTab('niche', this)">🌐 Find Competitors by Niche</div>
+  </div>
+
+  <!-- CHANNEL SEARCH -->
+  <div id="search-channel">
+    <div class="search-card">
+      <h2>Research a Specific Channel</h2>
+      <p>Enter a competitor's channel name or YouTube URL and we'll analyze what's working for them.</p>
+      <div class="field">
+        <label>Channel Name or YouTube URL</label>
+        <input type="text" id="channelInput" placeholder="e.g. @NICKMERCS or youtube.com/@NICKMERCS">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Your Niche</label>
+          <input type="text" id="channelNiche" placeholder="e.g. Warzone gaming clips">
+        </div>
+        <div class="field">
+          <label>Your Channel Size</label>
+          <select id="channelSize">
+            <option>Under 1K subscribers</option>
+            <option>1K–10K subscribers</option>
+            <option>10K–100K subscribers</option>
+            <option>100K+ subscribers</option>
+          </select>
+        </div>
+      </div>
+      <button class="analyze-btn" id="btn-channel" onclick="research('channel')">
+        <span>🔍</span> Research This Channel
+      </button>
+    </div>
+  </div>
+
+  <!-- NICHE SEARCH -->
+  <div id="search-niche" style="display:none">
+    <div class="search-card">
+      <h2>Find Competitors in Your Niche</h2>
+      <p>Tell us your niche and channel details and we'll identify the top competitors you should be studying — and what you can steal from them.</p>
+      <div class="field">
+        <label>Your Content Niche</label>
+        <input type="text" id="nicheInput" placeholder="e.g. Warzone gaming clips, funny moments, Call of Duty">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Platform</label>
+          <div class="platform-pills">
+            <div class="ppill selected" onclick="selectPill(this)">YouTube</div>
+            <div class="ppill" onclick="selectPill(this)">TikTok</div>
+            <div class="ppill" onclick="selectPill(this)">Twitch</div>
+            <div class="ppill" onclick="selectPill(this)">Kick</div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Your Channel Size</label>
+          <select id="nicheSize">
+            <option>Under 1K subscribers</option>
+            <option>1K–10K subscribers</option>
+            <option>10K–100K subscribers</option>
+            <option>100K+ subscribers</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>What's your content style?</label>
+        <select id="nicheStyle">
+          <option>Funny / reaction clips</option>
+          <option>Hype / montage</option>
+          <option>Tutorial / educational</option>
+          <option>Commentary</option>
+          <option>Vlog / lifestyle</option>
+          <option>Meta / strategy</option>
+        </select>
+      </div>
+      <button class="analyze-btn" id="btn-niche" onclick="research('niche')">
+        <span>🌐</span> Find My Competitors
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-section" class="results-section">
+
+    <div class="results-header">
+      <div>
+        <h2 id="results-title">Competitor Analysis</h2>
+        <p id="results-subtitle">Here's what we found</p>
+      </div>
+    </div>
+
+    <!-- RESULT TABS -->
+    <div class="result-tabs">
+      <div class="result-tab active" onclick="switchResultTab('overview', this)">📋 Overview</div>
+      <div class="result-tab" onclick="switchResultTab('videos', this)">🎬 Top Videos</div>
+      <div class="result-tab" onclick="switchResultTab('titles', this)">✍️ Title Formulas</div>
+      <div class="result-tab" onclick="switchResultTab('schedule', this)">📅 Posting Schedule</div>
+      <div class="result-tab" onclick="switchResultTab('tags', this)">🏷️ Tags & Keywords</div>
+      <div class="result-tab" onclick="switchResultTab('steal', this)">💡 What to Steal</div>
+    </div>
+
+    <div id="panel-overview" class="result-panel active"><div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Researching...</div></div>
+    <div id="panel-videos" class="result-panel"></div>
+    <div id="panel-titles" class="result-panel"></div>
+    <div id="panel-schedule" class="result-panel"></div>
+    <div id="panel-tags" class="result-panel"></div>
+    <div id="panel-steal" class="result-panel"></div>
+
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let usageLeft = 3;
+
+  function switchSearchTab(tab, btn) {
+    document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('search-channel').style.display = tab === 'channel' ? 'block' : 'none';
+    document.getElementById('search-niche').style.display = tab === 'niche' ? 'block' : 'none';
+  }
+
+  function switchResultTab(tab, btn) {
+    document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.result-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+
+  function selectPill(pill) {
+    pill.closest('.platform-pills').querySelectorAll('.ppill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+  }
+
+  function updateUsage() {
+    document.getElementById('usageCount').textContent = usageLeft;
+    document.getElementById('usageFill').style.width = (usageLeft / 3 * 100) + '%';
+  }
+
+  async function research(type) {
+    if (usageLeft <= 0) { showToast('No researches left today. Upgrade for unlimited!'); return; }
+
+    const btnId = type === 'channel' ? 'btn-channel' : 'btn-niche';
+    const btn = document.getElementById(btnId);
+    btn.disabled = true;
+    btn.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Researching...';
+
+    // Reset result panels
+    document.querySelectorAll('.result-panel').forEach(p => { p.innerHTML = ''; p.classList.remove('active'); });
+    document.getElementById('panel-overview').innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Analyzing competitor...</div>';
+    document.getElementById('panel-overview').classList.add('active');
+    document.querySelectorAll('.result-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('.result-tab').classList.add('active');
+
+    document.getElementById('results-section').className = 'results-section visible';
+
+    let prompt = '';
+    if (type === 'channel') {
+      const channel = document.getElementById('channelInput').value;
+      const niche = document.getElementById('channelNiche').value;
+      const size = document.getElementById('channelSize').value;
+      document.getElementById('results-title').textContent = `Analysis: ${channel}`;
+      document.getElementById('results-subtitle').textContent = `Competitor research for a ${size} channel in ${niche}`;
+      prompt = buildChannelPrompt(channel, niche, size);
+    } else {
+      const niche = document.getElementById('nicheInput').value;
+      const size = document.getElementById('nicheSize').value;
+      const style = document.getElementById('nicheStyle').value;
+      const platform = document.querySelector('.ppill.selected')?.textContent || 'YouTube';
+      document.getElementById('results-title').textContent = `Competitors in: ${niche}`;
+      document.getElementById('results-subtitle').textContent = `${platform} • ${style} • ${size}`;
+      prompt = buildNichePrompt(niche, platform, size, style);
+    }
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are CreatorNexusHQ's competitor research engine. You have deep knowledge of YouTube, Twitch, TikTok and creator ecosystems. Give specific, actionable intelligence about competitors and niches. Use your training data knowledge of real creators, channels, and content trends. Always be specific — name real channels, real title patterns, real strategies. Format with clear ALL CAPS section labels.`,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text || 'Something went wrong.';
+      usageLeft = Math.max(0, usageLeft - 1);
+      updateUsage();
+      renderCompetitorResults(text);
+
+    } catch(err) {
+      document.getElementById('panel-overview').innerHTML = '<p style="color:var(--red);font-size:13px">Error connecting to AI. Please try again.</p>';
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = type === 'channel' ? '<span>🔍</span> Research This Channel' : '<span>🌐</span> Find My Competitors';
+  }
+
+  function buildChannelPrompt(channel, niche, size) {
+    return `Research the YouTube/streaming channel "${channel}" for a creator in the ${niche} niche with ${size}.
+
+Provide a comprehensive competitor analysis with these exact sections:
+
+CHANNEL OVERVIEW: [subscribers, content type, posting frequency, what makes them successful]
+TOP VIDEOS: [list their 5 most successful types of videos with title examples and why they work]
+TITLE FORMULA: [the specific title pattern they use most — break down the formula]
+POSTING SCHEDULE: [when and how often they post, what days perform best]
+TAG STRATEGY: [what keywords and tags they likely target]
+CONTENT PILLARS: [the 3-4 content categories they focus on]
+WHAT MAKES THEM WIN: [the specific thing that sets this channel apart]
+STEAL THIS: [5 specific strategies a smaller creator can borrow from them]
+AVOID THIS: [what they do that you shouldn't copy as a smaller channel]
+YOUR OPPORTUNITY: [the gap in their content you could fill]`;
+  }
+
+  function buildNichePrompt(niche, platform, size, style) {
+    return `Find and analyze the top competitors for a ${platform} creator in the ${niche} niche making ${style} content with ${size}.
+
+Provide comprehensive competitor intelligence with these exact sections:
+
+TOP COMPETITORS: [list 5 specific real channels/creators in this niche with their approximate size and what they're known for]
+NICHE LANDSCAPE: [how competitive is this niche, what's the opportunity]
+WINNING TITLE FORMULA: [the title pattern that works best in this niche]
+CONTENT THAT PERFORMS: [specific types of videos that consistently get views in this niche]
+POSTING PATTERNS: [when top creators in this niche post and how often]
+TOP KEYWORDS: [the most important tags and keywords in this niche]
+NICHE GAPS: [what content is missing or underserved in this niche right now]
+STEAL THESE: [5 specific strategies from top creators in this niche you should copy]
+YOUR ANGLE: [how a ${size} channel can differentiate from the big players]
+30 DAY PLAN: [specific actions to compete in this niche over the next 30 days]`;
+  }
+
+  function renderCompetitorResults(text) {
+    const sections = {
+      overview: ['CHANNEL OVERVIEW', 'NICHE LANDSCAPE', 'CONTENT PILLARS', 'WHAT MAKES THEM WIN', 'TOP COMPETITORS'],
+      videos: ['TOP VIDEOS', 'CONTENT THAT PERFORMS'],
+      titles: ['TITLE FORMULA', 'WINNING TITLE FORMULA'],
+      schedule: ['POSTING SCHEDULE', 'POSTING PATTERNS'],
+      tags: ['TAG STRATEGY', 'TOP KEYWORDS'],
+      steal: ['STEAL THIS', 'STEAL THESE', 'AVOID THIS', 'YOUR OPPORTUNITY', 'YOUR ANGLE', 'NICHE GAPS', '30 DAY PLAN']
+    };
+
+    const parsed = {};
+    const lines = text.split('\n');
+    let currentKey = null;
+
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+      const match = trimmed.match(/^([A-Z][A-Z\s\d&]+):\s*(.*)/);
+      if (match) {
+        currentKey = match[1].trim();
+        parsed[currentKey] = match[2];
+      } else if (currentKey) {
+        parsed[currentKey] += ' ' + trimmed;
+      }
+    });
+
+    // Render each panel
+    Object.entries(sections).forEach(([panelId, keys]) => {
+      const panel = document.getElementById('panel-' + panelId);
+      let html = '';
+      keys.forEach(key => {
+        const val = Object.entries(parsed).find(([k]) => k.includes(key) || key.includes(k));
+        if (val) {
+          html += `
+            <div class="card">
+              <div class="card-label">${val[0]}</div>
+              <button class="copy-btn" onclick="copyText(this,'${val[1].replace(/'/g,"\\'")}')">Copy</button>
+              <div class="card-text">${val[1]}</div>
+            </div>`;
+        }
+      });
+      if (!html) {
+        html = `<div class="card"><div class="card-text" style="color:var(--muted)">See the Overview tab for full analysis.</div></div>`;
+      }
+      panel.innerHTML = html;
+    });
+  }
+
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>
