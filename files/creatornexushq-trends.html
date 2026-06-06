@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorNexusHQ — Trend Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07070f; --surface: #0e0e1a; --surface2: #13131f;
+  --border: #1a1a2e; --border2: #252540; --text: #eeeeff;
+  --muted: #5a5a90; --accent: #7c3aed; --accent2: #a855f7;
+  --accent3: #c084fc; --gold: #f59e0b; --green: #10b981;
+  --red: #ef4444; --cyan: #06b6d4; --orange: #f97316;
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 15% 15%, rgba(124,58,237,0.07) 0%, transparent 50%), radial-gradient(ellipse at 85% 85%, rgba(6,182,212,0.05) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+* { position: relative; z-index: 1; }
+::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* SIDEBAR */
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+.sidebar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+.sidebar-plan { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+.sidebar-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
+.sidebar-upgrade-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+
+/* MOBILE */
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; }
+.mobile-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; }
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; } .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; } .mobile-topbar { display: flex !important; }
+  .content { padding: 16px !important; } .two-col { grid-template-columns: 1fr !important; }
+  .trend-grid { grid-template-columns: 1fr !important; }
+  .platform-tabs { flex-wrap: wrap; }
+}
+
+/* CONTENT */
+.content { padding: 32px 28px; max-width: 1100px; margin: 0 auto; }
+.page-header { margin-bottom: 28px; }
+.page-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+.page-header p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* PRO GATE */
+.pro-gate { background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(6,182,212,0.04)); border: 1px solid rgba(124,58,237,0.25); border-radius: 16px; padding: 40px 24px; text-align: center; margin-bottom: 24px; }
+.pro-gate-icon { font-size: 40px; margin-bottom: 16px; }
+.pro-gate h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.pro-gate p { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.7; max-width: 480px; margin-left: auto; margin-right: auto; }
+.pro-gate-features { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+.pro-feature { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--accent3); font-family: 'Syne', sans-serif; }
+.pro-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; padding: 13px 32px; color: white; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s; margin-right: 10px; }
+.pro-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+.pro-btn-yearly { background: linear-gradient(135deg, var(--gold), var(--orange)); color: #000; border: none; border-radius: 12px; padding: 13px 32px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+.pro-btn-yearly:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* PLATFORM TABS */
+.platform-tabs { display: flex; gap: 8px; margin-bottom: 24px; }
+.platform-tab { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 10px 20px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--muted); }
+.platform-tab:hover { border-color: var(--accent); color: var(--text); }
+.platform-tab.active { border-color: var(--accent); background: rgba(124,58,237,0.1); color: var(--accent3); }
+
+/* SEARCH CARD */
+.search-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+.search-card h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.search-card p { font-size: 13px; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
+
+/* FIELDS */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+.field input, .field select { width: 100%; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.field select option { background: var(--surface2); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* SEARCH BTN */
+.search-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; padding: 12px 24px; color: white; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+.search-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+.search-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* TREND RESULTS */
+.trend-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+.trend-section { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+.trend-section h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+.trend-section p { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+.trend-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; transition: border-color 0.15s; cursor: default; }
+.trend-item:hover { border-color: var(--border2); }
+
+.trend-rank { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--border2); width: 24px; flex-shrink: 0; }
+.trend-rank.hot { color: var(--red); }
+.trend-rank.rising { color: var(--gold); }
+
+.trend-info { flex: 1; min-width: 0; }
+.trend-name { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+.trend-meta { font-size: 11px; color: var(--muted); }
+
+.trend-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; letter-spacing: 0.5px; flex-shrink: 0; }
+.trend-badge.hot { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+.trend-badge.rising { background: rgba(245,158,11,0.1); color: var(--gold); border: 1px solid rgba(245,158,11,0.2); }
+.trend-badge.new { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+.trend-badge.steady { background: rgba(6,182,212,0.1); color: var(--cyan); border: 1px solid rgba(6,182,212,0.2); }
+
+.copy-btn { background: none; border: 1px solid var(--border2); border-radius: 6px; padding: 3px 10px; color: var(--muted); font-size: 11px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; flex-shrink: 0; }
+.copy-btn:hover { border-color: var(--accent); color: var(--accent3); }
+.copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+/* ACTION CARD */
+.action-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+.action-card h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; margin-bottom: 12px; }
+.action-item { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; display: flex; gap: 10px; }
+.action-item-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: var(--accent3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+/* LOADING */
+.loading { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; padding: 40px 0; justify-content: center; }
+.dots { display: flex; gap: 4px; }
+.dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: bounce 1.2s ease infinite; }
+.dot:nth-child(2) { animation-delay: 0.2s; } .dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.results-wrapper { display: none; animation: fadeUp 0.3s ease both; }
+.results-wrapper.visible { display: block; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; padding: 12px 20px; font-size: 13px; z-index: 9999; transition: transform 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== GLOBAL SIDEBAR ===== */
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+.sidebar-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+.sidebar-plan { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+.sidebar-label { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: "Syne", sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: "DM Sans", sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
+.sidebar-upgrade-title { font-family: "Syne", sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; gap: 8px; }
+.mobile-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; transition: all 0.15s; }
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; }
+  .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; }
+  .mobile-topbar { display: flex !important; }
+}
+
+</style>
+</head>
+<body>
+<div class="app-layout">
+<div class="mobile-topbar">
+  <div class="mobile-logo">Creator<span>NexusHQ</span></div>
+  <div class="mobile-nav">
+    <a href="index.html" >Tools</a>
+    <a href="creatornexushq-platforms.html" >Platforms</a>
+    <a href="creatornexushq-analyze.html" >Analyze</a>
+    <a href="creatornexushq-resources.html" >Resources</a>
+    <a href="creatornexushq-thumbnail.html" >Thumbs</a>
+    <a href="creatornexushq-competitor.html" >Research</a>
+    <a href="creatornexushq-monetization.html" >Monetize</a>
+    <a href="creatornexushq-streaming.html" >Stream</a>
+    <a href="creatornexushq-collab.html" >Collab</a>
+    <a href="creatornexushq-trends.html" class="active">Trends</a>
+  </div>
+</div>
+<div class="app-sidebar">
+  <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
+  <div class="sidebar-plan" id="sidebarPlan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item "><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item "><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item "><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item "><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item "><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item "><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-monetization.html" class="sidebar-item "><span class="sidebar-icon">💰</span>Monetization</a>
+  <a href="creatornexushq-streaming.html" class="sidebar-item "><span class="sidebar-icon">🎮</span>Stream Planner</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item "><span class="sidebar-icon">🤝</span>Collab Finder</a>
+  <a href="creatornexushq-trends.html" class="sidebar-item active"><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade" onclick="document.getElementById('upgradeModal')?.classList.add('open') || document.getElementById('pricingModal')?.classList.add('open') || document.querySelector('.pro-gate') && showToast('Upgrade available on each tool page!')">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MOBILE -->
+  <div class="mobile-nav">
+    <a href="index.html">Tools</a>
+    <a href="creatornexushq-analyze.html">Analyze</a>
+    <a href="creatornexushq-collab.html">Collab</a>
+    <a href="creatornexushq-trends.html" class="active">Trends</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+  <div class="sidebar-plan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item"><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item"><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-monetization.html" class="sidebar-item"><span class="sidebar-icon">💰</span>Monetization</a>
+  <a href="creatornexushq-streaming.html" class="sidebar-item"><span class="sidebar-icon">🎮</span>Stream Planner</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item"><span class="sidebar-icon">🤝</span>Collab Finder</a>
+  <a href="creatornexushq-trends.html" class="sidebar-item active"><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles & Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="app-main">
+<div class="content">
+
+  <div class="page-header">
+    <h1>🔥 Trend Tracker</h1>
+    <p>See what's trending right now in your niche across YouTube, TikTok, Instagram, and Facebook. Jump on trends before they peak.</p>
+  </div>
+
+  <!-- PRO GATE -->
+  <div class="pro-gate" id="proGate">
+    <div class="pro-gate-icon">🔥</div>
+    <h2>Trend Tracker is a Pro Feature</h2>
+    <p>The fastest way to grow is to create content around trends before everyone else does. Get real-time trending topics and hashtags for your niche across every platform.</p>
+    <div class="pro-gate-features">
+      <div class="pro-feature">Trending topics by niche</div>
+      <div class="pro-feature">Trending hashtags</div>
+      <div class="pro-feature">YouTube, TikTok, Instagram, Facebook</div>
+      <div class="pro-feature">How to use each trend</div>
+      <div class="pro-feature">Video ideas from trends</div>
+      <div class="pro-feature">Trend window estimates</div>
+    </div>
+    <button class="pro-btn" onclick="unlockPro()">★ Upgrade to Pro — $9/mo</button>
+    <button class="pro-btn-yearly" onclick="unlockPro()">Best Value — $79/yr</button>
+  </div>
+
+  <!-- TOOL -->
+  <div id="proTool" style="display:none">
+
+    <!-- PLATFORM TABS -->
+    <div class="platform-tabs">
+      <div class="platform-tab active" onclick="switchPlatform('youtube', this)"><span>▶️</span>YouTube</div>
+      <div class="platform-tab" onclick="switchPlatform('tiktok', this)"><span>🎵</span>TikTok</div>
+      <div class="platform-tab" onclick="switchPlatform('instagram', this)"><span>📷</span>Instagram</div>
+      <div class="platform-tab" onclick="switchPlatform('facebook', this)"><span>🎮</span>Facebook</div>
+    </div>
+
+    <!-- SEARCH FORM -->
+    <div class="search-card">
+      <h2 id="search-title">🔥 YouTube Trend Tracker</h2>
+      <p id="search-desc">Find what's trending right now on YouTube in your niche so you can create content while the topic is hot.</p>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Your Niche</label>
+          <input type="text" id="niche-input" placeholder="e.g. Warzone, gaming, fitness, cooking...">
+        </div>
+        <div class="field">
+          <label>Content Style</label>
+          <select id="style-input">
+            <option>Funny / entertainment</option>
+            <option>Gaming / gameplay</option>
+            <option>Tutorial / educational</option>
+            <option>Commentary / opinion</option>
+            <option>Lifestyle / vlog</option>
+            <option>News / current events</option>
+            <option>Challenge / trend</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Channel Size</label>
+          <select id="size-input">
+            <option>Under 1K</option>
+            <option>1K–10K</option>
+            <option>10K–100K</option>
+            <option>100K+</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>How fast do you post?</label>
+          <select id="speed-input">
+            <option>Very fast (same day)</option>
+            <option>Fast (within 2-3 days)</option>
+            <option>Moderate (within a week)</option>
+            <option>Slow (takes 2+ weeks)</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="search-btn" id="searchBtn" onclick="fetchTrends()">
+        <span>🔥</span> <span id="search-btn-text">Find YouTube Trends</span>
+      </button>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results-wrapper" id="resultsWrapper">
+      <div id="resultsContent"></div>
+    </div>
+
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let currentPlatform = 'youtube';
+  const platformMeta = {
+    youtube: { name: 'YouTube', icon: '▶️', color: '#ff0000' },
+    tiktok: { name: 'TikTok', icon: '🎵', color: '#aaaaaa' },
+    instagram: { name: 'Instagram', icon: '📷', color: '#e1306c' },
+    facebook: { name: 'Facebook', icon: '🎮', color: '#1877f2' },
+  };
+
+  function unlockPro() {
+    document.getElementById('proGate').style.display = 'none';
+    document.getElementById('proTool').style.display = 'block';
+    document.querySelector('.sidebar-plan').textContent = '★ PRO';
+    showToast('🎉 Pro unlocked! Welcome to Trend Tracker.');
+  }
+
+  function switchPlatform(platform, tab) {
+    document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentPlatform = platform;
+    const p = platformMeta[platform];
+    document.getElementById('search-title').textContent = `🔥 ${p.name} Trend Tracker`;
+    document.getElementById('search-desc').textContent = `Find what's trending right now on ${p.name} in your niche so you can create content while the topic is hot.`;
+    document.getElementById('search-btn-text').textContent = `Find ${p.name} Trends`;
+    document.getElementById('resultsWrapper').className = 'results-wrapper';
+  }
+
+  async function fetchTrends() {
+    const niche = document.getElementById('niche-input').value.trim();
+    const style = document.getElementById('style-input').value;
+    const size = document.getElementById('size-input').value;
+    const speed = document.getElementById('speed-input').value;
+
+    if (!niche) { showToast('Please enter your niche first.'); return; }
+
+    const btn = document.getElementById('searchBtn');
+    const wrapper = document.getElementById('resultsWrapper');
+    const content = document.getElementById('resultsContent');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Scanning trends...';
+
+    wrapper.className = 'results-wrapper visible';
+    content.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Scanning trending topics and hashtags...</div>';
+
+    const platform = platformMeta[currentPlatform].name;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are CreatorNexusHQ's trend intelligence engine. You have deep knowledge of what trends, topics, formats, and hashtags perform well on YouTube, TikTok, Instagram, and Facebook. Use your knowledge of creator culture, viral content patterns, and platform-specific trends to give specific, timely, and actionable trend intelligence. Always be specific — name real trends, real topics, real hashtags. Tailor everything to the creator's niche and channel size.`,
+          messages: [{
+            role: 'user',
+            content: `Find current trending topics and hashtags on ${platform} for a ${style} creator in the ${niche} niche with ${size} subscribers/followers who posts ${speed}.
+
+Provide trend intelligence in these exact sections:
+
+TRENDING TOPICS:
+TOPIC 1: [name] | STATUS: [Hot/Rising/New/Steady] | WHY: [one line on why it's trending] | WINDOW: [how long this trend will last]
+TOPIC 2: [name] | STATUS: [status] | WHY: [why] | WINDOW: [window]
+TOPIC 3: [name] | STATUS: [status] | WHY: [why] | WINDOW: [window]
+TOPIC 4: [name] | STATUS: [status] | WHY: [why] | WINDOW: [window]
+TOPIC 5: [name] | STATUS: [status] | WHY: [why] | WINDOW: [window]
+TOPIC 6: [name] | STATUS: [status] | WHY: [why] | WINDOW: [window]
+TOPIC 7: [name] | STATUS: [status] | WHY: [why] | WINDOW: [window]
+TOPIC 8: [name] | STATUS: [status] | WHY: [why] | WINDOW: [window]
+
+TRENDING HASHTAGS:
+TAG 1: #[hashtag] | SIZE: [approximate posts/usage] | TYPE: [Niche/Broad/Trending]
+TAG 2: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 3: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 4: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 5: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 6: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 7: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 8: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 9: #[hashtag] | SIZE: [size] | TYPE: [type]
+TAG 10: #[hashtag] | SIZE: [size] | TYPE: [type]
+
+TOP OPPORTUNITY: [The single best trend to jump on RIGHT NOW for this creator — specific and actionable]
+VIDEO IDEA 1: [Specific video idea using the top trend]
+VIDEO IDEA 2: [Specific video idea using the second best trend]
+VIDEO IDEA 3: [Specific video idea using the third best trend]
+TIMING TIP: [Specific advice on when to post trend content for maximum reach on ${platform}]
+WARNING: [One trend to avoid or be careful with and why]`
+          }]
+        })
+      });
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text || 'Something went wrong.';
+      renderTrends(text, content);
+
+    } catch(err) {
+      content.innerHTML = '<p style="color:var(--red);font-size:13px;padding:20px">Error connecting to AI. Please try again.</p>';
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = `<span>🔥</span> <span id="search-btn-text">Find ${platformMeta[currentPlatform].name} Trends</span>`;
+  }
+
+  function renderTrends(text, el) {
+    el.innerHTML = '';
+
+    // Parse topics
+    const topicLines = text.match(/TOPIC \d+:.+/g) || [];
+    const tagLines = text.match(/TAG \d+:.+/g) || [];
+
+    const topics = topicLines.map(line => {
+      const parts = line.replace(/^TOPIC \d+:\s*/, '').split('|').map(p => p.trim());
+      const name = parts[0] || '';
+      const status = parts[1]?.replace('STATUS:', '').trim() || 'Rising';
+      const why = parts[2]?.replace('WHY:', '').trim() || '';
+      const window = parts[3]?.replace('WINDOW:', '').trim() || '';
+      return { name, status, why, window };
+    });
+
+    const tags = tagLines.map(line => {
+      const parts = line.replace(/^TAG \d+:\s*/, '').split('|').map(p => p.trim());
+      const tag = parts[0] || '';
+      const size = parts[1]?.replace('SIZE:', '').trim() || '';
+      const type = parts[2]?.replace('TYPE:', '').trim() || '';
+      return { tag, size, type };
+    });
+
+    // Render trend grid
+    el.innerHTML += '<div class="trend-grid">';
+
+    // Topics section
+    el.innerHTML += `
+      <div class="trend-section">
+        <h3>🔥 Trending Topics</h3>
+        <p>Topics blowing up in your niche right now</p>
+        ${topics.map((t, i) => {
+          const statusClass = t.status.toLowerCase().includes('hot') ? 'hot' : t.status.toLowerCase().includes('rising') ? 'rising' : t.status.toLowerCase().includes('new') ? 'new' : 'steady';
+          const rankClass = i < 3 ? statusClass : '';
+          return `<div class="trend-item">
+            <div class="trend-rank ${rankClass}">${i + 1}</div>
+            <div class="trend-info">
+              <div class="trend-name">${t.name}</div>
+              <div class="trend-meta">${t.why}${t.window ? ` · ${t.window}` : ''}</div>
+            </div>
+            <span class="trend-badge ${statusClass}">${t.status}</span>
+            <button class="copy-btn" onclick="copyText(this,'${t.name.replace(/'/g,"\\'")}')">Copy</button>
+          </div>`;
+        }).join('')}
+      </div>`;
+
+    // Hashtags section
+    const tagTypeColors = { 'Niche': 'var(--accent3)', 'Broad': 'var(--cyan)', 'Trending': 'var(--red)' };
+    el.innerHTML += `
+      <div class="trend-section">
+        <h3>#️⃣ Trending Hashtags</h3>
+        <p>Copy and add these to your next post</p>
+        ${tags.map((t, i) => {
+          const typeKey = Object.keys(tagTypeColors).find(k => t.type.includes(k)) || 'Niche';
+          const color = tagTypeColors[typeKey];
+          return `<div class="trend-item">
+            <div class="trend-rank">${i + 1}</div>
+            <div class="trend-info">
+              <div class="trend-name" style="color:${color}">${t.tag}</div>
+              <div class="trend-meta">${t.size}</div>
+            </div>
+            <span class="trend-badge" style="background:${color}18;color:${color};border:1px solid ${color}40">${t.type}</span>
+            <button class="copy-btn" onclick="copyText(this,'${t.tag.replace(/'/g,"\\'")}')">Copy</button>
+          </div>`;
+        }).join('')}
+        <button class="copy-btn" style="width:100%;margin-top:8px;padding:8px;font-size:12px" onclick="copyAllTags()">Copy All Hashtags</button>
+      </div>`;
+
+    el.innerHTML += '</div>';
+
+    // Opportunities and ideas
+    const opportunity = text.match(/TOP OPPORTUNITY:\s*(.+?)(?=VIDEO IDEA|$)/s)?.[1]?.trim();
+    const ideas = [
+      text.match(/VIDEO IDEA 1:\s*(.+?)(?=VIDEO IDEA 2|$)/s)?.[1]?.trim(),
+      text.match(/VIDEO IDEA 2:\s*(.+?)(?=VIDEO IDEA 3|$)/s)?.[1]?.trim(),
+      text.match(/VIDEO IDEA 3:\s*(.+?)(?=TIMING|$)/s)?.[1]?.trim(),
+    ].filter(Boolean);
+    const timing = text.match(/TIMING TIP:\s*(.+?)(?=WARNING|$)/s)?.[1]?.trim();
+    const warning = text.match(/WARNING:\s*(.+?)$/s)?.[1]?.trim();
+
+    if (opportunity || ideas.length > 0) {
+      el.innerHTML += `<div class="action-card">
+        <h3>🎯 How to Use These Trends</h3>
+        ${opportunity ? `<div class="action-item"><div><div class="action-item-label">Top Opportunity</div>${opportunity}</div></div>` : ''}
+        ${ideas.map((idea, i) => `<div class="action-item"><div><div class="action-item-label">Video Idea ${i+1}</div>${idea}</div><button class="copy-btn" style="flex-shrink:0;margin-left:8px" onclick="copyText(this,'${idea.replace(/'/g,"\\'")}')">Copy</button></div>`).join('')}
+        ${timing ? `<div class="action-item" style="border-color:rgba(6,182,212,0.3)"><div><div class="action-item-label" style="color:var(--cyan)">Timing Tip</div>${timing}</div></div>` : ''}
+        ${warning ? `<div class="action-item" style="border-color:rgba(239,68,68,0.2)"><div><div class="action-item-label" style="color:var(--red)">⚠️ Warning</div>${warning}</div></div>` : ''}
+      </div>`;
+    }
+
+    // Store tags for copy all
+    window._allTags = tags.map(t => t.tag).join(' ');
+  }
+
+  function copyAllTags() {
+    if (window._allTags) {
+      navigator.clipboard.writeText(window._allTags).then(() => {
+        showToast('All hashtags copied!');
+      });
+    }
+  }
+
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>

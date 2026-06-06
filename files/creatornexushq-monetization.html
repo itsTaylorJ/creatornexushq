@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorNexusHQ — Monetization Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07070f; --surface: #0e0e1a; --surface2: #13131f;
+  --border: #1a1a2e; --border2: #252540; --text: #eeeeff;
+  --muted: #5a5a90; --accent: #7c3aed; --accent2: #a855f7;
+  --accent3: #c084fc; --gold: #f59e0b; --green: #10b981;
+  --red: #ef4444; --cyan: #06b6d4; --orange: #f97316;
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 15% 15%, rgba(124,58,237,0.07) 0%, transparent 50%), radial-gradient(ellipse at 85% 85%, rgba(6,182,212,0.05) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+* { position: relative; z-index: 1; }
+::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* SIDEBAR */
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+.sidebar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+.sidebar-plan { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+.sidebar-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
+.sidebar-upgrade-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+
+/* MOBILE */
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; }
+.mobile-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; }
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; } .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; } .mobile-topbar { display: flex !important; }
+  .content { padding: 16px !important; } .platforms-grid { grid-template-columns: 1fr !important; }
+  .req-grid { grid-template-columns: 1fr !important; }
+}
+
+/* CONTENT */
+.content { padding: 32px 28px; max-width: 1000px; margin: 0 auto; }
+.page-header { margin-bottom: 28px; }
+.page-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+.page-header p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* PLATFORM TABS */
+.platform-tabs { display: flex; gap: 8px; margin-bottom: 28px; overflow-x: auto; scrollbar-width: none; }
+.platform-tabs::-webkit-scrollbar { display: none; }
+.platform-tab { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 12px 20px; cursor: pointer; transition: all 0.2s; text-align: center; min-width: 110px; }
+.platform-tab:hover { border-color: var(--accent); }
+.platform-tab.active { border-color: var(--accent); background: rgba(124,58,237,0.1); }
+.platform-tab-icon { font-size: 22px; margin-bottom: 4px; }
+.platform-tab-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--muted); }
+.platform-tab.active .platform-tab-name { color: var(--accent3); }
+
+/* PLATFORM SECTION */
+.platform-section { display: none; }
+.platform-section.active { display: block; animation: fadeUp 0.25s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* INPUT CARD */
+.input-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 24px; }
+.input-card h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.input-card p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+
+/* REQ GRID */
+.req-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+
+/* FIELD */
+.field { margin-bottom: 0; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+.field input, .field select { width: 100%; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
+.field input:focus, .field select:focus { border-color: var(--accent); }
+.field select option { background: var(--surface2); }
+
+/* PROGRESS BARS */
+.progress-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+.progress-card h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.progress-card p { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+
+.req-item { margin-bottom: 20px; }
+.req-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.req-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; }
+.req-values { font-size: 12px; color: var(--muted); }
+.req-values strong { color: var(--text); }
+
+.progress-bar-track { height: 10px; background: var(--border); border-radius: 5px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 5px; transition: width 0.8s ease; }
+
+.req-status { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 12px; }
+.req-status.done { color: var(--green); }
+.req-status.progress { color: var(--gold); }
+.req-status.start { color: var(--red); }
+
+/* OVERALL PROGRESS */
+.overall-card { background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(6,182,212,0.05)); border: 1px solid rgba(124,58,237,0.2); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; }
+.overall-pct { font-family: 'Syne', sans-serif; font-size: 56px; font-weight: 800; background: linear-gradient(135deg, var(--accent3), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: 6px; }
+.overall-label { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 12px; }
+.overall-eta { font-size: 13px; color: var(--text); background: rgba(0,0,0,0.3); border-radius: 8px; padding: 8px 16px; display: inline-block; }
+
+/* CALCULATE BTN */
+.calc-btn { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; padding: 13px; color: white; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.calc-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+
+/* PRO LOCKED */
+.pro-locked { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px 24px; text-align: center; }
+.pro-locked-icon { font-size: 36px; margin-bottom: 16px; }
+.pro-locked h3 { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+.pro-locked p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto; }
+.pro-btn { background: linear-gradient(135deg, var(--gold), var(--orange)); border: none; border-radius: 10px; padding: 12px 28px; color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer; transition: all 0.2s; }
+.pro-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* MILESTONE */
+.milestone-row { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+.milestone-icon { font-size: 20px; flex-shrink: 0; }
+.milestone-info { flex: 1; }
+.milestone-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.milestone-desc { font-size: 11px; color: var(--muted); }
+.milestone-status { font-size: 11px; font-weight: 700; flex-shrink: 0; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; padding: 12px 20px; font-size: 13px; z-index: 9999; transition: transform 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== GLOBAL SIDEBAR ===== */
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+.sidebar-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+.sidebar-plan { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+.sidebar-label { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: "Syne", sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: "DM Sans", sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
+.sidebar-upgrade-title { font-family: "Syne", sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; gap: 8px; }
+.mobile-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; transition: all 0.15s; }
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; }
+  .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; }
+  .mobile-topbar { display: flex !important; }
+}
+
+</style>
+</head>
+<body>
+<div class="app-layout">
+<div class="mobile-topbar">
+  <div class="mobile-logo">Creator<span>NexusHQ</span></div>
+  <div class="mobile-nav">
+    <a href="index.html" >Tools</a>
+    <a href="creatornexushq-platforms.html" >Platforms</a>
+    <a href="creatornexushq-analyze.html" >Analyze</a>
+    <a href="creatornexushq-resources.html" >Resources</a>
+    <a href="creatornexushq-thumbnail.html" >Thumbs</a>
+    <a href="creatornexushq-competitor.html" >Research</a>
+    <a href="creatornexushq-monetization.html" class="active">Monetize</a>
+    <a href="creatornexushq-streaming.html" >Stream</a>
+    <a href="creatornexushq-collab.html" >Collab</a>
+    <a href="creatornexushq-trends.html" >Trends</a>
+  </div>
+</div>
+<div class="app-sidebar">
+  <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
+  <div class="sidebar-plan" id="sidebarPlan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item "><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item "><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item "><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item "><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item "><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item "><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-monetization.html" class="sidebar-item active"><span class="sidebar-icon">💰</span>Monetization</a>
+  <a href="creatornexushq-streaming.html" class="sidebar-item "><span class="sidebar-icon">🎮</span>Stream Planner</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item "><span class="sidebar-icon">🤝</span>Collab Finder</a>
+  <a href="creatornexushq-trends.html" class="sidebar-item "><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade" onclick="document.getElementById('upgradeModal')?.classList.add('open') || document.getElementById('pricingModal')?.classList.add('open') || document.querySelector('.pro-gate') && showToast('Upgrade available on each tool page!')">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MOBILE -->
+  <div class="mobile-nav">
+    <a href="index.html">Tools</a>
+    <a href="creatornexushq-platforms.html">Platforms</a>
+    <a href="creatornexushq-analyze.html">Analyze</a>
+    <a href="creatornexushq-resources.html">Resources</a>
+    <a href="creatornexushq-monetization.html" class="active">Monetize</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+  <div class="sidebar-plan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item"><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item"><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-monetization.html" class="sidebar-item active"><span class="sidebar-icon">💰</span>Monetization</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles & Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="app-main">
+<div class="content">
+
+  <div class="page-header">
+    <h1>💰 Monetization Tracker</h1>
+    <p>Track your progress toward monetization on every platform. See exactly where you stand and what you need to get there.</p>
+  </div>
+
+  <!-- PLATFORM TABS -->
+  <div class="platform-tabs">
+    <div class="platform-tab active" onclick="switchPlatform('youtube', this)">
+      <div class="platform-tab-icon">▶️</div>
+      <div class="platform-tab-name">YouTube</div>
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('twitch', this)">
+      <div class="platform-tab-icon">🟣</div>
+      <div class="platform-tab-name">Twitch</div>
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('tiktok', this)">
+      <div class="platform-tab-icon">🎵</div>
+      <div class="platform-tab-name">TikTok</div>
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('kick', this)">
+      <div class="platform-tab-icon">🟢</div>
+      <div class="platform-tab-name">Kick</div>
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('rumble', this)">
+      <div class="platform-tab-icon">🔴</div>
+      <div class="platform-tab-name">Rumble</div>
+    </div>
+    <div class="platform-tab" onclick="switchPlatform('instagram', this)">
+      <div class="platform-tab-icon">📷</div>
+      <div class="platform-tab-name">Instagram</div>
+    </div>
+  </div>
+
+  <!-- YOUTUBE -->
+  <div id="platform-youtube" class="platform-section active">
+    <div class="input-card">
+      <h2>▶️ YouTube Partner Program</h2>
+      <p>Enter your current stats to track your progress toward the YouTube Partner Program (YPP). You need 1,000 subscribers and 4,000 watch hours in the last 12 months — or 1,000 subscribers and 10M Shorts views in 90 days.</p>
+      <div class="req-grid">
+        <div class="field"><label>Current Subscribers</label><input type="number" id="yt-subs" placeholder="e.g. 484" oninput="calculateYT()"></div>
+        <div class="field"><label>Watch Hours (last 12 months)</label><input type="number" id="yt-hours" placeholder="e.g. 850" oninput="calculateYT()"></div>
+        <div class="field"><label>Shorts Views (last 90 days)</label><input type="number" id="yt-shorts" placeholder="e.g. 500000" oninput="calculateYT()"></div>
+        <div class="field"><label>Avg new subs per month</label><input type="number" id="yt-subsrate" placeholder="e.g. 13" oninput="calculateYT()"></div>
+      </div>
+      <div class="field" style="margin-top:4px"><label>Avg watch hours gained per month</label><input type="number" id="yt-hoursrate" placeholder="e.g. 65" oninput="calculateYT()"></div>
+    </div>
+
+    <div id="yt-results" style="display:none">
+      <div class="overall-card">
+        <div class="overall-pct" id="yt-pct">0%</div>
+        <div class="overall-label">TOWARD MONETIZATION</div>
+        <div class="overall-eta" id="yt-eta">Enter your stats above to see your ETA</div>
+      </div>
+
+      <div class="progress-card">
+        <h2>Requirements Progress</h2>
+        <p>Track each requirement for the YouTube Partner Program.</p>
+
+        <div class="req-item">
+          <div class="req-header">
+            <div class="req-name">Subscribers</div>
+            <div class="req-values"><strong id="yt-subs-val">0</strong> / 1,000</div>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="yt-subs-bar" style="width:0%;background:linear-gradient(90deg,#7c3aed,#c084fc)"></div></div>
+          <div class="req-status" id="yt-subs-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header">
+            <div class="req-name">Watch Hours (12 months)</div>
+            <div class="req-values"><strong id="yt-hours-val">0</strong> / 4,000</div>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="yt-hours-bar" style="width:0%;background:linear-gradient(90deg,#06b6d4,#a855f7)"></div></div>
+          <div class="req-status" id="yt-hours-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header">
+            <div class="req-name">Shorts Views (90 days) — Alternative path</div>
+            <div class="req-values"><strong id="yt-shorts-val">0</strong> / 10,000,000</div>
+          </div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="yt-shorts-bar" style="width:0%;background:linear-gradient(90deg,#f59e0b,#f97316)"></div></div>
+          <div class="req-status" id="yt-shorts-status"></div>
+        </div>
+      </div>
+
+      <!-- MILESTONES -->
+      <div class="progress-card">
+        <h2>Milestones</h2>
+        <p>Key achievements on your way to monetization.</p>
+        <div id="yt-milestones"></div>
+      </div>
+
+      <!-- PRO ACTION PLAN -->
+      <div class="pro-locked" id="yt-action-plan">
+        <div class="pro-locked-icon">🚀</div>
+        <h3>Your Personalized Action Plan</h3>
+        <p>Get a specific week-by-week plan to hit monetization faster — tailored to your current stats, content type, and growth rate.</p>
+        <button class="pro-btn" onclick="showToast('Upgrade to Pro to unlock your action plan!')">★ Unlock Action Plan — Pro Only</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TWITCH -->
+  <div id="platform-twitch" class="platform-section">
+    <div class="input-card">
+      <h2>🟣 Twitch Affiliate & Partner</h2>
+      <p>Track your progress toward Twitch Affiliate (first monetization tier) and eventually Twitch Partner.</p>
+      <div class="req-grid">
+        <div class="field"><label>Total Followers</label><input type="number" id="tw-followers" placeholder="e.g. 45" oninput="calculateTwitch()"></div>
+        <div class="field"><label>Avg Concurrent Viewers</label><input type="number" id="tw-acv" placeholder="e.g. 2" oninput="calculateTwitch()"></div>
+        <div class="field"><label>Stream Days (last 30 days)</label><input type="number" id="tw-days" placeholder="e.g. 8" oninput="calculateTwitch()"></div>
+        <div class="field"><label>Avg stream hours per session</label><input type="number" id="tw-hours" placeholder="e.g. 2" oninput="calculateTwitch()"></div>
+      </div>
+    </div>
+
+    <div id="tw-results" style="display:none">
+      <div class="overall-card">
+        <div class="overall-pct" id="tw-pct">0%</div>
+        <div class="overall-label">TOWARD TWITCH AFFILIATE</div>
+        <div class="overall-eta" id="tw-eta">Enter your stats above</div>
+      </div>
+
+      <div class="progress-card">
+        <h2>Affiliate Requirements</h2>
+        <p>You need all 4 to qualify for Twitch Affiliate.</p>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Followers</div><div class="req-values"><strong id="tw-followers-val">0</strong> / 50</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="tw-followers-bar" style="width:0%;background:linear-gradient(90deg,#9146ff,#c084fc)"></div></div>
+          <div class="req-status" id="tw-followers-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Avg Concurrent Viewers</div><div class="req-values"><strong id="tw-acv-val">0</strong> / 3</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="tw-acv-bar" style="width:0%;background:linear-gradient(90deg,#9146ff,#c084fc)"></div></div>
+          <div class="req-status" id="tw-acv-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Stream Days (last 30 days)</div><div class="req-values"><strong id="tw-days-val">0</strong> / 12</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="tw-days-bar" style="width:0%;background:linear-gradient(90deg,#9146ff,#c084fc)"></div></div>
+          <div class="req-status" id="tw-days-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Stream Hours (last 30 days)</div><div class="req-values"><strong id="tw-hours-val">0</strong> / 25</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="tw-hours-bar" style="width:0%;background:linear-gradient(90deg,#9146ff,#c084fc)"></div></div>
+          <div class="req-status" id="tw-hours-status"></div>
+        </div>
+      </div>
+
+      <div class="pro-locked">
+        <div class="pro-locked-icon">🚀</div>
+        <h3>Affiliate Action Plan</h3>
+        <p>Get a specific streaming schedule and growth plan to hit Twitch Affiliate as fast as possible.</p>
+        <button class="pro-btn" onclick="showToast('Upgrade to Pro to unlock your action plan!')">★ Unlock Action Plan — Pro Only</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIKTOK -->
+  <div id="platform-tiktok" class="platform-section">
+    <div class="input-card">
+      <h2>🎵 TikTok Creator Fund & Series</h2>
+      <p>Track your progress toward TikTok monetization programs including the Creator Fund and TikTok Series.</p>
+      <div class="req-grid">
+        <div class="field"><label>Followers</label><input type="number" id="tt-followers" placeholder="e.g. 8500" oninput="calculateTikTok()"></div>
+        <div class="field"><label>Total Views (last 30 days)</label><input type="number" id="tt-views" placeholder="e.g. 50000" oninput="calculateTikTok()"></div>
+        <div class="field"><label>Account Age (days)</label><input type="number" id="tt-age" placeholder="e.g. 120" oninput="calculateTikTok()"></div>
+        <div class="field"><label>Your Age (18+ required)</label><select id="tt-age-check"><option value="yes">18 or older</option><option value="no">Under 18</option></select></div>
+      </div>
+    </div>
+
+    <div id="tt-results" style="display:none">
+      <div class="overall-card">
+        <div class="overall-pct" id="tt-pct">0%</div>
+        <div class="overall-label">TOWARD CREATOR FUND</div>
+        <div class="overall-eta" id="tt-eta">Enter your stats above</div>
+      </div>
+
+      <div class="progress-card">
+        <h2>Creator Fund Requirements</h2>
+        <p>Requirements to join the TikTok Creator Fund.</p>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Followers</div><div class="req-values"><strong id="tt-followers-val">0</strong> / 10,000</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="tt-followers-bar" style="width:0%;background:linear-gradient(90deg,#010101,#555)"></div></div>
+          <div class="req-status" id="tt-followers-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Views (last 30 days)</div><div class="req-values"><strong id="tt-views-val">0</strong> / 100,000</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="tt-views-bar" style="width:0%;background:linear-gradient(90deg,#010101,#555)"></div></div>
+          <div class="req-status" id="tt-views-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Account Age</div><div class="req-values"><strong id="tt-age-val">0</strong> / 30 days</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="tt-age-bar" style="width:0%;background:linear-gradient(90deg,#010101,#555)"></div></div>
+          <div class="req-status" id="tt-age-status"></div>
+        </div>
+      </div>
+
+      <div class="pro-locked">
+        <div class="pro-locked-icon">🚀</div>
+        <h3>TikTok Growth Action Plan</h3>
+        <p>Get a content strategy specifically designed to hit 10K followers and 100K views on TikTok as fast as possible.</p>
+        <button class="pro-btn" onclick="showToast('Upgrade to Pro to unlock your action plan!')">★ Unlock Action Plan — Pro Only</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- KICK -->
+  <div id="platform-kick" class="platform-section">
+    <div class="input-card">
+      <h2>🟢 Kick Monetization</h2>
+      <p>Track your progress toward Kick's monetization program. Kick pays a 95/5 revenue split — the best in the industry.</p>
+      <div class="req-grid">
+        <div class="field"><label>Followers</label><input type="number" id="kick-followers" placeholder="e.g. 75" oninput="calculateKick()"></div>
+        <div class="field"><label>Avg Concurrent Viewers</label><input type="number" id="kick-acv" placeholder="e.g. 5" oninput="calculateKick()"></div>
+        <div class="field"><label>Hours Streamed (last 30 days)</label><input type="number" id="kick-hours" placeholder="e.g. 20" oninput="calculateKick()"></div>
+        <div class="field"><label>Stream days (last 30 days)</label><input type="number" id="kick-days" placeholder="e.g. 10" oninput="calculateKick()"></div>
+      </div>
+    </div>
+
+    <div id="kick-results" style="display:none">
+      <div class="overall-card">
+        <div class="overall-pct" id="kick-pct">0%</div>
+        <div class="overall-label">TOWARD KICK MONETIZATION</div>
+        <div class="overall-eta" id="kick-eta">Enter your stats above</div>
+      </div>
+
+      <div class="progress-card">
+        <h2>Kick Requirements</h2>
+        <p>Kick's requirements are more accessible than Twitch — great for new streamers.</p>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Followers</div><div class="req-values"><strong id="kick-followers-val">0</strong> / 75</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="kick-followers-bar" style="width:0%;background:linear-gradient(90deg,#53fc18,#10b981)"></div></div>
+          <div class="req-status" id="kick-followers-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Avg Concurrent Viewers</div><div class="req-values"><strong id="kick-acv-val">0</strong> / 5</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="kick-acv-bar" style="width:0%;background:linear-gradient(90deg,#53fc18,#10b981)"></div></div>
+          <div class="req-status" id="kick-acv-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Stream Hours (last 30 days)</div><div class="req-values"><strong id="kick-hours-val">0</strong> / 25</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="kick-hours-bar" style="width:0%;background:linear-gradient(90deg,#53fc18,#10b981)"></div></div>
+          <div class="req-status" id="kick-hours-status"></div>
+        </div>
+      </div>
+
+      <div class="pro-locked">
+        <div class="pro-locked-icon">🚀</div>
+        <h3>Kick Growth Action Plan</h3>
+        <p>Get a streaming plan built specifically for Kick's algorithm and audience to hit monetization faster.</p>
+        <button class="pro-btn" onclick="showToast('Upgrade to Pro to unlock your action plan!')">★ Unlock Action Plan — Pro Only</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RUMBLE -->
+  <div id="platform-rumble" class="platform-section">
+    <div class="input-card">
+      <h2>🔴 Rumble Monetization</h2>
+      <p>Track your progress toward Rumble's monetization program. Rumble offers licensing deals and ad revenue sharing.</p>
+      <div class="req-grid">
+        <div class="field"><label>Followers</label><input type="number" id="rm-followers" placeholder="e.g. 200" oninput="calculateRumble()"></div>
+        <div class="field"><label>Total Video Views</label><input type="number" id="rm-views" placeholder="e.g. 5000" oninput="calculateRumble()"></div>
+        <div class="field"><label>Videos Published</label><input type="number" id="rm-videos" placeholder="e.g. 15" oninput="calculateRumble()"></div>
+        <div class="field"><label>Account Age (days)</label><input type="number" id="rm-age" placeholder="e.g. 60" oninput="calculateRumble()"></div>
+      </div>
+    </div>
+
+    <div id="rm-results" style="display:none">
+      <div class="overall-card">
+        <div class="overall-pct" id="rm-pct">0%</div>
+        <div class="overall-label">TOWARD RUMBLE MONETIZATION</div>
+        <div class="overall-eta" id="rm-eta">Enter your stats above</div>
+      </div>
+
+      <div class="progress-card">
+        <h2>Rumble Requirements</h2>
+        <p>Rumble's program is more flexible than most — focus on consistent uploads and views.</p>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Followers</div><div class="req-values"><strong id="rm-followers-val">0</strong> / 500</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="rm-followers-bar" style="width:0%;background:linear-gradient(90deg,#85c742,#10b981)"></div></div>
+          <div class="req-status" id="rm-followers-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Total Views</div><div class="req-values"><strong id="rm-views-val">0</strong> / 10,000</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="rm-views-bar" style="width:0%;background:linear-gradient(90deg,#85c742,#10b981)"></div></div>
+          <div class="req-status" id="rm-views-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Videos Published</div><div class="req-values"><strong id="rm-videos-val">0</strong> / 10</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="rm-videos-bar" style="width:0%;background:linear-gradient(90deg,#85c742,#10b981)"></div></div>
+          <div class="req-status" id="rm-videos-status"></div>
+        </div>
+      </div>
+
+      <div class="pro-locked">
+        <div class="pro-locked-icon">🚀</div>
+        <h3>Rumble Growth Action Plan</h3>
+        <p>Get a content strategy to grow on Rumble and hit monetization requirements faster.</p>
+        <button class="pro-btn" onclick="showToast('Upgrade to Pro to unlock your action plan!')">★ Unlock Action Plan — Pro Only</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTAGRAM -->
+  <div id="platform-instagram" class="platform-section">
+    <div class="input-card">
+      <h2>📷 Instagram Monetization</h2>
+      <p>Track your progress toward Instagram's monetization features including Badges, Subscriptions, and the Bonus program.</p>
+      <div class="req-grid">
+        <div class="field"><label>Followers</label><input type="number" id="ig-followers" placeholder="e.g. 3500" oninput="calculateIG()"></div>
+        <div class="field"><label>Avg Reel Views</label><input type="number" id="ig-views" placeholder="e.g. 1200" oninput="calculateIG()"></div>
+        <div class="field"><label>Account Age (days)</label><input type="number" id="ig-age" placeholder="e.g. 90" oninput="calculateIG()"></div>
+        <div class="field"><label>Account Type</label><select id="ig-type"><option>Creator Account</option><option>Business Account</option><option>Personal Account</option></select></div>
+      </div>
+    </div>
+
+    <div id="ig-results" style="display:none">
+      <div class="overall-card">
+        <div class="overall-pct" id="ig-pct">0%</div>
+        <div class="overall-label">TOWARD INSTAGRAM MONETIZATION</div>
+        <div class="overall-eta" id="ig-eta">Enter your stats above</div>
+      </div>
+
+      <div class="progress-card">
+        <h2>Monetization Requirements</h2>
+        <p>Instagram monetization eligibility requirements.</p>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Followers</div><div class="req-values"><strong id="ig-followers-val">0</strong> / 10,000</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="ig-followers-bar" style="width:0%;background:linear-gradient(90deg,#e1306c,#f77737)"></div></div>
+          <div class="req-status" id="ig-followers-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Account Age</div><div class="req-values"><strong id="ig-age-val">0</strong> / 30 days</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="ig-age-bar" style="width:0%;background:linear-gradient(90deg,#e1306c,#f77737)"></div></div>
+          <div class="req-status" id="ig-age-status"></div>
+        </div>
+
+        <div class="req-item">
+          <div class="req-header"><div class="req-name">Creator/Business Account</div><div class="req-values" id="ig-type-val">—</div></div>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="ig-type-bar" style="width:0%;background:linear-gradient(90deg,#e1306c,#f77737)"></div></div>
+          <div class="req-status" id="ig-type-status"></div>
+        </div>
+      </div>
+
+      <div class="pro-locked">
+        <div class="pro-locked-icon">🚀</div>
+        <h3>Instagram Growth Action Plan</h3>
+        <p>Get a Reels and content strategy to hit 10K followers and unlock Instagram monetization faster.</p>
+        <button class="pro-btn" onclick="showToast('Upgrade to Pro to unlock your action plan!')">★ Unlock Action Plan — Pro Only</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function switchPlatform(platform, tab) {
+    document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.platform-section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('platform-' + platform).classList.add('active');
+  }
+
+  function setBar(id, pct) {
+    const el = document.getElementById(id);
+    if (el) el.style.width = Math.min(pct, 100) + '%';
+  }
+
+  function setStatus(id, current, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const pct = (current / target) * 100;
+    if (pct >= 100) { el.className = 'req-status done'; el.textContent = '✓ Complete'; }
+    else if (pct >= 50) { el.className = 'req-status progress'; el.textContent = `${Math.round(pct)}% — ${(target - current).toLocaleString()} more needed`; }
+    else { el.className = 'req-status start'; el.textContent = `${Math.round(pct)}% — ${(target - current).toLocaleString()} more needed`; }
+  }
+
+  // YOUTUBE
+  function calculateYT() {
+    const subs = parseInt(document.getElementById('yt-subs').value) || 0;
+    const hours = parseInt(document.getElementById('yt-hours').value) || 0;
+    const shorts = parseInt(document.getElementById('yt-shorts').value) || 0;
+    const subsRate = parseInt(document.getElementById('yt-subsrate').value) || 0;
+    const hoursRate = parseInt(document.getElementById('yt-hoursrate').value) || 0;
+
+    document.getElementById('yt-results').style.display = 'block';
+    document.getElementById('yt-subs-val').textContent = subs.toLocaleString();
+    document.getElementById('yt-hours-val').textContent = hours.toLocaleString();
+    document.getElementById('yt-shorts-val').textContent = shorts.toLocaleString();
+
+    const subsPct = Math.min((subs / 1000) * 100, 100);
+    const hoursPct = Math.min((hours / 4000) * 100, 100);
+    const shortsPct = Math.min((shorts / 10000000) * 100, 100);
+
+    setBar('yt-subs-bar', subsPct);
+    setBar('yt-hours-bar', hoursPct);
+    setBar('yt-shorts-bar', shortsPct);
+
+    setStatus('yt-subs-status', subs, 1000);
+    setStatus('yt-hours-status', hours, 4000);
+    setStatus('yt-shorts-status', shorts, 10000000);
+
+    const longFormPct = (subsPct + hoursPct) / 2;
+    const overall = Math.round(longFormPct);
+    document.getElementById('yt-pct').textContent = overall + '%';
+
+    // ETA
+    let etaText = '';
+    if (overall >= 100) {
+      etaText = '🎉 You qualify! Apply now in YouTube Studio';
+    } else {
+      const subsLeft = Math.max(0, 1000 - subs);
+      const hoursLeft = Math.max(0, 4000 - hours);
+      const monthsForSubs = subsRate > 0 ? Math.ceil(subsLeft / subsRate) : null;
+      const monthsForHours = hoursRate > 0 ? Math.ceil(hoursLeft / hoursRate) : null;
+      if (monthsForSubs && monthsForHours) {
+        const months = Math.max(monthsForSubs, monthsForHours);
+        etaText = `Estimated ${months} month${months !== 1 ? 's' : ''} at your current growth rate`;
+      } else {
+        etaText = `${overall}% complete — add your growth rates for an ETA`;
+      }
+    }
+    document.getElementById('yt-eta').textContent = etaText;
+
+    // Milestones
+    const milestones = [
+      { icon: '👥', title: '100 Subscribers', desc: 'Custom URL unlocks', val: subs, target: 100 },
+      { icon: '📊', title: '500 Subscribers', desc: 'Community posts unlock', val: subs, target: 500 },
+      { icon: '🎯', title: '1,000 Subscribers', desc: 'YPP eligibility (subs met)', val: subs, target: 1000 },
+      { icon: '⏱️', title: '4,000 Watch Hours', desc: 'YPP eligibility (hours met)', val: hours, target: 4000 },
+      { icon: '💰', title: 'Full Monetization', desc: 'Both requirements met', val: Math.min(subs/1000, 1) * Math.min(hours/4000, 1) * 1, target: 1 },
+    ];
+
+    const milestonesEl = document.getElementById('yt-milestones');
+    milestonesEl.innerHTML = milestones.map(m => {
+      const done = m.val >= m.target;
+      return `<div class="milestone-row">
+        <div class="milestone-icon">${m.icon}</div>
+        <div class="milestone-info">
+          <div class="milestone-title">${m.title}</div>
+          <div class="milestone-desc">${m.desc}</div>
+        </div>
+        <div class="milestone-status" style="color:${done ? 'var(--green)' : 'var(--muted)'}">${done ? '✓ Done' : `${Math.round(Math.min((m.val/m.target)*100,100))}%`}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // TWITCH
+  function calculateTwitch() {
+    const followers = parseInt(document.getElementById('tw-followers').value) || 0;
+    const acv = parseInt(document.getElementById('tw-acv').value) || 0;
+    const days = parseInt(document.getElementById('tw-days').value) || 0;
+    const hoursPerSession = parseFloat(document.getElementById('tw-hours').value) || 0;
+    const totalHours = days * hoursPerSession;
+
+    document.getElementById('tw-results').style.display = 'block';
+    document.getElementById('tw-followers-val').textContent = followers;
+    document.getElementById('tw-acv-val').textContent = acv;
+    document.getElementById('tw-days-val').textContent = days;
+    document.getElementById('tw-hours-val').textContent = totalHours.toFixed(1);
+
+    const fPct = Math.min((followers/50)*100,100);
+    const aPct = Math.min((acv/3)*100,100);
+    const dPct = Math.min((days/12)*100,100);
+    const hPct = Math.min((totalHours/25)*100,100);
+
+    setBar('tw-followers-bar', fPct); setBar('tw-acv-bar', aPct);
+    setBar('tw-days-bar', dPct); setBar('tw-hours-bar', hPct);
+    setStatus('tw-followers-status', followers, 50); setStatus('tw-acv-status', acv, 3);
+    setStatus('tw-days-status', days, 12); setStatus('tw-hours-status', totalHours, 25);
+
+    const overall = Math.round((fPct + aPct + dPct + hPct) / 4);
+    document.getElementById('tw-pct').textContent = overall + '%';
+    document.getElementById('tw-eta').textContent = overall >= 100 ? '🎉 You qualify for Affiliate!' : `${overall}% toward Twitch Affiliate`;
+  }
+
+  // TIKTOK
+  function calculateTikTok() {
+    const followers = parseInt(document.getElementById('tt-followers').value) || 0;
+    const views = parseInt(document.getElementById('tt-views').value) || 0;
+    const age = parseInt(document.getElementById('tt-age').value) || 0;
+    const isAdult = document.getElementById('tt-age-check').value === 'yes';
+
+    document.getElementById('tt-results').style.display = 'block';
+    document.getElementById('tt-followers-val').textContent = followers.toLocaleString();
+    document.getElementById('tt-views-val').textContent = views.toLocaleString();
+    document.getElementById('tt-age-val').textContent = age;
+
+    const fPct = Math.min((followers/10000)*100,100);
+    const vPct = Math.min((views/100000)*100,100);
+    const aPct = Math.min((age/30)*100,100);
+
+    setBar('tt-followers-bar', fPct); setBar('tt-views-bar', vPct); setBar('tt-age-bar', aPct);
+    setStatus('tt-followers-status', followers, 10000); setStatus('tt-views-status', views, 100000); setStatus('tt-age-status', age, 30);
+
+    const overall = !isAdult ? 0 : Math.round((fPct + vPct + aPct) / 3);
+    document.getElementById('tt-pct').textContent = overall + '%';
+    document.getElementById('tt-eta').textContent = !isAdult ? 'Must be 18+ for Creator Fund' : overall >= 100 ? '🎉 You qualify!' : `${overall}% complete`;
+  }
+
+  // KICK
+  function calculateKick() {
+    const followers = parseInt(document.getElementById('kick-followers').value) || 0;
+    const acv = parseInt(document.getElementById('kick-acv').value) || 0;
+    const hours = parseInt(document.getElementById('kick-hours').value) || 0;
+
+    document.getElementById('kick-results').style.display = 'block';
+    document.getElementById('kick-followers-val').textContent = followers;
+    document.getElementById('kick-acv-val').textContent = acv;
+    document.getElementById('kick-hours-val').textContent = hours;
+
+    const fPct = Math.min((followers/75)*100,100);
+    const aPct = Math.min((acv/5)*100,100);
+    const hPct = Math.min((hours/25)*100,100);
+
+    setBar('kick-followers-bar', fPct); setBar('kick-acv-bar', aPct); setBar('kick-hours-bar', hPct);
+    setStatus('kick-followers-status', followers, 75); setStatus('kick-acv-status', acv, 5); setStatus('kick-hours-status', hours, 25);
+
+    const overall = Math.round((fPct + aPct + hPct) / 3);
+    document.getElementById('kick-pct').textContent = overall + '%';
+    document.getElementById('kick-eta').textContent = overall >= 100 ? '🎉 Apply for Kick monetization!' : `${overall}% toward Kick monetization`;
+  }
+
+  // RUMBLE
+  function calculateRumble() {
+    const followers = parseInt(document.getElementById('rm-followers').value) || 0;
+    const views = parseInt(document.getElementById('rm-views').value) || 0;
+    const videos = parseInt(document.getElementById('rm-videos').value) || 0;
+
+    document.getElementById('rm-results').style.display = 'block';
+    document.getElementById('rm-followers-val').textContent = followers.toLocaleString();
+    document.getElementById('rm-views-val').textContent = views.toLocaleString();
+    document.getElementById('rm-videos-val').textContent = videos;
+
+    const fPct = Math.min((followers/500)*100,100);
+    const vPct = Math.min((views/10000)*100,100);
+    const vidPct = Math.min((videos/10)*100,100);
+
+    setBar('rm-followers-bar', fPct); setBar('rm-views-bar', vPct); setBar('rm-videos-bar', vidPct);
+    setStatus('rm-followers-status', followers, 500); setStatus('rm-views-status', views, 10000); setStatus('rm-videos-status', videos, 10);
+
+    const overall = Math.round((fPct + vPct + vidPct) / 3);
+    document.getElementById('rm-pct').textContent = overall + '%';
+    document.getElementById('rm-eta').textContent = overall >= 100 ? '🎉 Apply for Rumble monetization!' : `${overall}% toward Rumble monetization`;
+  }
+
+  // INSTAGRAM
+  function calculateIG() {
+    const followers = parseInt(document.getElementById('ig-followers').value) || 0;
+    const age = parseInt(document.getElementById('ig-age').value) || 0;
+    const type = document.getElementById('ig-type').value;
+    const isCreator = type !== 'Personal Account';
+
+    document.getElementById('ig-results').style.display = 'block';
+    document.getElementById('ig-followers-val').textContent = followers.toLocaleString();
+    document.getElementById('ig-age-val').textContent = age;
+    document.getElementById('ig-type-val').textContent = type;
+
+    const fPct = Math.min((followers/10000)*100,100);
+    const aPct = Math.min((age/30)*100,100);
+    const tPct = isCreator ? 100 : 0;
+
+    setBar('ig-followers-bar', fPct); setBar('ig-age-bar', aPct); setBar('ig-type-bar', tPct);
+    setStatus('ig-followers-status', followers, 10000); setStatus('ig-age-status', age, 30);
+    const typeEl = document.getElementById('ig-type-status');
+    if (isCreator) { typeEl.className = 'req-status done'; typeEl.textContent = '✓ Creator/Business account set'; }
+    else { typeEl.className = 'req-status start'; typeEl.textContent = 'Switch to Creator or Business account in settings'; }
+
+    const overall = Math.round((fPct + aPct + tPct) / 3);
+    document.getElementById('ig-pct').textContent = overall + '%';
+    document.getElementById('ig-eta').textContent = overall >= 100 ? '🎉 You may be eligible — check Instagram settings!' : `${overall}% toward eligibility`;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>

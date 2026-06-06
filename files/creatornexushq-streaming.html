@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CreatorNexusHQ — Stream Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07070f; --surface: #0e0e1a; --surface2: #13131f;
+  --border: #1a1a2e; --border2: #252540; --text: #eeeeff;
+  --muted: #5a5a90; --accent: #7c3aed; --accent2: #a855f7;
+  --accent3: #c084fc; --gold: #f59e0b; --green: #10b981;
+  --red: #ef4444; --cyan: #06b6d4; --orange: #f97316;
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 15% 15%, rgba(124,58,237,0.07) 0%, transparent 50%), radial-gradient(ellipse at 85% 85%, rgba(6,182,212,0.05) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+* { position: relative; z-index: 1; }
+::-webkit-scrollbar { width: 3px; } ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+/* SIDEBAR */
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+.sidebar-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+.sidebar-plan { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+.sidebar-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
+.sidebar-upgrade-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+
+/* MOBILE */
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; }
+.mobile-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; }
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; } .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; } .mobile-topbar { display: flex !important; }
+  .content { padding: 16px !important; } .two-col { grid-template-columns: 1fr !important; }
+  .platform-grid { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
+/* CONTENT */
+.content { padding: 32px 28px; max-width: 1000px; margin: 0 auto; }
+.page-header { margin-bottom: 28px; }
+.page-header h1 { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+.page-header p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* USAGE */
+.usage-row { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; margin-bottom: 24px; font-size: 12px; color: var(--muted); }
+.usage-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.usage-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 2px; transition: width 0.4s; }
+.upgrade-link { color: var(--gold); font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 11px; }
+
+/* PLATFORM GRID */
+.platform-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 24px; }
+.platform-card { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.platform-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+.platform-card.active { border-color: var(--accent); background: rgba(124,58,237,0.1); }
+.platform-card-icon { font-size: 24px; margin-bottom: 6px; }
+.platform-card-name { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted); }
+.platform-card.active .platform-card-name { color: var(--accent3); }
+
+/* TWO COL */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* FORM CARD */
+.form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+.form-card h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.form-card p { font-size: 13px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+
+/* FIELDS */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+.field input, .field select, .field textarea { width: 100%; background: var(--bg); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 14px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; resize: none; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+.field select option { background: var(--surface2); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* GENERATE BTN */
+.gen-btn { width: 100%; background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; border-radius: 12px; padding: 13px; color: white; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px; }
+.gen-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+.gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* RESULTS */
+.results-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; padding: 24px; display: none; }
+.results-card.visible { display: block; animation: fadeUp 0.3s ease both; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.results-label { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; color: var(--accent3); text-transform: uppercase; margin-bottom: 16px; }
+
+/* TITLE CARDS */
+.title-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; transition: border-color 0.15s; }
+.title-card:hover { border-color: var(--border2); }
+.title-card-text { font-size: 14px; line-height: 1.5; flex: 1; }
+.title-card-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.copy-btn { background: none; border: 1px solid var(--border2); border-radius: 6px; padding: 4px 12px; color: var(--muted); font-size: 11px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; white-space: nowrap; flex-shrink: 0; }
+.copy-btn:hover { border-color: var(--accent); color: var(--accent3); }
+.copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+/* SECTION DIVIDER */
+.section-divider { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--muted); text-transform: uppercase; margin: 20px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+/* TIPS */
+.tip-card { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; color: var(--muted); display: flex; gap: 10px; }
+.tip-card strong { color: var(--text); display: block; margin-bottom: 2px; font-family: 'Syne', sans-serif; font-size: 12px; }
+
+/* LOADING */
+.loading { display: flex; align-items: center; gap: 10px; color: var(--muted); font-size: 13px; padding: 20px 0; }
+.dots { display: flex; gap: 4px; }
+.dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: bounce 1.2s ease infinite; }
+.dot:nth-child(2) { animation-delay: 0.2s; } .dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+/* PLACEHOLDER */
+.placeholder { background: var(--surface); border: 1px dashed var(--border2); border-radius: 16px; padding: 60px 24px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.8; }
+
+/* PLATFORM TIPS SECTION */
+.platform-tips { margin-top: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+.platform-tips h2 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; margin-bottom: 16px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; padding: 12px 20px; font-size: 13px; z-index: 9999; transition: transform 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ===== GLOBAL SIDEBAR ===== */
+.app-layout { display: flex; min-height: 100vh; }
+.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
+.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
+.sidebar-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
+.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
+.sidebar-plan { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
+.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
+.sidebar-label { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: "Syne", sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+.sidebar-item:hover { color: #eeeeff; background: #13131f; }
+.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
+.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: "DM Sans", sans-serif; font-weight: 500; }
+.sidebar-icon { font-size: 15px; flex-shrink: 0; }
+.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
+.sidebar-upgrade-title { font-family: "Syne", sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
+.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; gap: 8px; }
+.mobile-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
+.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
+.mobile-nav a { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; transition: all 0.15s; }
+.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
+@media (max-width: 768px) {
+  .app-sidebar { display: none !important; }
+  .app-main { margin-left: 0 !important; width: 100% !important; }
+  .app-layout { display: block !important; }
+  .mobile-topbar { display: flex !important; }
+}
+
+</style>
+</head>
+<body>
+<div class="app-layout">
+<div class="mobile-topbar">
+  <div class="mobile-logo">Creator<span>NexusHQ</span></div>
+  <div class="mobile-nav">
+    <a href="index.html" >Tools</a>
+    <a href="creatornexushq-platforms.html" >Platforms</a>
+    <a href="creatornexushq-analyze.html" >Analyze</a>
+    <a href="creatornexushq-resources.html" >Resources</a>
+    <a href="creatornexushq-thumbnail.html" >Thumbs</a>
+    <a href="creatornexushq-competitor.html" >Research</a>
+    <a href="creatornexushq-monetization.html" >Monetize</a>
+    <a href="creatornexushq-streaming.html" class="active">Stream</a>
+    <a href="creatornexushq-collab.html" >Collab</a>
+    <a href="creatornexushq-trends.html" >Trends</a>
+  </div>
+</div>
+<div class="app-sidebar">
+  <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
+  <div class="sidebar-plan" id="sidebarPlan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item "><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item "><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item "><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item "><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item "><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item "><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-monetization.html" class="sidebar-item "><span class="sidebar-icon">💰</span>Monetization</a>
+  <a href="creatornexushq-streaming.html" class="sidebar-item active"><span class="sidebar-icon">🎮</span>Stream Planner</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item "><span class="sidebar-icon">🤝</span>Collab Finder</a>
+  <a href="creatornexushq-trends.html" class="sidebar-item "><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade" onclick="document.getElementById('upgradeModal')?.classList.add('open') || document.getElementById('pricingModal')?.classList.add('open') || document.querySelector('.pro-gate') && showToast('Upgrade available on each tool page!')">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MOBILE -->
+  <div class="mobile-nav">
+    <a href="index.html">Tools</a>
+    <a href="creatornexushq-analyze.html">Analyze</a>
+    <a href="creatornexushq-monetization.html">Monetize</a>
+    <a href="creatornexushq-streaming.html" class="active">Stream</a>
+  </div>
+</div>
+
+<!-- SIDEBAR -->
+  <div class="sidebar-plan">FREE PLAN</div>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">NAVIGATION</div>
+  <a href="index.html" class="sidebar-item"><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item"><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-monetization.html" class="sidebar-item"><span class="sidebar-icon">💰</span>Monetization</a>
+  <a href="creatornexushq-streaming.html" class="sidebar-item active"><span class="sidebar-icon">🎮</span>Stream Planner</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">TOOLS</div>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles & Hooks</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
+  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-label">ANALYZE</div>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
+  <div class="sidebar-divider"></div>
+  <div class="sidebar-upgrade">
+    <div class="sidebar-upgrade-icon">★</div>
+    <div>
+      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
+      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="app-main">
+<div class="content">
+
+  <div class="page-header">
+    <h1>🎮 Stream Planner</h1>
+    <p>Generate scroll-stopping stream titles for any platform. Tell us what you're streaming and we'll write titles that pull in viewers.</p>
+  </div>
+
+  <div class="usage-row">
+    <span><strong id="usageCount">5</strong> / 5 free generations left today</span>
+    <div class="usage-track"><div class="usage-fill" id="usageFill" style="width:100%"></div></div>
+    <span class="upgrade-link">Upgrade for unlimited →</span>
+  </div>
+
+  <!-- PLATFORM SELECTOR -->
+  <div class="platform-grid">
+    <div class="platform-card active" onclick="selectPlatform('twitch', this)" id="card-twitch">
+      <div class="platform-card-icon">🟣</div>
+      <div class="platform-card-name">Twitch</div>
+    </div>
+    <div class="platform-card" onclick="selectPlatform('kick', this)" id="card-kick">
+      <div class="platform-card-icon">🟢</div>
+      <div class="platform-card-name">Kick</div>
+    </div>
+    <div class="platform-card" onclick="selectPlatform('youtube', this)" id="card-youtube">
+      <div class="platform-card-icon">▶️</div>
+      <div class="platform-card-name">YouTube Live</div>
+    </div>
+    <div class="platform-card" onclick="selectPlatform('facebook', this)" id="card-facebook">
+      <div class="platform-card-icon">🎮</div>
+      <div class="platform-card-name">FB Gaming</div>
+    </div>
+    <div class="platform-card" onclick="selectPlatform('tiktok', this)" id="card-tiktok">
+      <div class="platform-card-icon">🎵</div>
+      <div class="platform-card-name">TikTok Live</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- FORM -->
+    <div>
+      <div class="form-card">
+        <h2 id="form-title">🟣 Twitch Stream Title Generator</h2>
+        <p>Fill in the details about your stream and we'll generate titles optimized for the platform.</p>
+
+        <div class="field">
+          <label>Game / Content</label>
+          <input type="text" id="game" placeholder="e.g. Warzone, Just Chatting, Minecraft...">
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label>Stream Vibe</label>
+            <select id="vibe">
+              <option>Chill / relaxed</option>
+              <option>Hype / competitive</option>
+              <option>Funny / chaotic</option>
+              <option>Grinding / ranked</option>
+              <option>First time playing</option>
+              <option>Challenge run</option>
+              <option>Community games</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Channel Size</label>
+            <select id="size">
+              <option>Just starting (0-50 followers)</option>
+              <option>Growing (50-500 followers)</option>
+              <option>Established (500-5K followers)</option>
+              <option>Large (5K+ followers)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Anything specific happening this stream?</label>
+          <textarea id="specific" rows="2" placeholder="e.g. grinding ranked, doing a 24hr challenge, playing with viewers, first time playing..."></textarea>
+        </div>
+
+        <div class="field">
+          <label>Your Streaming Personality</label>
+          <select id="personality">
+            <option>Variety / funny</option>
+            <option>Competitive / tryhard</option>
+            <option>Educator / coach</option>
+            <option>Storyteller</option>
+            <option>Just vibing</option>
+          </select>
+        </div>
+
+        <button class="gen-btn" id="genBtn" onclick="generateTitles()">
+          <span>🎮</span> Generate Stream Titles
+        </button>
+      </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div>
+      <div class="results-card" id="resultsCard">
+        <div class="results-label" id="results-platform-label">✦ Twitch Stream Titles</div>
+        <div id="resultsContent"></div>
+      </div>
+      <div class="placeholder" id="placeholder">
+        Select your platform, fill in the details,<br>and hit Generate to get your stream titles
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PLATFORM TIPS -->
+  <div class="platform-tips" id="platformTips">
+    <h2 id="tips-title">🟣 Twitch Title Tips</h2>
+    <div id="tips-content"></div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let usageLeft = 5;
+  let currentPlatform = 'twitch';
+
+  const platformData = {
+    twitch: {
+      name: 'Twitch', icon: '🟣',
+      tips: [
+        { title: 'Keep it under 60 characters', desc: 'Twitch truncates titles in the directory — front-load the most important info.' },
+        { title: 'Include the game name', desc: 'Viewers browsing the game directory see your title first — make it stand out from the other 500 streams.' },
+        { title: 'Use energy words', desc: 'Words like "GRINDING", "FIRST TIME", "CHALLENGE" signal what kind of stream it is instantly.' },
+        { title: 'Add viewer incentives', desc: '"!commands" or "raids welcome" in titles attract other streamers and new viewers browsing.' },
+        { title: 'Emojis work on Twitch', desc: 'A well-placed emoji makes your title pop in the directory — but keep it to 1-2 max.' },
+      ]
+    },
+    kick: {
+      name: 'Kick', icon: '🟢',
+      tips: [
+        { title: 'Kick favors personality over polish', desc: 'Raw, authentic titles perform better on Kick than highly produced ones. Be yourself.' },
+        { title: 'Mention your follower count goal', desc: 'Kick audiences love milestone streams — "Road to 100 followers" drives follows.' },
+        { title: 'Cross-platform mentions work', desc: 'If you also stream on Twitch, mentioning it builds trust and cross-platform community.' },
+        { title: 'Gaming and IRL do best', desc: 'Kick\'s algorithm currently favors gaming and IRL content — lean into those categories.' },
+        { title: 'Be direct', desc: 'Kick audiences are straightforward — tell them exactly what the stream is, no fluff.' },
+      ]
+    },
+    youtube: {
+      name: 'YouTube Live', icon: '▶️',
+      tips: [
+        { title: 'Treat it like a video title', desc: 'YouTube Live titles show up in search and recommendations — SEO matters more here than on Twitch.' },
+        { title: 'Include keywords', desc: 'Add the game name, "live", and a specific descriptor — e.g. "Warzone Live — Solo Ranked Grind".' },
+        { title: 'Longer is okay', desc: 'YouTube shows more characters than Twitch — use up to 80 characters to be descriptive.' },
+        { title: 'Create urgency', desc: '"LIVE NOW" or time-based language ("Tonight only") increases click-through from notifications.' },
+        { title: 'Thumbnail matters more here', desc: 'YouTube Live thumbnails show everywhere — invest time in a good one alongside your title.' },
+      ]
+    },
+    facebook: {
+      name: 'Facebook Gaming', icon: '🎮',
+      tips: [
+        { title: 'Community first language', desc: 'Facebook audiences respond to inclusive language — "Let\'s play together" over "Watch me play".' },
+        { title: 'Share to groups', desc: 'Facebook Gaming streams shared to gaming groups get significantly more reach than organic.' },
+        { title: 'Schedule in advance', desc: 'Facebook rewards scheduled streams with more notification reach — set it up 24hrs ahead.' },
+        { title: 'Go Live consistently', desc: 'Facebook\'s algorithm heavily rewards consistent streamers — same time, same days.' },
+        { title: 'Mention the occasion', desc: 'Facebook audiences engage with milestone and event streams — mention if it\'s a special stream.' },
+      ]
+    },
+    tiktok: {
+      name: 'TikTok Live', icon: '🎵',
+      tips: [
+        { title: 'First 3 seconds are everything', desc: 'TikTok Live titles show for just a second in the For You page — be punchy and immediate.' },
+        { title: 'Interaction drives discovery', desc: 'TikTok ranks lives by interaction — ask questions, run polls, and respond to every comment early.' },
+        { title: 'Short and punchy titles', desc: 'TikTok titles are tiny — under 30 characters is ideal. One clear hook beats anything longer.' },
+        { title: 'Use trending topics', desc: 'Connecting your stream to a trending game, challenge, or meme gets picked up by TikTok faster.' },
+        { title: 'Go live when your audience is active', desc: 'Check your TikTok Analytics for when your followers are most active — that\'s your window.' },
+      ]
+    }
+  };
+
+  function selectPlatform(platform, card) {
+    document.querySelectorAll('.platform-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
+    currentPlatform = platform;
+    const p = platformData[platform];
+    document.getElementById('form-title').textContent = `${p.icon} ${p.name} Stream Title Generator`;
+    document.getElementById('tips-title').textContent = `${p.icon} ${p.name} Title Tips`;
+    document.getElementById('results-platform-label').textContent = `✦ ${p.name} Stream Titles`;
+    renderTips(platform);
+  }
+
+  function renderTips(platform) {
+    const tips = platformData[platform].tips;
+    document.getElementById('tips-content').innerHTML = tips.map(t => `
+      <div class="tip-card">
+        <span>→</span>
+        <div><strong>${t.title}</strong>${t.desc}</div>
+      </div>
+    `).join('');
+  }
+
+  function updateUsage() {
+    document.getElementById('usageCount').textContent = usageLeft;
+    document.getElementById('usageFill').style.width = (usageLeft / 5 * 100) + '%';
+  }
+
+  async function generateTitles() {
+    if (usageLeft <= 0) { showToast('No generations left today. Upgrade for unlimited!'); return; }
+
+    const game = document.getElementById('game').value;
+    if (!game.trim()) { showToast('Please enter a game or content type first.'); return; }
+
+    const btn = document.getElementById('genBtn');
+    const resultsCard = document.getElementById('resultsCard');
+    const resultsContent = document.getElementById('resultsContent');
+    const placeholder = document.getElementById('placeholder');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Generating...';
+
+    placeholder.style.display = 'none';
+    resultsCard.className = 'results-card visible';
+    resultsContent.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Writing your titles...</div>';
+
+    const platform = platformData[currentPlatform].name;
+    const vibe = document.getElementById('vibe').value;
+    const size = document.getElementById('size').value;
+    const specific = document.getElementById('specific').value;
+    const personality = document.getElementById('personality').value;
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: `You are CreatorNexusHQ's stream title specialist. You write stream titles that are optimized for each platform's specific algorithm, audience, and culture. You know that Twitch titles need to stand out in directories, YouTube Live titles need SEO, Kick titles need authenticity, Facebook Gaming needs community language, and TikTok Live needs punchy hooks. Always write platform-native titles. Be specific and creative — never generic.`,
+          messages: [{
+            role: 'user',
+            content: `Generate 8 stream titles for ${platform}.
+
+Details:
+- Game / Content: ${game}
+- Stream vibe: ${vibe}
+- Channel size: ${size}
+- Specific details: ${specific || 'Nothing specific'}
+- Personality: ${personality}
+
+Format exactly like this:
+TITLE 1: [title]
+TYPE 1: [one word describing the style — e.g. Hype, Chill, Challenge, Milestone]
+
+TITLE 2: [title]
+TYPE 2: [style]
+
+(continue for all 8)
+
+BEST PICK: Title [number] — [one sentence on why this one will perform best for this platform and channel size]
+
+PLATFORM NOTE: [one specific tip about what makes titles work on ${platform} right now]`
+          }]
+        })
+      });
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text || 'Something went wrong.';
+      usageLeft = Math.max(0, usageLeft - 1);
+      updateUsage();
+      renderTitles(text, resultsContent);
+
+    } catch(err) {
+      resultsContent.innerHTML = '<p style="color:var(--red);font-size:13px">Error connecting to AI. Please try again.</p>';
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<span>🎮</span> Generate Stream Titles';
+  }
+
+  function renderTitles(text, el) {
+    el.innerHTML = '';
+    const lines = text.split('\n').filter(l => l.trim());
+
+    let titles = [];
+    let types = {};
+    let bestPick = '';
+    let platformNote = '';
+
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      const titleMatch = trimmed.match(/^TITLE (\d+):\s*(.+)/);
+      const typeMatch = trimmed.match(/^TYPE (\d+):\s*(.+)/);
+      const bestMatch = trimmed.match(/^BEST PICK:\s*(.+)/);
+      const noteMatch = trimmed.match(/^PLATFORM NOTE:\s*(.+)/);
+
+      if (titleMatch) titles[parseInt(titleMatch[1]) - 1] = titleMatch[2];
+      if (typeMatch) types[parseInt(typeMatch[1])] = typeMatch[2];
+      if (bestMatch) bestPick = bestMatch[1];
+      if (noteMatch) platformNote = noteMatch[1];
+    });
+
+    // Render titles
+    el.innerHTML += '<div class="section-divider">Generated Titles</div>';
+    titles.forEach((title, i) => {
+      if (!title) return;
+      const type = types[i + 1] || '';
+      const isBest = bestPick.includes(`Title ${i + 1}`);
+      el.innerHTML += `
+        <div class="title-card" style="${isBest ? 'border-color:rgba(124,58,237,0.4);background:rgba(124,58,237,0.03)' : ''}">
+          <div>
+            <div class="title-card-text">${title} ${isBest ? '<span style="font-size:10px;background:rgba(124,58,237,0.15);color:var(--accent3);border:1px solid rgba(124,58,237,0.3);border-radius:4px;padding:1px 7px;margin-left:6px;font-family:Syne,sans-serif;font-weight:700">BEST</span>' : ''}</div>
+            <div class="title-card-meta">${type}</div>
+          </div>
+          <button class="copy-btn" onclick="copyText(this,'${title.replace(/'/g,"\\'")}')">Copy</button>
+        </div>`;
+    });
+
+    if (bestPick) {
+      el.innerHTML += `<div class="section-divider">Best Pick</div>
+        <div class="tip-card"><span>★</span><div>${bestPick}</div></div>`;
+    }
+
+    if (platformNote) {
+      el.innerHTML += `<div class="section-divider">Platform Tip</div>
+        <div class="tip-card"><span>💡</span><div>${platformNote}</div></div>`;
+    }
+  }
+
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // Init tips
+  renderTips('twitch');
+</script>
+</body>
+</html>
