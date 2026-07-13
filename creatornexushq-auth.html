@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up / Login — CreatorNexusHQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #07070f; --surface: #0e0e1a; --surface2: #13131f;
+  --border: #1a1a2e; --border2: #252540; --text: #eeeeff;
+  --muted: #5a5a90; --accent: #7c3aed; --accent2: #a855f7;
+  --accent3: #c084fc; --gold: #f59e0b; --green: #10b981;
+  --red: #ef4444; --cyan: #06b6d4;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(124,58,237,0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(6,182,212,0.06) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+* { position: relative; z-index: 1; }
+
+/* NAV */
+nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 40px; border-bottom: 1px solid var(--border);
+  background: rgba(7,7,15,0.9); backdrop-filter: blur(20px);
+}
+.nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+.nav-logo span { -webkit-text-fill-color: var(--text); }
+.nav-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
+.nav-right a { color: var(--accent3); text-decoration: none; font-weight: 600; }
+.nav-right a:hover { text-decoration: underline; }
+
+/* MAIN */
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 440px;
+}
+
+/* TABS */
+.auth-tabs {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 24px;
+}
+
+.auth-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.auth-tab.active {
+  background: var(--bg);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* CARD */
+.auth-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.auth-card h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.auth-card p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+/* GOOGLE BTN */
+.google-btn {
+  width: 100%;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 20px;
+}
+.google-btn:hover { background: #f5f5f5; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.google-icon { width: 18px; height: 18px; }
+
+/* DIVIDER */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-text { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+/* FIELDS */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.field input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+}
+.field input::placeholder { color: var(--muted); }
+
+/* PASSWORD TOGGLE */
+.password-wrap { position: relative; }
+.password-wrap input { padding-right: 44px; }
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px;
+}
+.password-toggle:hover { color: var(--text); }
+
+/* SUBMIT BTN */
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.submit-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ERROR / SUCCESS */
+.alert {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: none;
+  line-height: 1.5;
+}
+.alert.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--red); }
+.alert.success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: var(--green); }
+.alert.show { display: block; }
+
+/* FORGOT PASSWORD */
+.forgot-link {
+  font-size: 12px;
+  color: var(--accent3);
+  text-decoration: none;
+  float: right;
+  margin-top: -8px;
+  margin-bottom: 14px;
+  display: block;
+}
+.forgot-link:hover { text-decoration: underline; }
+
+/* TERMS NOTE */
+.terms-note {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 16px;
+  line-height: 1.6;
+}
+.terms-note a { color: var(--accent3); text-decoration: none; }
+.terms-note a:hover { text-decoration: underline; }
+
+/* PLATFORM SELECT */
+.platform-pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ppill {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--muted);
+}
+.ppill:hover { border-color: var(--accent); color: var(--text); }
+.ppill.selected { border-color: var(--accent); background: rgba(124,58,237,0.1); color: var(--accent3); }
+
+/* BENEFITS */
+.benefits {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  padding: 5px 0;
+}
+.benefit-icon { font-size: 15px; flex-shrink: 0; }
+.benefit-item strong { color: var(--text); }
+
+/* LOADING SPINNER */
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* FOOTER */
+footer {
+  padding: 20px 40px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.footer-link { color: var(--muted); text-decoration: none; font-size: 12px; }
+.footer-link:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="creatornexushq-landing.html" class="nav-logo">Creator<span>NexusHQ</span></a>
+  <div class="nav-right">
+    <span id="nav-prompt">Already have an account?</span>
+    <a href="#" id="nav-switch" onclick="switchToLogin()">Log in</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="auth-container">
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-signup" onclick="switchTab('signup')">Create Account</button>
+      <button class="auth-tab" id="tab-login" onclick="switchTab('login')">Log In</button>
+    </div>
+
+    <!-- SIGN UP -->
+    <div id="form-signup">
+      <div class="auth-card">
+        <h1>Start growing today 🚀</h1>
+        <p>Create your free account and unlock all CreatorNexusHQ tools. No credit card required.</p>
+
+        <div class="alert" id="signup-alert"></div>
+
+        <!-- GOOGLE -->
+        <button class="google-btn" onclick="signInWithGoogle()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-text">or sign up with email</div>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="signup-name" placeholder="Your name">
+        </div>
+
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="signup-email" placeholder="you@email.com">
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="signup-password" placeholder="Min. 8 characters">
+            <button class="password-toggle" onclick="togglePassword('signup-password', this)" type="button">👁</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Primary Platform</label>
+          <div class="platform-pills">
+            <div class="ppill" onclick="selectPill(this)">▶️ YouTube</div>
+            <div class="ppill" onclick="selectPill(this)">🟣 Twitch</div>
+            <div class="ppill" onclick="selectPill(this)">🎵 TikTok</div>
+            <div class="ppill" onclick="selectPill(this)">🟢 Kick</div>
+            <div class="ppill" onclick="selectPill(this)">📷 Instagram</div>
+            <div class="ppill" onclick="selectPill(this)">🔴 Rumble</div>
+          </div>
+        </div>
+
+        <button class="submit-btn" id="signup-btn" onclick="signUp()">
+          Create Free Account
+        </button>
+
+        <div class="terms-note">
+          By signing up you agree to our
+          <a href="creatornexushq-terms.html">Terms of Service</a> and
+          <a href="creatornexushq-privacy.html">Privacy Policy</a>.
+        </div>
+
+        <div class="benefits">
+          <div class="benefit-item"><span class="benefit-icon">✓</span><span><strong>Free forever</strong> — no credit card needed</span></div>
+          <div class="benefit-item"><span class="benefit-icon">✓</span><span><strong>5 AI generations</strong> per day on the free plan</span></div>
+          <div class="benefit-item"><span class="benefit-icon">✓</span><span><strong>All core tools</strong> included free</span></div>
+          <div class="benefit-item"><span class="benefit-icon">✓</span><span><strong>Your data saved</strong> across sessions</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOG IN -->
+    <div id="form-login" style="display:none">
+      <div class="auth-card">
+        <h1>Welcome back 👋</h1>
+        <p>Log back into your CreatorNexusHQ account to pick up where you left off.</p>
+
+        <div class="alert" id="login-alert"></div>
+
+        <!-- GOOGLE -->
+        <button class="google-btn" onclick="signInWithGoogle()">
+          <svg class="google-icon" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+          </svg>
+          Continue with Google
+        </button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <div class="divider-text">or log in with email</div>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="login-email" placeholder="you@email.com">
+        </div>
+
+        <div class="field">
+          <label>Password</label>
+          <div class="password-wrap">
+            <input type="password" id="login-password" placeholder="Your password">
+            <button class="password-toggle" onclick="togglePassword('login-password', this)" type="button">👁</button>
+          </div>
+          <a href="#" class="forgot-link" onclick="resetPassword()">Forgot password?</a>
+        </div>
+
+        <button class="submit-btn" id="login-btn" onclick="logIn()">
+          Log In to CreatorNexusHQ
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <a href="creatornexushq-landing.html" class="footer-link">Home</a>
+  <a href="creatornexushq-terms.html" class="footer-link">Terms</a>
+  <a href="creatornexushq-privacy.html" class="footer-link">Privacy</a>
+  <a href="index.html" class="footer-link">App</a>
+  <span style="font-size:12px;color:var(--muted)">© 2026 CreatorNexusHQ</span>
+</footer>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+  // ============================================
+  // FIREBASE CONFIG — REPLACE WITH YOUR VALUES
+  // ============================================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, sendPasswordResetEmail, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc",
+    authDomain: "creatornexushq-eaf70.firebaseapp.com",
+    projectId: "creatornexushq-eaf70",
+    storageBucket: "creatornexushq-eaf70.firebasestorage.app",
+    messagingSenderId: "867089002449",
+    appId: "1:867089002449:web:cadae5b363375020cdbaf0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const googleProvider = new GoogleAuthProvider();
+
+  // Check if already logged in
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = 'index.html';
+    }
+  });
+
+  // Save user to Firestore
+  async function saveUserToFirestore(user, extraData = {}) {
+    const userRef = doc(db, 'users', user.uid);
+    const existing = await getDoc(userRef);
+    if (!existing.exists()) {
+      await setDoc(userRef, {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName || extraData.name || '',
+        platform: extraData.platform || '',
+        plan: 'free',
+        generationsToday: 0,
+        lastGenerationDate: null,
+        createdAt: serverTimestamp(),
+      });
+    }
+  }
+
+  // SIGN UP
+  window.signUp = async function() {
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+    const platform = document.querySelector('.ppill.selected')?.textContent?.trim() || '';
+    const btn = document.getElementById('signup-btn');
+    const alert = document.getElementById('signup-alert');
+
+    if (!name) return showAlert(alert, 'error', 'Please enter your name.');
+    if (!email) return showAlert(alert, 'error', 'Please enter your email.');
+    if (password.length < 8) return showAlert(alert, 'error', 'Password must be at least 8 characters.');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Creating account...';
+
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(result.user, { displayName: name });
+      await saveUserToFirestore(result.user, { name, platform });
+      showAlert(alert, 'success', 'Account created! Redirecting...');
+      setTimeout(() => window.location.href = 'index.html', 1200);
+    } catch(err) {
+      btn.disabled = false;
+      btn.innerHTML = 'Create Free Account';
+      const msg = getErrorMessage(err.code);
+      showAlert(alert, 'error', msg);
+    }
+  };
+
+  // LOG IN
+  window.logIn = async function() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const btn = document.getElementById('login-btn');
+    const alert = document.getElementById('login-alert');
+
+    if (!email) return showAlert(alert, 'error', 'Please enter your email.');
+    if (!password) return showAlert(alert, 'error', 'Please enter your password.');
+
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Logging in...';
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      window.location.href = 'index.html';
+    } catch(err) {
+      btn.disabled = false;
+      btn.innerHTML = 'Log In to CreatorNexusHQ';
+      showAlert(alert, 'error', getErrorMessage(err.code));
+    }
+  };
+
+  // GOOGLE SIGN IN
+  window.signInWithGoogle = async function() {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      await saveUserToFirestore(result.user);
+      window.location.href = 'index.html';
+    } catch(err) {
+      const alertEl = document.getElementById('signup-alert') || document.getElementById('login-alert');
+      showAlert(alertEl, 'error', 'Google sign-in failed. Please try again.');
+    }
+  };
+
+  // RESET PASSWORD
+  window.resetPassword = async function() {
+    const email = document.getElementById('login-email').value.trim();
+    const alert = document.getElementById('login-alert');
+    if (!email) return showAlert(alert, 'error', 'Enter your email above first.');
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showAlert(alert, 'success', 'Password reset email sent! Check your inbox.');
+    } catch(err) {
+      showAlert(alert, 'error', 'Could not send reset email. Check your email address.');
+    }
+  };
+
+  function getErrorMessage(code) {
+    const messages = {
+      'auth/email-already-in-use': 'An account with this email already exists. Try logging in.',
+      'auth/invalid-email': 'Please enter a valid email address.',
+      'auth/weak-password': 'Password must be at least 8 characters.',
+      'auth/user-not-found': 'No account found with this email. Try signing up.',
+      'auth/wrong-password': 'Incorrect password. Try again or reset your password.',
+      'auth/too-many-requests': 'Too many attempts. Please wait a moment and try again.',
+      'auth/network-request-failed': 'Network error. Check your connection and try again.',
+    };
+    return messages[code] || 'Something went wrong. Please try again.';
+  }
+
+  function showAlert(el, type, msg) {
+    el.className = `alert ${type} show`;
+    el.textContent = msg;
+  }
+</script>
+
+<script>
+  // UI functions (non-Firebase)
+  function switchTab(tab) {
+    document.getElementById('form-signup').style.display = tab === 'signup' ? 'block' : 'none';
+    document.getElementById('form-login').style.display = tab === 'login' ? 'block' : 'none';
+    document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('nav-prompt').textContent = tab === 'signup' ? 'Already have an account?' : "Don't have an account?";
+    document.getElementById('nav-switch').textContent = tab === 'signup' ? 'Log in' : 'Sign up';
+    document.getElementById('nav-switch').onclick = tab === 'signup' ? () => switchTab('login') : () => switchTab('signup');
+  }
+
+  function switchToLogin() { switchTab('login'); return false; }
+
+  function selectPill(pill) {
+    pill.closest('.platform-pills').querySelectorAll('.ppill').forEach(p => p.classList.remove('selected'));
+    pill.classList.add('selected');
+  }
+
+  function togglePassword(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  // Enter key submit
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const signupVisible = document.getElementById('form-signup').style.display !== 'none';
+      if (signupVisible) window.signUp?.();
+      else window.logIn?.();
+    }
+  });
+</script>
+
+</body>
+</html>

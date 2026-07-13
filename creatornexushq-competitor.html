@@ -149,72 +149,76 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border2); border-radius: 12px; padding: 12px 20px; font-size: 13px; z-index: 9999; transition: transform 0.3s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
 .toast.show { transform: translateX(-50%) translateY(0); }
 
-/* ===== GLOBAL SIDEBAR ===== */
-.app-layout { display: flex; min-height: 100vh; }
-.app-sidebar { width: 280px; min-width: 280px; background: #0a0a14; border-right: 1px solid #1a1a2e; display: flex; flex-direction: column; padding: 20px 12px; position: fixed; top: 0; left: 0; height: 100vh; overflow-y: auto; z-index: 300; }
-.app-main { margin-left: 280px; flex: 1; min-width: 0; width: calc(100% - 280px); }
-.sidebar-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; padding: 0 8px; white-space: nowrap; }
-.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
-.sidebar-plan { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: #5a5a90; padding: 0 8px; margin-bottom: 16px; }
-.sidebar-divider { height: 1px; background: #1a1a2e; margin: 10px 0; }
-.sidebar-label { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; color: #3a3a60; padding: 4px 8px; margin-bottom: 4px; }
-.sidebar-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; text-decoration: none; color: #5a5a90; font-family: "Syne", sans-serif; font-size: 13px; font-weight: 600; transition: all 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
-.sidebar-item:hover { color: #eeeeff; background: #13131f; }
-.sidebar-item.active { color: #c084fc; background: rgba(124,58,237,0.12); border-color: rgba(124,58,237,0.2); }
-.sidebar-item.sidebar-sub { font-size: 12px; padding: 7px 10px; font-family: "DM Sans", sans-serif; font-weight: 500; }
-.sidebar-icon { font-size: 15px; flex-shrink: 0; }
-.sidebar-upgrade { background: rgba(124,58,237,0.08); border: 1px solid rgba(124,58,237,0.2); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
-.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
-.sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
-.sidebar-upgrade-title { font-family: "Syne", sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
-.sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
-.mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; flex-wrap: wrap; gap: 8px; }
-.mobile-logo { font-family: "Syne", sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.mobile-logo span { -webkit-text-fill-color: #eeeeff; }
-.mobile-nav { display: flex; gap: 4px; flex-wrap: wrap; }
-.mobile-nav a { font-family: "Syne", sans-serif; font-size: 10px; font-weight: 700; color: #5a5a90; text-decoration: none; padding: 5px 8px; border-radius: 6px; transition: all 0.15s; }
-.mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
-@media (max-width: 768px) {
-  .app-sidebar { display: none !important; }
   .app-main { margin-left: 0 !important; width: 100% !important; }
   .app-layout { display: block !important; }
   .mobile-topbar { display: flex !important; }
 }
 
+
+
+/* ===== GLOBAL SIDEBAR ===== */
+.app-layout{display:flex;min-height:100vh}.app-sidebar{width:280px;min-width:280px;background:#0a0a14;border-right:1px solid #1a1a2e;display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:300}.app-main{margin-left:280px;flex:1;min-width:0;width:calc(100% - 280px)}.sidebar-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:18px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;padding:0 8px;white-space:nowrap}.sidebar-logo span{-webkit-text-fill-color:#eeeeff}.sidebar-plan{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#5a5a90;padding:0 8px;margin-bottom:16px}.sidebar-divider{height:1px;background:#1a1a2e;margin:10px 0}.sidebar-label{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#3a3a60;padding:4px 8px;margin-bottom:4px}.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:#5a5a90;font-family:"Syne",sans-serif;font-size:13px;font-weight:600;transition:all .15s;margin-bottom:2px;border:1px solid transparent}.sidebar-item:hover{color:#eeeeff;background:#13131f}.sidebar-item.active{color:#c084fc;background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.2)}.sidebar-item.sidebar-sub{font-size:12px;padding:7px 10px;font-family:"DM Sans",sans-serif;font-weight:500}.sidebar-icon{font-size:15px;flex-shrink:0}.sidebar-upgrade{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;margin-top:16px}.sidebar-upgrade:hover{background:rgba(124,58,237,.15)}.sidebar-upgrade-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:white}.sidebar-upgrade-title{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;color:#c084fc}.sidebar-upgrade-sub{font-size:11px;color:#5a5a90;margin-top:1px}.mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(7,7,15,.95);border-bottom:1px solid #1a1a2e;position:sticky;top:0;z-index:200;flex-wrap:wrap;gap:8px}.mobile-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:16px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.mobile-logo span{-webkit-text-fill-color:#eeeeff}.mobile-nav{display:flex;gap:4px;flex-wrap:wrap}.mobile-nav a{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;color:#5a5a90;text-decoration:none;padding:5px 8px;border-radius:6px;transition:all .15s}.mobile-nav a.active{color:#c084fc;background:rgba(124,58,237,.12)}@media(max-width:768px){.app-sidebar{display:none!important}.app-main{margin-left:0!important;width:100%!important}.app-layout{display:block!important}.mobile-topbar{display:flex!important}.content,.main{padding:16px!important}.two-col,.form-grid,.form-row{grid-template-columns:1fr!important}}
 </style>
 </head>
+<style>
+/* ===== SIDEBAR ===== */
+.app-layout{display:flex;min-height:100vh}
+.app-sidebar{width:280px;min-width:280px;background:#0a0a14;border-right:1px solid #1a1a2e;display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:300}
+.app-main{margin-left:280px;flex:1;min-width:0;width:calc(100% - 280px)}
+.sidebar-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:18px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;padding:0 8px;white-space:nowrap}
+.sidebar-logo span{-webkit-text-fill-color:#eeeeff}
+.sidebar-plan{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#5a5a90;padding:0 8px;margin-bottom:16px}
+.sidebar-divider{height:1px;background:#1a1a2e;margin:10px 0}
+.sidebar-label{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#3a3a60;padding:4px 8px;margin-bottom:4px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:#5a5a90;font-family:"Syne",sans-serif;font-size:13px;font-weight:600;transition:all .15s;margin-bottom:2px;border:1px solid transparent}
+.sidebar-item:hover{color:#eeeeff;background:#13131f}
+.sidebar-item.active{color:#c084fc;background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.2)}
+.sidebar-item.sidebar-sub{font-size:12px;padding:7px 10px;font-family:"DM Sans",sans-serif;font-weight:500}
+.sidebar-icon{font-size:15px;flex-shrink:0}
+.sidebar-upgrade{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;margin-top:16px}
+.sidebar-upgrade-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:white}
+.sidebar-upgrade-title{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;color:#c084fc}
+.sidebar-upgrade-sub{font-size:11px;color:#5a5a90;margin-top:1px}
+.mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(7,7,15,.95);border-bottom:1px solid #1a1a2e;position:sticky;top:0;z-index:200;flex-wrap:wrap;gap:8px}
+.mobile-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:16px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.mobile-logo span{-webkit-text-fill-color:#eeeeff}
+.mobile-nav{display:flex;gap:4px;flex-wrap:wrap}
+.mobile-nav a{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;color:#5a5a90;text-decoration:none;padding:5px 8px;border-radius:6px;transition:all .15s}
+.mobile-nav a.active{color:#c084fc;background:rgba(124,58,237,.12)}
+@media(max-width:768px){.app-sidebar{display:none!important}.app-main{margin-left:0!important;width:100%!important}.app-layout{display:block!important}.mobile-topbar{display:flex!important}.content,.main{padding:16px!important}.two-col,.form-grid,.form-row{grid-template-columns:1fr!important}}
+</style>
 <body>
 <div class="app-layout">
 <div class="mobile-topbar">
   <div class="mobile-logo">Creator<span>NexusHQ</span></div>
   <div class="mobile-nav">
-    <a href="index.html" >Tools</a>
-    <a href="creatornexushq-platforms.html" >Platforms</a>
-    <a href="creatornexushq-analyze.html" >Analyze</a>
-    <a href="creatornexushq-resources.html" >Resources</a>
-    <a href="creatornexushq-thumbnail.html" >Thumbs</a>
+    <a href="index.html" class="">Tools</a>
+    <a href="creatornexushq-platforms.html" class="">Platforms</a>
+    <a href="creatornexushq-analyze.html" class="">Analyze</a>
+    <a href="creatornexushq-resources.html" class="">Resources</a>
+    <a href="creatornexushq-thumbnail.html" class="">Thumbs</a>
     <a href="creatornexushq-competitor.html" class="active">Research</a>
-    <a href="creatornexushq-monetization.html" >Monetize</a>
-    <a href="creatornexushq-streaming.html" >Stream</a>
-    <a href="creatornexushq-collab.html" >Collab</a>
-    <a href="creatornexushq-trends.html" >Trends</a>
+    <a href="creatornexushq-monetization.html" class="">Monetize</a>
+    <a href="creatornexushq-streaming.html" class="">Stream</a>
+    <a href="creatornexushq-collab.html" class="">Collab</a>
+    <a href="creatornexushq-trends.html" class="">Trends</a>
   </div>
 </div>
 <div class="app-sidebar">
   <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
-  <div class="sidebar-plan" id="sidebarPlan">FREE PLAN</div>
+  <div class="sidebar-plan">FREE PLAN</div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-label">NAVIGATION</div>
-  <a href="index.html" class="sidebar-item "><span class="sidebar-icon">🎯</span>Tools</a>
-  <a href="creatornexushq-platforms.html" class="sidebar-item "><span class="sidebar-icon">🔗</span>Platforms</a>
-  <a href="creatornexushq-analyze.html" class="sidebar-item "><span class="sidebar-icon">📊</span>Analyze</a>
-  <a href="creatornexushq-resources.html" class="sidebar-item "><span class="sidebar-icon">📚</span>Resources</a>
-  <a href="creatornexushq-thumbnail.html" class="sidebar-item "><span class="sidebar-icon">🖼️</span>Thumbnails</a>
+  <a href="index.html" class="sidebar-item"><span class="sidebar-icon">🎯</span>Tools</a>
+  <a href="creatornexushq-platforms.html" class="sidebar-item"><span class="sidebar-icon">🔗</span>Platforms</a>
+  <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
+  <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
+  <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
   <a href="creatornexushq-competitor.html" class="sidebar-item active"><span class="sidebar-icon">🔍</span>Competitor Research</a>
-  <a href="creatornexushq-monetization.html" class="sidebar-item "><span class="sidebar-icon">💰</span>Monetization</a>
-  <a href="creatornexushq-streaming.html" class="sidebar-item "><span class="sidebar-icon">🎮</span>Stream Planner</a>
-  <a href="creatornexushq-collab.html" class="sidebar-item "><span class="sidebar-icon">🤝</span>Collab Finder</a>
-  <a href="creatornexushq-trends.html" class="sidebar-item "><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <a href="creatornexushq-monetization.html" class="sidebar-item"><span class="sidebar-icon">💰</span>Monetization</a>
+  <a href="creatornexushq-streaming.html" class="sidebar-item"><span class="sidebar-icon">🎮</span>Stream Planner</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item"><span class="sidebar-icon">🤝</span>Collab Finder</a>
+  <a href="creatornexushq-trends.html" class="sidebar-item"><span class="sidebar-icon">🔥</span>Trend Tracker</a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-label">TOOLS</div>
   <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
@@ -227,58 +231,11 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
   <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
   <div class="sidebar-divider"></div>
-  <div class="sidebar-upgrade" onclick="document.getElementById('upgradeModal')?.classList.add('open') || document.getElementById('pricingModal')?.classList.add('open') || document.querySelector('.pro-gate') && showToast('Upgrade available on each tool page!')">
-    <div class="sidebar-upgrade-icon">★</div>
-    <div>
-      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
-      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
-    </div>
-  </div>
-</div>
-
-
-<!-- MOBILE -->
-  <div class="mobile-nav">
-    <a href="index.html">Tools</a>
-    <a href="creatornexushq-platforms.html">Platforms</a>
-    <a href="creatornexushq-analyze.html">Analyze</a>
-    <a href="creatornexushq-resources.html">Resources</a>
-    <a href="creatornexushq-competitor.html" class="active">Research</a>
-  </div>
-</div>
-
-<!-- SIDEBAR -->
-  <div class="sidebar-plan">FREE PLAN</div>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-label">NAVIGATION</div>
-  <a href="index.html" class="sidebar-item"><span class="sidebar-icon">🎯</span>Tools</a>
-  <a href="creatornexushq-platforms.html" class="sidebar-item"><span class="sidebar-icon">🔗</span>Platforms</a>
-  <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
-  <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
-  <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
-  <a href="creatornexushq-competitor.html" class="sidebar-item active"><span class="sidebar-icon">🔍</span>Competitor Research</a>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-label">TOOLS</div>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles & Hooks</a>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-label">ANALYZE</div>
-  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
-  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
-  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
-  <div class="sidebar-divider"></div>
   <div class="sidebar-upgrade">
     <div class="sidebar-upgrade-icon">★</div>
-    <div>
-      <div class="sidebar-upgrade-title">Upgrade to Pro</div>
-      <div class="sidebar-upgrade-sub">$9/mo or $79/yr</div>
-    </div>
+    <div><div class="sidebar-upgrade-title">Upgrade to Pro</div><div class="sidebar-upgrade-sub">$9/mo or $79/yr</div></div>
   </div>
 </div>
-
-<!-- MAIN -->
 <div class="app-main">
 <div class="content">
 
@@ -438,7 +395,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   }
 
   async function research(type) {
-    if (usageLeft <= 0) { showToast('No researches left today. Upgrade for unlimited!'); return; }
+    if (usageLeft <= 0) { showEmailCapture(); return; }
 
     const btnId = type === 'channel' ? 'btn-channel' : 'btn-niche';
     const btn = document.getElementById(btnId);
@@ -594,6 +551,36 @@ YOUR ANGLE: [how a ${size} channel can differentiate from the big players]
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
   }
+</script>
+
+
+
+
+</div></div>
+</div>
+</div>
+<!-- EMAIL CAPTURE MODAL -->
+<div id="emailCaptureModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:9998;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#0e0e1a;border:1px solid #252540;border-radius:20px;padding:32px;max-width:460px;width:100%;position:relative">
+    <button onclick="closeEmailCapture()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#5a5a90;font-size:20px;cursor:pointer">✕</button>
+    <div style="font-size:32px;margin-bottom:14px">🚀</div>
+    <div style="font-family:Syne,sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">You have hit your daily limit</div>
+    <div style="font-size:13px;color:#5a5a90;margin-bottom:22px;line-height:1.6">Create a free account to unlock more generations and save your work. No credit card needed.</div>
+    <a href="creatornexushq-auth.html" style="display:flex;align-items:center;justify-content:center;width:100%;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:12px;padding:14px;color:white;font-family:Syne,sans-serif;font-size:14px;font-weight:800;text-decoration:none;margin-bottom:10px">Create Free Account →</a>
+    <a href="creatornexushq-auth.html" style="display:flex;align-items:center;justify-content:center;width:100%;background:none;border:1px solid #252540;border-radius:12px;padding:12px;color:#eeeeff;font-family:Syne,sans-serif;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:18px">Already have an account? Log in</a>
+    <div style="border-top:1px solid #1a1a2e;padding-top:16px">
+      <div style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;color:#5a5a90;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Upgrade to Pro for unlimited access</div>
+      <div style="display:flex;gap:8px">
+        <a href="creatornexushq-auth.html" style="flex:1;text-align:center;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:10px;padding:11px;color:#000;font-family:Syne,sans-serif;font-size:12px;font-weight:800;text-decoration:none">★ Pro — $9/mo</a>
+        <a href="creatornexushq-auth.html" style="flex:1;text-align:center;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:10px;padding:11px;color:#000;font-family:Syne,sans-serif;font-size:12px;font-weight:800;text-decoration:none">Best Value — $79/yr</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function showEmailCapture(){document.getElementById("emailCaptureModal").style.display="flex";}
+function closeEmailCapture(){document.getElementById("emailCaptureModal").style.display="none";}
+document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("emailCaptureModal");if(m)m.addEventListener("click",function(e){if(e.target===this)closeEmailCapture();});});
 </script>
 </body>
 </html>
