@@ -1,0 +1,13 @@
+name = "creatornexushq-api"
+main = "src/index.js"
+compatibility_date = "2025-01-01"
+
+# Created by running: wrangler kv namespace create RATE_LIMIT
+# Paste the returned "id" value below before running `wrangler deploy`.
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "1df69e401a134d08829ef71f645d5f88"
+
+# Set with: wrangler secret put GROQ_API_KEY
+# (never stored in this file — ANTHROPIC_API_KEY is also supported and
+# reserved for a future paid tier, but GROQ_API_KEY is what's live today)

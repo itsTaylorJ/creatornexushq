@@ -194,11 +194,11 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
     <a href="creatornexushq-analyze.html" class="">Analyze</a>
     <a href="creatornexushq-resources.html" class="">Resources</a>
     <a href="creatornexushq-thumbnail.html" class="">Thumbs</a>
-    <a href="creatornexushq-competitor.html" class="">Research</a>
+    <a href="creatornexushq-competitor.html" class="">Research <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
     <a href="creatornexushq-monetization.html" class="">Monetize</a>
     <a href="creatornexushq-streaming.html" class="">Stream</a>
-    <a href="creatornexushq-collab.html" class="">Collab</a>
-    <a href="creatornexushq-trends.html" class="active">Trends</a>
+    <a href="creatornexushq-collab.html" class="">Collab <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
+    <a href="creatornexushq-trends.html" class="active">Trends <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
   </div>
 </div>
 <div class="app-sidebar">
@@ -211,11 +211,11 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
   <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
   <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
-  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
   <a href="creatornexushq-monetization.html" class="sidebar-item"><span class="sidebar-icon">💰</span>Monetization</a>
   <a href="creatornexushq-streaming.html" class="sidebar-item"><span class="sidebar-icon">🎮</span>Stream Planner</a>
-  <a href="creatornexushq-collab.html" class="sidebar-item"><span class="sidebar-icon">🤝</span>Collab Finder</a>
-  <a href="creatornexushq-trends.html" class="sidebar-item active"><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item"><span class="sidebar-icon">🤝</span>Collab Finder<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
+  <a href="creatornexushq-trends.html" class="sidebar-item active"><span class="sidebar-icon">🔥</span>Trend Tracker<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-label">TOOLS</div>
   <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
@@ -244,8 +244,8 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   <!-- PRO GATE -->
   <div class="pro-gate" id="proGate">
     <div class="pro-gate-icon">🔥</div>
-    <h2>Trend Tracker is a Pro Feature</h2>
-    <p>The fastest way to grow is to create content around trends before everyone else does. Get real-time trending topics and hashtags for your niche across every platform.</p>
+    <h2>Trend Tracker — Coming Soon</h2>
+    <p>The fastest way to grow is to create content around trends before everyone else does. We're wiring this up to real trend data rather than an AI guess — here's what's planned for your niche across every platform:</p>
     <div class="pro-gate-features">
       <div class="pro-feature">Trending topics by niche</div>
       <div class="pro-feature">Trending hashtags</div>
@@ -254,8 +254,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
       <div class="pro-feature">Video ideas from trends</div>
       <div class="pro-feature">Trend window estimates</div>
     </div>
-    <button class="pro-btn" onclick="unlockPro()">★ Upgrade to Pro — $9/mo</button>
-    <button class="pro-btn-yearly" onclick="unlockPro()">Best Value — $79/yr</button>
   </div>
 
   <!-- TOOL -->
@@ -340,13 +338,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
     instagram: { name: 'Instagram', icon: '📷', color: '#e1306c' },
     facebook: { name: 'Facebook', icon: '🎮', color: '#1877f2' },
   };
-
-  function unlockPro() {
-    document.getElementById('proGate').style.display = 'none';
-    document.getElementById('proTool').style.display = 'block';
-    document.querySelector('.sidebar-plan').textContent = '★ PRO';
-    showToast('🎉 Pro unlocked! Welcome to Trend Tracker.');
-  }
 
   function switchPlatform(platform, tab) {
     document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('active'));

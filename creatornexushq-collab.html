@@ -208,11 +208,11 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
     <a href="creatornexushq-analyze.html" class="">Analyze</a>
     <a href="creatornexushq-resources.html" class="">Resources</a>
     <a href="creatornexushq-thumbnail.html" class="">Thumbs</a>
-    <a href="creatornexushq-competitor.html" class="">Research</a>
+    <a href="creatornexushq-competitor.html" class="">Research <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
     <a href="creatornexushq-monetization.html" class="">Monetize</a>
     <a href="creatornexushq-streaming.html" class="">Stream</a>
-    <a href="creatornexushq-collab.html" class="active">Collab</a>
-    <a href="creatornexushq-trends.html" class="">Trends</a>
+    <a href="creatornexushq-collab.html" class="active">Collab <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
+    <a href="creatornexushq-trends.html" class="">Trends <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
   </div>
 </div>
 <div class="app-sidebar">
@@ -225,11 +225,11 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
   <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
   <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
-  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
   <a href="creatornexushq-monetization.html" class="sidebar-item"><span class="sidebar-icon">💰</span>Monetization</a>
   <a href="creatornexushq-streaming.html" class="sidebar-item"><span class="sidebar-icon">🎮</span>Stream Planner</a>
-  <a href="creatornexushq-collab.html" class="sidebar-item active"><span class="sidebar-icon">🤝</span>Collab Finder</a>
-  <a href="creatornexushq-trends.html" class="sidebar-item"><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item active"><span class="sidebar-icon">🤝</span>Collab Finder<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
+  <a href="creatornexushq-trends.html" class="sidebar-item"><span class="sidebar-icon">🔥</span>Trend Tracker<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-label">TOOLS</div>
   <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
@@ -258,8 +258,8 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   <!-- PRO GATE -->
   <div class="pro-gate" id="proGate">
     <div class="pro-gate-icon">🤝</div>
-    <h2>Collab Finder is a Pro Feature</h2>
-    <p>Finding the right collab partner can 2-3x your growth overnight. We match you with creators at your size, in your niche, with a complementary audience — across every platform.</p>
+    <h2>Collab Finder — Coming Soon</h2>
+    <p>Finding the right collab partner can 2-3x your growth overnight. We're building real matching — creators at your size, in your niche, with a complementary audience — rather than ship something that just guesses. Here's what's planned:</p>
     <div class="pro-gate-features">
       <div class="pro-feature">Similar size matching</div>
       <div class="pro-feature">Same niche filtering</div>
@@ -268,8 +268,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
       <div class="pro-feature">Collab pitch templates</div>
       <div class="pro-feature">Outreach scripts</div>
     </div>
-    <button class="pro-btn" onclick="unlockPro()">★ Upgrade to Pro — $9/mo</button>
-    <button class="pro-btn-yearly" onclick="unlockPro()">Best Value — $79/yr</button>
   </div>
 
   <!-- TOOL (hidden until pro) -->
@@ -378,14 +376,6 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 
 <script>
   let isPro = false;
-
-  function unlockPro() {
-    isPro = true;
-    document.getElementById('proGate').style.display = 'none';
-    document.getElementById('proTool').style.display = 'block';
-    document.querySelector('.sidebar-plan').textContent = '★ PRO';
-    showToast('🎉 Pro unlocked! Welcome to Collab Finder.');
-  }
 
   function togglePill(pill) {
     pill.classList.toggle('selected');

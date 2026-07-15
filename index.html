@@ -737,6 +737,7 @@ nav {
   padding: 0 8px;
   margin-bottom: 16px;
 }
+.sidebar-plan.pro { color: #f59e0b; }
 
 .sidebar-divider {
   height: 1px;
@@ -825,6 +826,50 @@ nav {
   color: #5a5a90;
   margin-top: 1px;
 }
+
+.sidebar-account {
+  margin-top: 12px;
+  padding: 10px 8px 2px;
+  border-top: 1px solid #1a1a2e;
+}
+.sidebar-account-email {
+  font-size: 12px;
+  color: #8a8ac0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 8px;
+  padding: 0 2px;
+}
+.sidebar-signout {
+  display: block;
+  width: 100%;
+  background: none;
+  border: 1px solid #252540;
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: #9a9ac5;
+  font-family: "Syne", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.sidebar-signout:hover { border-color: #ef4444; color: #ef4444; }
+
+.mobile-signout {
+  background: none;
+  border: 1px solid #252540;
+  border-radius: 6px;
+  padding: 5px 10px;
+  color: #9a9ac5;
+  font-family: "Syne", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.mobile-signout:hover { border-color: #ef4444; color: #ef4444; }
 
 @media (max-width: 768px) {
   .app-sidebar { display: none; }
@@ -1077,16 +1122,17 @@ nav {
     <a href="creatornexushq-analyze.html" class="">Analyze</a>
     <a href="creatornexushq-resources.html" class="">Resources</a>
     <a href="creatornexushq-thumbnail.html" class="">Thumbs</a>
-    <a href="creatornexushq-competitor.html" class="">Research</a>
+    <a href="creatornexushq-competitor.html" class="">Research <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
     <a href="creatornexushq-monetization.html" class="">Monetize</a>
     <a href="creatornexushq-streaming.html" class="">Stream</a>
-    <a href="creatornexushq-collab.html" class="">Collab</a>
-    <a href="creatornexushq-trends.html" class="">Trends</a>
+    <a href="creatornexushq-collab.html" class="">Collab <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
+    <a href="creatornexushq-trends.html" class="">Trends <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
   </div>
+  <button class="mobile-signout" id="mobileSignOutBtn">Sign Out</button>
 </div>
 <div class="app-sidebar">
   <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
-  <div class="sidebar-plan">FREE PLAN</div>
+  <div class="sidebar-plan" id="sidebarPlan">FREE PLAN</div>
   <div class="sidebar-divider"></div>
   <div class="sidebar-label">NAVIGATION</div>
   <a href="index.html" class="sidebar-item active"><span class="sidebar-icon">🎯</span>Tools</a>
@@ -1094,11 +1140,11 @@ nav {
   <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
   <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
   <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
-  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research</a>
+  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
   <a href="creatornexushq-monetization.html" class="sidebar-item"><span class="sidebar-icon">💰</span>Monetization</a>
   <a href="creatornexushq-streaming.html" class="sidebar-item"><span class="sidebar-icon">🎮</span>Stream Planner</a>
-  <a href="creatornexushq-collab.html" class="sidebar-item"><span class="sidebar-icon">🤝</span>Collab Finder</a>
-  <a href="creatornexushq-trends.html" class="sidebar-item"><span class="sidebar-icon">🔥</span>Trend Tracker</a>
+  <a href="creatornexushq-collab.html" class="sidebar-item"><span class="sidebar-icon">🤝</span>Collab Finder<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
+  <a href="creatornexushq-trends.html" class="sidebar-item"><span class="sidebar-icon">🔥</span>Trend Tracker<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
   <div class="sidebar-divider"></div>
   <div class="sidebar-label">TOOLS</div>
   <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
@@ -1114,6 +1160,10 @@ nav {
   <div class="sidebar-upgrade">
     <div class="sidebar-upgrade-icon">★</div>
     <div><div class="sidebar-upgrade-title">Upgrade to Pro</div><div class="sidebar-upgrade-sub">$9/mo or $79/yr</div></div>
+  </div>
+  <div class="sidebar-account">
+    <div class="sidebar-account-email" id="accountEmail">&nbsp;</div>
+    <button class="sidebar-signout" id="signOutBtn">Sign Out</button>
   </div>
 </div>
 <div class="app-main">
@@ -1482,10 +1532,13 @@ nav {
   }
 
   // GENERATE
+  // Filled in once the Worker is deployed (see worker/README or ask Claude
+  // to update this after `wrangler deploy` prints the real *.workers.dev URL).
+  const WORKER_URL = 'https://creatornexushq-api.tjlangston15.workers.dev/generate';
+
   async function generate(tool) {
-    if (!isPro && usageLeft <= 0) {
-      openModal();
-      showToast('You\'ve used all your free generations today. Upgrade to Pro for unlimited access!');
+    if (!window.__currentUser) {
+      window.location.href = 'creatornexushq-auth.html';
       return;
     }
 
@@ -1498,36 +1551,54 @@ nav {
     resultsEl.className = 'results-card visible';
     resultsEl.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> CreatorNexusHQ is thinking...</div>';
 
-    const prompt = buildPrompt(tool);
-
     try {
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const idToken = await window.__currentUser.getIdToken();
+      const response = await fetch(WORKER_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are CreatorNexusHQ, an expert AI coach for content creators, streamers, and YouTubers. You specialize in helping small to mid-size creators grow their audience with practical, specific, and high-impact advice. Your tone is direct, energetic, and encouraging — like a knowledgeable friend who's also a successful creator. Always give concrete, actionable outputs. Format your responses clearly with labels like TITLE 1:, HOOK 1:, IDEA 1: etc so they're easy to parse. Never be generic. Always tailor to the specific content described.`,
-          messages: [{ role: 'user', content: prompt }]
-        })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + idToken,
+        },
+        body: JSON.stringify({ tool, ...collectFields(tool) }),
       });
 
-      const data = await response.json();
-      const text = data.content?.[0]?.text || 'Something went wrong. Please try again.';
+      if (response.status === 401) {
+        window.location.href = 'creatornexushq-auth.html';
+        return;
+      }
 
-      if (!isPro) {
-        usageLeft = Math.max(0, usageLeft - 1);
+      if (response.status === 429) {
+        const data = await response.json().catch(() => ({}));
+        openModal();
+        showToast(data.message || 'You\'ve used all your free generations today. Upgrade to Pro for unlimited access!');
+        resultsEl.className = 'results-card';
+        return;
+      }
+
+      const data = await response.json();
+
+      if (!response.ok || !data.text) {
+        let msg = data.message || 'Something went wrong. Please try again.';
+        if (data.detail) msg += '<br><span style="color:var(--muted);font-size:12px">' + String(data.detail).slice(0, 400) + '</span>';
+        resultsEl.innerHTML = '<p style="color:var(--red);font-size:14px">' + msg + '</p>';
+        return;
+      }
+
+      if (typeof data.remaining === 'number') {
+        usageLeft = data.remaining;
         updateUsage();
       }
 
-      renderResults(tool, resultsEl, text);
+      renderResults(tool, resultsEl, data.text);
 
     } catch (err) {
-      resultsEl.innerHTML = '<p style="color:var(--red);font-size:14px">Error connecting to AI. Please try again.</p>';
+      resultsEl.innerHTML = '<p style="color:var(--gold);font-size:14px">🔧 Our AI backend is still being connected. This tool isn\'t live yet — check back soon.</p>';
+    } finally {
+      // Runs on every exit path (success, 401, 429, error, or thrown
+      // exception) so the button never gets stuck on "Generating...".
+      btn.disabled = false;
+      btn.innerHTML = '<span>✦</span> Generate ' + getToolLabel(tool);
     }
-
-    btn.disabled = false;
-    btn.innerHTML = '<span>✦</span> Generate ' + getToolLabel(tool);
   }
 
   function getToolLabel(tool) {
@@ -1535,105 +1606,49 @@ nav {
     return labels[tool] || '';
   }
 
-  function buildPrompt(tool) {
+  // Collects form field values into a plain object. Prompt text itself is
+  // now built server-side (see worker/src/index.js) so the API key never
+  // has to touch the browser.
+  function collectFields(tool) {
     if (tool === 'titles') {
-      const platform = document.querySelector('#tab-titles .pill.selected')?.textContent || 'YouTube';
-      const type = document.getElementById('title-content-type').value;
-      const desc = document.getElementById('title-desc').value;
-      const tone = document.getElementById('title-tone').value;
-      const length = document.getElementById('title-length').value;
-      return `Generate 5 scroll-stopping titles and 5 hooks for a ${platform} creator.
-
-Video details:
-- Content type: ${type}
-- Description: ${desc}
-- Tone: ${tone}
-- Video length: ${length}
-
-Format exactly like this:
-TITLE 1: [title]
-TITLE 2: [title]
-TITLE 3: [title]
-TITLE 4: [title]
-TITLE 5: [title]
-
-HOOK 1: [hook - first 1-3 seconds spoken or on screen]
-HOOK 2: [hook]
-HOOK 3: [hook]
-HOOK 4: [hook]
-HOOK 5: [hook]
-
-BEST COMBO: Title [X] + Hook [Y] — [one sentence explaining why]
-
-Make them punchy, platform-native, and emotionally compelling. No generic clickbait.`;
+      return {
+        platform: document.querySelector('#tab-titles .pill.selected')?.textContent || 'YouTube',
+        contentType: document.getElementById('title-content-type').value,
+        description: document.getElementById('title-desc').value,
+        tone: document.getElementById('title-tone').value,
+        length: document.getElementById('title-length').value,
+      };
     }
 
     if (tool === 'ctas') {
-      const platform = document.querySelector('#tab-ctas .pill.selected')?.textContent || 'YouTube';
-      const goal = document.getElementById('cta-goal').value;
-      const niche = document.getElementById('cta-niche').value;
-      const tone = document.getElementById('cta-tone').value;
-      const format = document.getElementById('cta-format').value;
-      return `Generate 8 CTAs for a ${platform} creator.
-
-Details:
-- Goal: ${goal}
-- Niche: ${niche}
-- Tone: ${tone}
-- Format: ${format}
-
-Format exactly like this:
-CTA 1: [cta line]
-CTA 2: [cta line]
-...
-
-GROUP them by type: "Verbal CTAs" (say out loud) and "On-Screen CTAs" (text overlay). 
-Include a TIP at the end about WHERE and WHEN to place the CTA in the video.`;
+      return {
+        platform: document.querySelector('#tab-ctas .pill.selected')?.textContent || 'YouTube',
+        goal: document.getElementById('cta-goal').value,
+        niche: document.getElementById('cta-niche').value,
+        tone: document.getElementById('cta-tone').value,
+        format: document.getElementById('cta-format').value,
+      };
     }
 
     if (tool === 'ideas') {
-      const platform = document.querySelector('#tab-ideas .pill.selected')?.textContent || 'YouTube';
-      const niche = document.getElementById('ideas-niche').value;
-      const working = document.getElementById('ideas-working').value;
-      const subs = document.getElementById('ideas-subs').value;
-      const count = document.getElementById('ideas-count').value.split(' ')[0];
-      return `Generate ${count} specific video ideas for a ${platform} creator.
-
-Details:
-- Niche: ${niche}
-- What's working: ${working}
-- Subscriber count: ${subs}
-
-Format exactly like this:
-IDEA 1: [title idea] — [one sentence on why this will perform and what makes it unique]
-IDEA 2: ...
-
-Make them specific, not generic. Each idea should feel like something they could film TODAY.`;
+      return {
+        platform: document.querySelector('#tab-ideas .pill.selected')?.textContent || 'YouTube',
+        niche: document.getElementById('ideas-niche').value,
+        working: document.getElementById('ideas-working').value,
+        subs: document.getElementById('ideas-subs').value,
+        count: document.getElementById('ideas-count').value.split(' ')[0],
+      };
     }
 
     if (tool === 'analytics') {
-      const views = document.getElementById('an-views').value;
-      const subs = document.getElementById('an-subs').value;
-      const watchtime = document.getElementById('an-watchtime').value;
-      const avp = document.getElementById('an-avp').value;
-      const top = document.getElementById('an-top').value;
-      const challenge = document.getElementById('an-challenge').value;
-      return `Analyze these YouTube channel stats and give specific growth advice.
-
-Stats (last 28 days):
-- Views: ${views}
-- Subscribers gained: ${subs}
-- Watch time: ${watchtime} hours
-- Avg view percentage: ${avp}
-- Top content: ${top}
-- Biggest challenge: ${challenge}
-
-Give your response in these sections:
-DIAGNOSIS: [2-3 sentences on what the data is telling you]
-STRENGTHS: [what's working — be specific]
-GAPS: [what's holding them back]
-TOP 3 ACTIONS: [three specific things to do THIS WEEK]
-METRIC TO WATCH: [one number to focus on and why]`;
+      return {
+        views: document.getElementById('an-views').value,
+        subs: document.getElementById('an-subs').value,
+        watchtime: document.getElementById('an-watchtime').value,
+        avp: document.getElementById('an-avp').value,
+        top: document.getElementById('an-top').value,
+        challenge: document.getElementById('an-challenge').value,
+      };
     }
   }
 
@@ -1719,8 +1734,11 @@ METRIC TO WATCH: [one number to focus on and why]`;
   function selectPlan(type) {
     isPro = true;
     usageLeft = 999;
-    document.getElementById('planBadge').textContent = '★ PRO';
-    document.getElementById('planBadge').className = 'plan-badge pro';
+    const badge = document.getElementById('sidebarPlan');
+    if (badge) {
+      badge.textContent = '★ PRO PLAN';
+      badge.classList.add('pro');
+    }
     updateUsage();
     closeModal();
     showToast('🎉 Welcome to Pro! All features unlocked.');
@@ -1766,6 +1784,55 @@ METRIC TO WATCH: [one number to focus on and why]`;
 function showEmailCapture(){document.getElementById("emailCaptureModal").style.display="flex";}
 function closeEmailCapture(){document.getElementById("emailCaptureModal").style.display="none";}
 document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("emailCaptureModal");if(m)m.addEventListener("click",function(e){if(e.target===this)closeEmailCapture();});});
+</script>
+
+<!-- FIREBASE AUTH GATE — the AI tools need a real logged-in user so the
+     Worker can enforce per-account usage limits server-side. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc",
+    authDomain: "creatornexushq-eaf70.firebaseapp.com",
+    projectId: "creatornexushq-eaf70",
+    storageBucket: "creatornexushq-eaf70.firebasestorage.app",
+    messagingSenderId: "867089002449",
+    appId: "1:867089002449:web:cadae5b363375020cdbaf0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Disable generate buttons until we know whether the visitor is logged in,
+  // so a click during that brief window can't slip through with no token.
+  document.querySelectorAll('.gen-btn').forEach(b => b.disabled = true);
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = 'creatornexushq-auth.html';
+      return;
+    }
+    window.__currentUser = user;
+    document.querySelectorAll('.gen-btn').forEach(b => b.disabled = false);
+
+    const emailEl = document.getElementById('accountEmail');
+    if (emailEl) emailEl.textContent = user.email || user.displayName || 'Signed in';
+  });
+
+  async function handleSignOut() {
+    try {
+      await signOut(auth);
+    } finally {
+      window.location.href = 'creatornexushq-auth.html';
+    }
+  }
+
+  const signOutBtn = document.getElementById('signOutBtn');
+  if (signOutBtn) signOutBtn.addEventListener('click', handleSignOut);
+
+  const mobileSignOutBtn = document.getElementById('mobileSignOutBtn');
+  if (mobileSignOutBtn) mobileSignOutBtn.addEventListener('click', handleSignOut);
 </script>
 </body>
 </html>
