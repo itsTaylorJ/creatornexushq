@@ -3,29 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CreatorNexusHQ — AI Growth Coach</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<title>CreatorNexusHQ — The All-In-One Platform for Content Creators</title>
+<meta name="description" content="CreatorNexusHQ is the all-in-one growth platform for YouTube, Twitch, TikTok, Kick, and Instagram creators. AI-powered tools to grow faster, smarter.">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg: #080810;
+  --bg: #07070f;
   --surface: #0e0e1a;
   --surface2: #13131f;
-  --border: #1e1e30;
-  --border2: #2a2a40;
-  --text: #f0f0ff;
-  --muted: #6060a0;
+  --border: #1a1a2e;
+  --border2: #252540;
+  --text: #eeeeff;
+  --muted: #5a5a90;
   --accent: #7c3aed;
   --accent2: #a855f7;
   --accent3: #c084fc;
   --gold: #f59e0b;
   --green: #10b981;
-  --red: #ef4444;
-  --pink: #ec4899;
   --cyan: #06b6d4;
-  --glow: rgba(124, 58, 237, 0.15);
+  --orange: #f97316;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
@@ -35,119 +35,114 @@ body {
   overflow-x: hidden;
 }
 
-/* BG EFFECT */
-body::before {
-  content: '';
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(ellipse at 20% 20%, rgba(124,58,237,0.08) 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 80%, rgba(168,85,247,0.06) 0%, transparent 50%),
-              radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.04) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-* { position: relative; z-index: 1; }
-
 ::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
 
-/* NAVBAR */
+/* NAV */
 nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 24px;
+  padding: 18px 40px;
   border-bottom: 1px solid var(--border);
-  background: rgba(8,8,16,0.8);
+  background: rgba(7,7,15,0.9);
   backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-.logo {
+.nav-logo {
   font-family: 'Syne', sans-serif;
   font-weight: 800;
   font-size: 20px;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--accent3), var(--cyan));
+  background: linear-gradient(135deg, #c084fc, #06b6d4);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.nav-logo span { -webkit-text-fill-color: var(--text); }
 
-.logo span { -webkit-text-fill-color: var(--text); }
+.nav-links { display: flex; align-items: center; gap: 8px; }
+.nav-link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.nav-link:hover { color: var(--text); background: var(--surface); }
 
-.nav-right { display: flex; align-items: center; gap: 12px; }
-
-.nav-tab {
-  background: none;
-  border: none;
-  color: #5a5a90;
+.nav-cta {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: white;
+  text-decoration: none;
   font-family: 'Syne', sans-serif;
   font-size: 13px;
-  font-weight: 600;
-  padding: 7px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-  text-decoration: none;
-  display: inline-block;
-}
-.nav-tab:hover { color: #eeeeff; background: #0e0e1a; }
-.nav-tab.active { color: #c084fc; background: rgba(124,58,237,0.12); }
-
-.plan-badge {
-  font-family: 'Syne', sans-serif;
-  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 4px 10px;
-  border-radius: 20px;
-  border: 1px solid var(--border2);
-  color: var(--muted);
-  cursor: pointer;
+  padding: 10px 22px;
+  border-radius: 10px;
   transition: all 0.2s;
+  margin-left: 8px;
 }
-.plan-badge.free { border-color: var(--border2); }
-.plan-badge.pro { border-color: var(--gold); color: var(--gold); background: rgba(245,158,11,0.08); }
-.plan-badge:hover { border-color: var(--accent); color: var(--accent3); }
+.nav-cta:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+
+@media (max-width: 768px) {
+  nav { padding: 16px 20px; }
+  .nav-links .nav-link { display: none; }
+  .nav-logo { font-size: 17px; }
+  .nav-cta {
+    font-size: 12px;
+    padding: 8px 14px;
+    margin-left: 4px;
+    white-space: nowrap;
+  }
+}
 
 /* HERO */
 .hero {
   text-align: center;
-  padding: 60px 24px 40px;
-  max-width: 700px;
+  padding: 100px 24px 80px;
+  max-width: 860px;
   margin: 0 auto;
+  position: relative;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .hero-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--accent3);
+  gap: 8px;
   background: rgba(124,58,237,0.1);
   border: 1px solid rgba(124,58,237,0.3);
   border-radius: 20px;
-  padding: 5px 14px;
-  margin-bottom: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent3);
+  margin-bottom: 28px;
   letter-spacing: 0.5px;
 }
 
 .hero h1 {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(32px, 6vw, 52px);
+  font-size: clamp(36px, 6vw, 64px);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -1px;
-  margin-bottom: 16px;
+  line-height: 1.08;
+  letter-spacing: -1.5px;
+  margin-bottom: 24px;
 }
 
 .hero h1 .grad {
@@ -157,1682 +152,798 @@ nav {
 }
 
 .hero p {
-  font-size: 16px;
+  font-size: clamp(16px, 2vw, 20px);
   color: var(--muted);
   line-height: 1.7;
-  margin-bottom: 32px;
+  max-width: 600px;
+  margin: 0 auto 40px;
 }
 
-/* USAGE BAR */
-.usage-bar-wrap {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 14px 18px;
-  margin-bottom: 32px;
+.hero-btns {
   display: flex;
-  align-items: center;
   gap: 14px;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 60px;
 }
 
-.usage-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
-.usage-label strong { color: var(--text); }
-
-.usage-track {
-  flex: 1;
-  height: 6px;
-  background: var(--border);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.usage-fill {
-  height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--accent3));
-  transition: width 0.4s ease;
-}
-
-.upgrade-mini {
-  font-size: 11px;
-  color: var(--gold);
-  white-space: nowrap;
-  cursor: pointer;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* TABS */
-.tool-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
-  overflow-x: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  padding: 0 24px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-.tool-tabs::-webkit-scrollbar { display: none; }
-
-.tool-tab {
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  color: var(--muted);
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  padding: 14px 18px;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.tool-tab:hover { color: var(--text); }
-.tool-tab.active { color: var(--accent3); border-bottom-color: var(--accent); }
-.tool-tab .lock { font-size: 10px; color: var(--gold); }
-
-/* MAIN CONTENT */
-.main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 32px 24px;
-}
-
-.tool-section { display: none; }
-.tool-section.active { display: block; animation: fadeUp 0.3s ease both; }
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* FORM CARD */
-.form-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 20px;
-}
-
-.form-card h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.form-card p {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 20px;
-  line-height: 1.6;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-@media (max-width: 600px) {
-  .form-grid { grid-template-columns: 1fr; }
-}
-
-.field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-bottom: 6px;
-}
-
-.field input, .field select, .field textarea {
-  width: 100%;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: 10px;
-  padding: 11px 14px;
-  color: var(--text);
-  font-family: 'DM Sans', sans-serif;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  resize: none;
-}
-
-.field input:focus, .field select:focus, .field textarea:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
-}
-
-.field select option { background: var(--surface2); }
-
-.full-width { grid-column: 1 / -1; }
-
-/* GENERATE BTN */
-.gen-btn {
-  width: 100%;
+.btn-primary {
   background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border: none;
-  border-radius: 12px;
-  padding: 14px;
   color: white;
+  text-decoration: none;
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 16px 36px;
+  border-radius: 12px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 32px rgba(124,58,237,0.25);
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,58,237,0.35); }
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
   font-family: 'Syne', sans-serif;
   font-size: 15px;
   font-weight: 700;
-  letter-spacing: 0.5px;
-  cursor: pointer;
+  padding: 16px 36px;
+  border-radius: 12px;
+  border: 1px solid var(--border2);
   transition: all 0.2s;
-  margin-top: 16px;
+}
+.btn-secondary:hover { border-color: var(--accent); background: rgba(124,58,237,0.06); }
+
+/* PLATFORM LOGOS */
+.platform-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-}
-.gen-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(124,58,237,0.3); }
-.gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
-/* RESULTS */
-.results-card {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  margin-top: 20px;
-  display: none;
-}
-.results-card.visible { display: block; animation: fadeUp 0.3s ease both; }
-
-.results-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
-.results-title {
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent3);
-  letter-spacing: 0.5px;
-}
-
-.copy-all-btn {
-  background: none;
-  border: 1px solid var(--border2);
-  border-radius: 8px;
-  padding: 5px 12px;
-  color: var(--muted);
-  font-size: 12px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  transition: all 0.15s;
-}
-.copy-all-btn:hover { border-color: var(--accent); color: var(--accent3); }
-
-.result-text {
-  font-size: 14px;
-  line-height: 1.8;
-  color: var(--text);
-  white-space: pre-wrap;
-}
-
-.result-item {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-  transition: border-color 0.15s;
-}
-.result-item:hover { border-color: var(--border2); }
-
-.result-item-text { font-size: 14px; line-height: 1.6; flex: 1; }
-
-.copy-btn {
-  background: none;
-  border: 1px solid var(--border2);
-  border-radius: 6px;
-  padding: 4px 10px;
-  color: var(--muted);
-  font-size: 11px;
-  cursor: pointer;
-  font-family: 'DM Sans', sans-serif;
-  transition: all 0.15s;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.copy-btn:hover { border-color: var(--accent); color: var(--accent3); }
-.copy-btn.copied { border-color: var(--green); color: var(--green); }
-
-/* LOADING */
-.loading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--muted);
-  font-size: 14px;
-  padding: 20px 0;
-}
-
-.dots { display: flex; gap: 4px; }
-.dot {
-  width: 6px; height: 6px;
-  background: var(--accent);
-  border-radius: 50%;
-  animation: bounce 1.2s ease infinite;
-}
-.dot:nth-child(2) { animation-delay: 0.2s; }
-.dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes bounce {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-  40% { transform: scale(1); opacity: 1; }
-}
-
-/* LOCKED OVERLAY */
-.locked-overlay {
+.platform-pill {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 48px 24px;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-note { font-size: 13px; color: var(--muted); }
+
+/* STATS */
+.stats-bar {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 32px 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
   text-align: center;
 }
 
-.lock-icon { font-size: 40px; margin-bottom: 16px; }
+@media (max-width: 600px) { .stats-bar { grid-template-columns: 1fr 1fr; } }
 
-.locked-overlay h2 {
+.stat-item { }
+.stat-val {
   font-family: 'Syne', sans-serif;
-  font-size: 22px;
+  font-size: 32px;
   font-weight: 800;
-  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent3), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 13px; color: var(--muted); }
+
+/* SECTION */
+section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+
+.section-tag {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--accent3);
+  text-transform: uppercase;
+  margin-bottom: 12px;
 }
 
-.locked-overlay p {
-  font-size: 14px;
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(26px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+  line-height: 1.15;
+}
+
+.section-desc {
+  font-size: 16px;
   color: var(--muted);
-  margin-bottom: 24px;
-  line-height: 1.6;
-  max-width: 400px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* PRICING MODAL */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-.modal-overlay.open { display: flex; }
-
-.modal {
-  background: var(--surface);
-  border: 1px solid var(--border2);
-  border-radius: 20px;
-  padding: 32px;
+  line-height: 1.7;
   max-width: 560px;
-  width: 100%;
-  animation: fadeUp 0.3s ease both;
+  margin-bottom: 48px;
 }
 
-.modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* FEATURES GRID */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 900px) { .features-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .features-grid { grid-template-columns: 1fr; } }
+
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(124,58,237,0.04), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.feature-card:hover { border-color: rgba(124,58,237,0.4); transform: translateY(-2px); }
+.feature-card:hover::before { opacity: 1; }
+
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 14px;
+  display: block;
+}
+.feature-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 800;
   margin-bottom: 8px;
 }
+.feature-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-.modal h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: 24px;
-  font-weight: 800;
+.feature-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+  text-transform: uppercase;
 }
+.feature-tag.free { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+.feature-tag.pro { background: rgba(245,158,11,0.1); color: var(--gold); border: 1px solid rgba(245,158,11,0.2); }
 
-.close-btn {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 20px;
-  cursor: pointer;
-  line-height: 1;
-  padding: 4px;
-}
-.close-btn:hover { color: var(--text); }
-
-.modal > p {
-  font-size: 14px;
-  color: var(--muted);
-  margin-bottom: 24px;
-}
-
-.plans {
+/* HOW IT WORKS */
+.how-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-bottom: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  counter-reset: steps;
 }
+@media (max-width: 700px) { .how-grid { grid-template-columns: 1fr; } }
 
-@media (max-width: 480px) { .plans { grid-template-columns: 1fr; } }
+.how-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 24px;
+  position: relative;
+  counter-increment: steps;
+}
+.how-card::before {
+  content: counter(steps);
+  font-family: 'Syne', sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--border2);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  line-height: 1;
+}
+.how-icon { font-size: 28px; margin-bottom: 14px; }
+.how-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 8px; }
+.how-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
 
-.plan-card {
-  background: var(--bg);
+/* PLATFORMS SECTION */
+.platforms-showcase {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+@media (max-width: 700px) { .platforms-showcase { grid-template-columns: 1fr 1fr; } }
+
+.platform-card {
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 20px;
-  cursor: pointer;
+  text-align: center;
   transition: all 0.2s;
+}
+.platform-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.platform-card-icon { font-size: 32px; margin-bottom: 10px; }
+.platform-card-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.platform-card-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+/* PRICING */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+@media (max-width: 600px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+.pricing-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
   position: relative;
 }
+.pricing-card.featured {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, var(--surface), rgba(245,158,11,0.03));
+}
 
-.plan-card:hover { border-color: var(--accent); }
-.plan-card.recommended { border-color: var(--gold); }
-
-.plan-card .rec-tag {
+.pricing-popular {
   position: absolute;
-  top: -10px;
+  top: -12px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--gold);
   color: #000;
   font-family: 'Syne', sans-serif;
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 1px;
-  padding: 3px 10px;
+  padding: 4px 14px;
   border-radius: 20px;
   white-space: nowrap;
 }
 
-.plan-name {
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
+.pricing-name { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--muted); margin-bottom: 8px; }
+.pricing-price { font-family: 'Syne', sans-serif; font-size: 42px; font-weight: 800; margin-bottom: 4px; }
+.pricing-price span { font-size: 16px; font-weight: 400; color: var(--muted); }
+.pricing-period { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.pricing-features { list-style: none; margin-bottom: 28px; }
+.pricing-features li { font-size: 13px; color: var(--muted); padding: 6px 0; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+.pricing-features li:last-child { border-bottom: none; }
+.pricing-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+.pricing-features li.locked::before { content: '—'; color: var(--border2); }
+.pricing-features li.locked { opacity: 0.5; }
 
-.plan-price {
-  font-family: 'Syne', sans-serif;
-  font-size: 28px;
-  font-weight: 800;
-  margin-bottom: 2px;
-}
-
-.plan-price span { font-size: 14px; font-weight: 400; color: var(--muted); }
-
-.plan-desc { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
-
-.plan-features { list-style: none; }
-.plan-features li {
-  font-size: 12px;
-  color: var(--muted);
-  padding: 3px 0;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.plan-features li::before { content: '✓'; color: var(--green); font-weight: 700; }
-
-.plan-btn {
+.pricing-btn {
   width: 100%;
-  padding: 11px;
-  border-radius: 10px;
+  padding: 13px;
+  border-radius: 12px;
   border: none;
   font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 16px;
-  transition: all 0.2s;
-}
-
-.plan-btn.monthly { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; }
-.plan-btn.yearly { background: linear-gradient(135deg, var(--gold), #f97316); color: #000; }
-.plan-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-
-.modal-note {
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* PLATFORM PILLS */
-.platform-pills {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 0;
-}
-
-.pill {
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: 20px;
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  color: var(--muted);
-}
-.pill:hover { border-color: var(--accent); color: var(--text); }
-.pill.selected { border-color: var(--accent); background: rgba(124,58,237,0.1); color: var(--accent3); }
-
-/* SECTION DIVIDER */
-.section-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 28px 0 20px;
-}
-
-.section-divider span {
-  font-family: 'Syne', sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.section-divider::before, .section-divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: var(--surface2);
-  border: 1px solid var(--border2);
-  border-radius: 12px;
-  padding: 12px 20px;
   font-size: 14px;
-  color: var(--text);
-  z-index: 9999;
-  transition: transform 0.3s ease;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-.toast.show { transform: translateX(-50%) translateY(0); }
-
-/* ===== GLOBAL SIDEBAR STYLES ===== */
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.app-sidebar {
-  width: 280px;
-  min-width: 280px;
-  background: #0a0a14;
-  border-right: 1px solid #1a1a2e;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 12px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  overflow-y: auto;
-  z-index: 300;
-}
-
-.app-main {
-  margin-left: 280px;
-  flex: 1;
-  min-width: 0;
-}
-
-.sidebar-logo {
-  font-family: "Syne", sans-serif;
   font-weight: 800;
-  font-size: 18px;
-  white-space: nowrap;
-  overflow: visible;
-  background: linear-gradient(135deg, #c084fc, #06b6d4);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 4px;
-  padding: 0 8px;
-}
-.sidebar-logo span { -webkit-text-fill-color: #eeeeff; }
-
-.sidebar-plan {
-  font-family: "Syne", sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #5a5a90;
-  padding: 0 8px;
-  margin-bottom: 16px;
-}
-.sidebar-plan.pro { color: #f59e0b; }
-
-.sidebar-divider {
-  height: 1px;
-  background: #1a1a2e;
-  margin: 10px 0;
-}
-
-.sidebar-label {
-  font-family: "Syne", sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: #3a3a60;
-  padding: 4px 8px;
-  margin-bottom: 4px;
-}
-
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 10px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #5a5a90;
-  font-family: "Syne", sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  transition: all 0.15s;
-  margin-bottom: 2px;
-  border: 1px solid transparent;
-}
-.sidebar-item:hover {
-  color: #eeeeff;
-  background: #13131f;
-}
-.sidebar-item.active {
-  color: #c084fc;
-  background: rgba(124,58,237,0.12);
-  border-color: rgba(124,58,237,0.2);
-}
-.sidebar-item.sidebar-sub {
-  font-size: 12px;
-  padding: 7px 10px;
-  font-family: "DM Sans", sans-serif;
-  font-weight: 500;
-}
-
-.sidebar-icon { font-size: 15px; flex-shrink: 0; }
-
-.sidebar-upgrade {
-  margin-top: auto;
-  background: rgba(124,58,237,0.08);
-  border: 1px solid rgba(124,58,237,0.2);
-  border-radius: 10px;
-  padding: 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
   cursor: pointer;
   transition: all 0.2s;
-  margin-top: 16px;
+  text-decoration: none;
+  display: block;
+  text-align: center;
 }
-.sidebar-upgrade:hover { background: rgba(124,58,237,0.15); }
+.pricing-btn.free { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+.pricing-btn.free:hover { border-color: var(--accent); }
+.pricing-btn.pro-monthly { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; }
+.pricing-btn.pro-monthly:hover { opacity: 0.9; transform: translateY(-1px); }
+.pricing-btn.pro-yearly { background: linear-gradient(135deg, var(--gold), var(--orange)); color: #000; }
+.pricing-btn.pro-yearly:hover { opacity: 0.9; transform: translateY(-1px); }
 
-.sidebar-upgrade-icon {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  border-radius: 8px;
+.pricing-toggle {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 12px;
+  margin-bottom: 32px;
   font-size: 14px;
-  flex-shrink: 0;
-  color: white;
+  color: var(--muted);
 }
-.sidebar-upgrade-title {
-  font-family: "Syne", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  color: #c084fc;
-}
-.sidebar-upgrade-sub {
+.pricing-toggle strong { color: var(--text); }
+.save-badge {
+  background: rgba(16,185,129,0.1);
+  color: var(--green);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 20px;
+  padding: 2px 10px;
   font-size: 11px;
-  color: #5a5a90;
-  margin-top: 1px;
+  font-weight: 700;
 }
 
-.sidebar-account {
-  margin-top: 12px;
-  padding: 10px 8px 2px;
-  border-top: 1px solid #1a1a2e;
+/* TESTIMONIALS */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
-.sidebar-account-email {
-  font-size: 12px;
-  color: #8a8ac0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  margin-bottom: 8px;
-  padding: 0 2px;
+@media (max-width: 900px) { .testimonials-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .testimonials-grid { grid-template-columns: 1fr; } }
+
+.testimonial-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
 }
-.sidebar-signout {
-  display: block;
+.testimonial-stars { color: var(--gold); font-size: 14px; margin-bottom: 12px; letter-spacing: 2px; }
+.testimonial-text { font-size: 14px; line-height: 1.7; color: var(--text); margin-bottom: 16px; font-style: italic; }
+.testimonial-author { display: flex; align-items: center; gap: 10px; }
+.testimonial-avatar { width: 36px; height: 36px; border-radius: 10px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.testimonial-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; }
+.testimonial-handle { font-size: 11px; color: var(--muted); }
+
+/* FAQ */
+.faq-list { max-width: 700px; margin: 0 auto; }
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-question {
   width: 100%;
   background: none;
-  border: 1px solid #252540;
-  border-radius: 8px;
-  padding: 8px 10px;
-  color: #9a9ac5;
-  font-family: "Syne", sans-serif;
-  font-size: 12px;
+  border: none;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
   font-weight: 600;
+  padding: 20px 0;
+  text-align: left;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.faq-question:hover { color: var(--accent3); }
+.faq-icon { font-size: 18px; color: var(--muted); transition: transform 0.2s; flex-shrink: 0; }
+.faq-question.open .faq-icon { transform: rotate(45deg); color: var(--accent3); }
+.faq-answer { font-size: 14px; color: var(--muted); line-height: 1.7; padding-bottom: 20px; display: none; }
+.faq-answer.open { display: block; }
+
+/* FINAL CTA */
+.final-cta {
   text-align: center;
-  transition: all 0.15s;
+  padding: 80px 40px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(6,182,212,0.04));
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
 }
-.sidebar-signout:hover { border-color: #ef4444; color: #ef4444; }
-
-.mobile-signout {
-  background: none;
-  border: 1px solid #252540;
-  border-radius: 6px;
-  padding: 5px 10px;
-  color: #9a9ac5;
-  font-family: "Syne", sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-}
-.mobile-signout:hover { border-color: #ef4444; color: #ef4444; }
-
-@media (max-width: 768px) {
-  .app-sidebar { display: none; }
-  .app-main { margin-left: 0; }
-}
-
-
-
-/* ===== MOBILE STYLES ===== */
-@media (max-width: 768px) {
-  .app-sidebar { display: none !important; }
-  .app-main { margin-left: 0 !important; }
-
-  /* Mobile bottom nav */
-  .mobile-nav {
-    display: flex !important;
-  }
-
-  /* General spacing fixes */
-  .hero { padding: 20px 16px 24px !important; }
-  .hero h1 { font-size: 26px !important; }
-  .hero p { font-size: 13px !important; }
-  .usage-bar-wrap { margin: 0 0 20px !important; }
-
-  .tool-tabs, .main-tabs {
-    padding: 0 12px !important;
-    overflow-x: auto !important;
-  }
-
-  .main { padding: 16px 14px 80px !important; }
-  .content { padding: 16px 14px 80px !important; }
-  .page-hero { padding: 20px 14px 16px !important; }
-
-  .form-grid { grid-template-columns: 1fr !important; }
-  .form-row { grid-template-columns: 1fr !important; }
-  .two-col { grid-template-columns: 1fr !important; }
-  .features-grid { grid-template-columns: 1fr !important; }
-  .plans { grid-template-columns: 1fr !important; }
-  .plans-mini { grid-template-columns: 1fr !important; }
-  .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .overview-grid { grid-template-columns: 1fr 1fr !important; }
-  .qa-grid { grid-template-columns: 1fr 1fr !important; }
-  .calendar-grid { grid-template-columns: repeat(7, 1fr) !important; gap: 4px !important; }
-  .cal-day { min-height: 50px !important; padding: 6px 4px !important; }
-  .cal-day-header { font-size: 9px !important; }
-
-  .layout { grid-template-columns: 1fr !important; }
-  .sidebar { display: none !important; }
-
-  .platform-header { flex-wrap: wrap; gap: 10px !important; }
-  .connect-btn { margin-left: 0 !important; width: 100% !important; justify-content: center !important; }
-
-  .modal { padding: 20px 16px !important; }
-  .modal h2 { font-size: 18px !important; }
-
-  .gen-btn, .analyze-btn { font-size: 13px !important; }
-
-  .result-item { flex-direction: column !important; align-items: flex-start !important; }
-  .copy-btn { margin-left: 0 !important; margin-top: 6px !important; }
-
-  .score-wrap { flex-direction: row !important; }
-
-  .type-toggle { flex-wrap: wrap !important; }
-}
-
-@media (min-width: 769px) {
-  .mobile-nav { display: none !important; }
-}
-
-/* MOBILE BOTTOM NAV */
-.mobile-nav {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(10,10,20,0.97);
-  backdrop-filter: blur(20px);
-  border-top: 1px solid #1a1a2e;
-  z-index: 500;
-  padding: 8px 0 12px;
-}
-
-.mobile-nav-inner {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
-
-.mobile-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  text-decoration: none;
-  color: #5a5a90;
+.final-cta h2 {
   font-family: 'Syne', sans-serif;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  padding: 4px 12px;
-  border-radius: 8px;
-  transition: all 0.15s;
-  min-width: 60px;
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+  line-height: 1.15;
 }
-.mobile-nav-item:hover { color: #eeeeff; }
-.mobile-nav-item.active { color: #c084fc; }
-.mobile-nav-icon { font-size: 20px; }
+.final-cta p { font-size: 16px; color: var(--muted); margin-bottom: 36px; }
 
-
-/* ===== MOBILE FIXES ===== */
-@media (max-width: 768px) {
-  .app-sidebar { display: none !important; }
-  .app-main { margin-left: 0 !important; width: 100% !important; }
-  .app-layout { display: block !important; }
-
-  /* General padding fix */
-  .content, .main { padding: 16px !important; }
-  .hero { padding: 24px 16px 20px !important; }
-  .page-hero { padding: 24px 16px 16px !important; }
-
-  /* Two col stacks vertically */
-  .two-col { grid-template-columns: 1fr !important; }
-  .form-grid { grid-template-columns: 1fr !important; }
-  .form-row { grid-template-columns: 1fr !important; }
-  .stats-grid { grid-template-columns: 1fr 1fr !important; }
-  .features-grid { grid-template-columns: 1fr !important; }
-  .plans { grid-template-columns: 1fr !important; }
-  .plans-mini { grid-template-columns: 1fr !important; }
-  .overview-grid { grid-template-columns: 1fr 1fr !important; }
-  .qa-grid { grid-template-columns: 1fr 1fr !important; }
-  .calendar-grid { grid-template-columns: repeat(7, 1fr) !important; font-size: 9px !important; }
-
-  /* Hero text */
-  .hero h1 { font-size: 26px !important; }
-  .hero p { font-size: 14px !important; }
-
-  /* Tool tabs scroll horizontal */
-  .tool-tabs, .main-tabs {
-    overflow-x: auto !important;
-    -ms-overflow-style: none !important;
-    scrollbar-width: none !important;
-    padding: 0 12px !important;
-  }
-
-  /* Layout fixes */
-  .layout { grid-template-columns: 1fr !important; }
-  .sidebar { display: none !important; }
-
-  /* Platform header stacks */
-  .platform-header { flex-wrap: wrap !important; gap: 12px !important; }
-  .connect-btn { width: 100% !important; justify-content: center !important; }
-
-  /* Modal full width */
-  .modal { margin: 12px !important; padding: 20px !important; }
-
-  /* Usage bar */
-  .usage-bar-wrap { flex-wrap: wrap !important; gap: 8px !important; }
-  .usage-row { flex-wrap: wrap !important; }
-
-  /* Mobile top bar */
-  .mobile-topbar {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 16px;
-    background: rgba(7,7,15,0.95);
-    border-bottom: 1px solid #1a1a2e;
-    position: sticky;
-    top: 0;
-    z-index: 200;
-  }
-  .mobile-logo {
-    font-family: "Syne", sans-serif;
-    font-weight: 800;
-    font-size: 16px;
-    background: linear-gradient(135deg, #c084fc, #06b6d4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .mobile-logo span { -webkit-text-fill-color: #eeeeff; }
-  .mobile-nav {
-    display: flex;
-    gap: 4px;
-  }
-  .mobile-nav a {
-    font-family: "Syne", sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    color: #5a5a90;
-    text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 6px;
-    transition: all 0.15s;
-  }
-  .mobile-nav a.active { color: #c084fc; background: rgba(124,58,237,0.12); }
-  .mobile-nav a:hover { color: #eeeeff; }
+/* FOOTER */
+footer {
+  padding: 40px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
 }
+.footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.footer-logo span { -webkit-text-fill-color: var(--text); }
+.footer-links { display: flex; gap: 20px; flex-wrap: wrap; }
+.footer-link { color: var(--muted); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+.footer-link:hover { color: var(--text); }
+.footer-copy { font-size: 12px; color: var(--muted); }
 
-@media (min-width: 769px) {
-  .mobile-topbar { display: none !important; }
-}
+/* DIVIDER */
+.section-divider { height: 1px; background: var(--border); max-width: 1100px; margin: 0 auto; }
 
-
-  .app-main { margin-left: 0 !important; width: 100% !important; }
-  .app-layout { display: block !important; }
-  .mobile-topbar { display: flex !important; }
-}
-
-
-
-/* ===== GLOBAL SIDEBAR ===== */
-.app-layout{display:flex;min-height:100vh}.app-sidebar{width:280px;min-width:280px;background:#0a0a14;border-right:1px solid #1a1a2e;display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:300}.app-main{margin-left:280px;flex:1;min-width:0;width:calc(100% - 280px)}.sidebar-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:18px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;padding:0 8px;white-space:nowrap}.sidebar-logo span{-webkit-text-fill-color:#eeeeff}.sidebar-plan{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#5a5a90;padding:0 8px;margin-bottom:16px}.sidebar-divider{height:1px;background:#1a1a2e;margin:10px 0}.sidebar-label{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#3a3a60;padding:4px 8px;margin-bottom:4px}.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:#5a5a90;font-family:"Syne",sans-serif;font-size:13px;font-weight:600;transition:all .15s;margin-bottom:2px;border:1px solid transparent}.sidebar-item:hover{color:#eeeeff;background:#13131f}.sidebar-item.active{color:#c084fc;background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.2)}.sidebar-item.sidebar-sub{font-size:12px;padding:7px 10px;font-family:"DM Sans",sans-serif;font-weight:500}.sidebar-icon{font-size:15px;flex-shrink:0}.sidebar-upgrade{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;margin-top:16px}.sidebar-upgrade:hover{background:rgba(124,58,237,.15)}.sidebar-upgrade-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:white}.sidebar-upgrade-title{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;color:#c084fc}.sidebar-upgrade-sub{font-size:11px;color:#5a5a90;margin-top:1px}.mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(7,7,15,.95);border-bottom:1px solid #1a1a2e;position:sticky;top:0;z-index:200;flex-wrap:wrap;gap:8px}.mobile-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:16px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.mobile-logo span{-webkit-text-fill-color:#eeeeff}.mobile-nav{display:flex;gap:4px;flex-wrap:wrap}.mobile-nav a{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;color:#5a5a90;text-decoration:none;padding:5px 8px;border-radius:6px;transition:all .15s}.mobile-nav a.active{color:#c084fc;background:rgba(124,58,237,.12)}@media(max-width:768px){.app-sidebar{display:none!important}.app-main{margin-left:0!important;width:100%!important}.app-layout{display:block!important}.mobile-topbar{display:flex!important}.content,.main{padding:16px!important}.two-col,.form-grid,.form-row{grid-template-columns:1fr!important}}
+/* SCROLL REVEAL */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.35s ease, transform 0.35s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
-<style>
-/* ===== SIDEBAR ===== */
-.app-layout{display:flex;min-height:100vh}
-.app-sidebar{width:280px;min-width:280px;background:#0a0a14;border-right:1px solid #1a1a2e;display:flex;flex-direction:column;padding:20px 12px;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:300}
-.app-main{margin-left:280px;flex:1;min-width:0;width:calc(100% - 280px)}
-.sidebar-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:18px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;padding:0 8px;white-space:nowrap}
-.sidebar-logo span{-webkit-text-fill-color:#eeeeff}
-.sidebar-plan{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;color:#5a5a90;padding:0 8px;margin-bottom:16px}
-.sidebar-divider{height:1px;background:#1a1a2e;margin:10px 0}
-.sidebar-label{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#3a3a60;padding:4px 8px;margin-bottom:4px}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;text-decoration:none;color:#5a5a90;font-family:"Syne",sans-serif;font-size:13px;font-weight:600;transition:all .15s;margin-bottom:2px;border:1px solid transparent}
-.sidebar-item:hover{color:#eeeeff;background:#13131f}
-.sidebar-item.active{color:#c084fc;background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.2)}
-.sidebar-item.sidebar-sub{font-size:12px;padding:7px 10px;font-family:"DM Sans",sans-serif;font-weight:500}
-.sidebar-icon{font-size:15px;flex-shrink:0}
-.sidebar-upgrade{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:12px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .2s;margin-top:16px}
-.sidebar-upgrade-icon{width:32px;height:32px;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:white}
-.sidebar-upgrade-title{font-family:"Syne",sans-serif;font-size:12px;font-weight:700;color:#c084fc}
-.sidebar-upgrade-sub{font-size:11px;color:#5a5a90;margin-top:1px}
-.mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(7,7,15,.95);border-bottom:1px solid #1a1a2e;position:sticky;top:0;z-index:200;flex-wrap:wrap;gap:8px}
-.mobile-logo{font-family:"Syne",sans-serif;font-weight:800;font-size:16px;background:linear-gradient(135deg,#c084fc,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.mobile-logo span{-webkit-text-fill-color:#eeeeff}
-.mobile-nav{display:flex;gap:4px;flex-wrap:wrap}
-.mobile-nav a{font-family:"Syne",sans-serif;font-size:10px;font-weight:700;color:#5a5a90;text-decoration:none;padding:5px 8px;border-radius:6px;transition:all .15s}
-.mobile-nav a.active{color:#c084fc;background:rgba(124,58,237,.12)}
-@media(max-width:768px){.app-sidebar{display:none!important}.app-main{margin-left:0!important;width:100%!important}.app-layout{display:block!important}.mobile-topbar{display:flex!important}.content,.main{padding:16px!important}.two-col,.form-grid,.form-row{grid-template-columns:1fr!important}}
-</style>
 <body>
-<div class="app-layout">
-<div class="mobile-topbar">
-  <div class="mobile-logo">Creator<span>NexusHQ</span></div>
-  <div class="mobile-nav">
-    <a href="index.html" class="active">Tools</a>
-    <a href="creatornexushq-platforms.html" class="">Platforms</a>
-    <a href="creatornexushq-analyze.html" class="">Analyze</a>
-    <a href="creatornexushq-resources.html" class="">Resources</a>
-    <a href="creatornexushq-thumbnail.html" class="">Thumbs</a>
-    <a href="creatornexushq-competitor.html" class="">Research <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
-    <a href="creatornexushq-monetization.html" class="">Monetize</a>
-    <a href="creatornexushq-streaming.html" class="">Stream</a>
-    <a href="creatornexushq-collab.html" class="">Collab <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
-    <a href="creatornexushq-trends.html" class="">Trends <span style="color:#06b6d4;font-size:7px;vertical-align:super" title="Coming soon">•</span></a>
-  </div>
-  <button class="mobile-signout" id="mobileSignOutBtn">Sign Out</button>
-</div>
-<div class="app-sidebar">
-  <div class="sidebar-logo">Creator<span>NexusHQ</span></div>
-  <div class="sidebar-plan" id="sidebarPlan">FREE PLAN</div>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-label">NAVIGATION</div>
-  <a href="index.html" class="sidebar-item active"><span class="sidebar-icon">🎯</span>Tools</a>
-  <a href="creatornexushq-platforms.html" class="sidebar-item"><span class="sidebar-icon">🔗</span>Platforms</a>
-  <a href="creatornexushq-analyze.html" class="sidebar-item"><span class="sidebar-icon">📊</span>Analyze</a>
-  <a href="creatornexushq-resources.html" class="sidebar-item"><span class="sidebar-icon">📚</span>Resources</a>
-  <a href="creatornexushq-thumbnail.html" class="sidebar-item"><span class="sidebar-icon">🖼️</span>Thumbnails</a>
-  <a href="creatornexushq-competitor.html" class="sidebar-item"><span class="sidebar-icon">🔍</span>Competitor Research<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
-  <a href="creatornexushq-monetization.html" class="sidebar-item"><span class="sidebar-icon">💰</span>Monetization</a>
-  <a href="creatornexushq-streaming.html" class="sidebar-item"><span class="sidebar-icon">🎮</span>Stream Planner</a>
-  <a href="creatornexushq-collab.html" class="sidebar-item"><span class="sidebar-icon">🤝</span>Collab Finder<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
-  <a href="creatornexushq-trends.html" class="sidebar-item"><span class="sidebar-icon">🔥</span>Trend Tracker<span style="margin-left:auto;font-size:9px;font-weight:700;letter-spacing:0.5px;color:#06b6d4;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.25);padding:1px 6px;border-radius:10px;text-transform:uppercase">Soon</span></a>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-label">TOOLS</div>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">✍️</span>Titles &amp; Hooks</a>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📣</span>CTAs</a>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">💡</span>Content Ideas</a>
-  <a href="index.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📈</span>Analytics Advice</a>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-label">ANALYZE</div>
-  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🏷️</span>Tag Analyzer</a>
-  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">🗓️</span>Schedule</a>
-  <a href="creatornexushq-analyze.html" class="sidebar-item sidebar-sub"><span class="sidebar-icon">📅</span>Calendar</a>
-  <div class="sidebar-divider"></div>
-  <div class="sidebar-upgrade">
-    <div class="sidebar-upgrade-icon">★</div>
-    <div><div class="sidebar-upgrade-title">Upgrade to Pro</div><div class="sidebar-upgrade-sub">$9/mo or $79/yr</div></div>
-  </div>
-  <div class="sidebar-account">
-    <div class="sidebar-account-email" id="accountEmail">&nbsp;</div>
-    <button class="sidebar-signout" id="signOutBtn">Sign Out</button>
-  </div>
-</div>
-<div class="app-main">
-<!-- NAV -->
 
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Creator<span>NexusHQ</span></div>
+  <div class="nav-links">
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#platforms" class="nav-link">Platforms</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#faq" class="nav-link">FAQ</a>
+    <a href="creatornexushq-app.html" class="nav-cta">Start for Free →</a>
+  </div>
+</nav>
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-tag">✦ AI-Powered Growth</div>
-  <h1>Grow your channel<br>with <span class="grad">AI strategy</span></h1>
-  <p>Titles, hooks, scripts, CTAs, and growth coaching — built specifically for content creators and streamers.</p>
+  <div class="hero-tag">✦ The Creator's Headquarters</div>
+  <h1>Stop Guessing.<br><span class="grad">Start Growing.</span></h1>
+  <p>CreatorNexusHQ is the all-in-one AI platform built for content creators and streamers. Everything you need to grow your channel — in one place.</p>
 
-  <div class="usage-bar-wrap" id="usageBar">
-    <span class="usage-label"><strong id="usageCount">5</strong> / 5 generations left today</span>
-    <div class="usage-track">
-      <div class="usage-fill" id="usageFill" style="width:100%"></div>
-    </div>
-    <span class="upgrade-mini" onclick="openModal()">Upgrade →</span>
+  <div class="hero-btns">
+    <a href="creatornexushq-app.html" class="btn-primary">🚀 Launch Your Growth — It's Free</a>
+    <a href="#features" class="btn-secondary">See What's Inside →</a>
+  </div>
+
+  <div class="platform-row">
+    <div class="platform-pill">▶️ YouTube</div>
+    <div class="platform-pill">🟣 Twitch</div>
+    <div class="platform-pill">🎵 TikTok</div>
+    <div class="platform-pill">🟢 Kick</div>
+    <div class="platform-pill">📷 Instagram</div>
+    <div class="platform-pill">🔴 Rumble</div>
+    <div class="platform-pill">🎮 Facebook</div>
+  </div>
+  <div class="hero-note" style="margin-top:12px">Free to start. No credit card required.</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar reveal">
+  <div class="stat-item">
+    <div class="stat-val">10+</div>
+    <div class="stat-label">AI-Powered Tools</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-val">7</div>
+    <div class="stat-label">Platforms Supported</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-val">100%</div>
+    <div class="stat-label">Creator Focused</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-val">$0</div>
+    <div class="stat-label">To Get Started</div>
   </div>
 </div>
 
-<!-- TABS -->
-<div class="tool-tabs">
-  <button class="tool-tab active" onclick="switchTab('titles', this)">🎯 Titles & Hooks</button>
-  <button class="tool-tab" onclick="switchTab('ctas', this)">📣 CTAs</button>
-  <button class="tool-tab" onclick="switchTab('ideas', this)">💡 Content Ideas</button>
-  <button class="tool-tab" onclick="switchTab('analytics', this)">📊 Analytics Advice</button>
-  <button class="tool-tab" onclick="switchTab('scripts', this)">✍️ Scripts <span class="lock">★ PRO</span></button>
-  <button class="tool-tab" onclick="switchTab('thumbnails', this)">🖼️ Thumbnails <span class="lock">★ PRO</span></button>
-  <button class="tool-tab" onclick="switchTab('coach', this)">🚀 Growth Coach <span class="lock">★ PRO</span></button>
+<!-- FEATURES -->
+<section id="features">
+  <div class="reveal">
+    <div class="section-tag">Everything You Need</div>
+    <div class="section-title">Your entire growth<br>stack. One platform.</div>
+    <div class="section-desc">Stop bouncing between 10 different tools. CreatorNexusHQ brings everything a creator needs under one roof — powered by AI.</div>
+  </div>
+
+  <div class="features-grid reveal">
+    <div class="feature-card">
+      <span class="feature-icon">🎯</span>
+      <div class="feature-title">Title & Hook Generator</div>
+      <div class="feature-desc">Generate scroll-stopping titles and first-second hooks that make viewers click. Platform-native results every time.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <div class="feature-title">Content Analyzer</div>
+      <div class="feature-desc">Paste your title, description, or script and get a score, detailed feedback, and specific rewrites to improve performance.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏷️</span>
+      <div class="feature-title">Tag & Hashtag Analyzer</div>
+      <div class="feature-desc">Score your existing tags, find what's missing, and get a ready-to-copy optimized tag set for every platform.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🖼️</span>
+      <div class="feature-title">Thumbnail Analyzer</div>
+      <div class="feature-desc">Upload your thumbnail and get an AI-powered score across 5 dimensions with specific improvements to boost CTR.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">✨</span>
+      <div class="feature-title">AI Thumbnail Prompt Generator</div>
+      <div class="feature-desc">Get ready-to-paste AI image prompts for Midjourney, DALL-E, and Firefly — create stunning thumbnails without design skills.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔍</span>
+      <div class="feature-title">Competitor Research</div>
+      <div class="feature-desc">Reverse engineer what's working for top channels in your niche. Get their title formulas, tag strategy, and posting patterns.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">💰</span>
+      <div class="feature-title">Monetization Tracker</div>
+      <div class="feature-desc">Track your progress toward monetization on YouTube, Twitch, TikTok, Kick, Rumble, and Instagram in real time.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🗓️</span>
+      <div class="feature-title">Posting Schedule & Calendar</div>
+      <div class="feature-desc">Get the best days and times to post on each platform and build a full weekly content calendar tailored to your niche.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🎮</span>
+      <div class="feature-title">Stream Planner</div>
+      <div class="feature-desc">Generate optimized stream titles for Twitch, Kick, YouTube Live, Facebook Gaming, and TikTok Live with platform-specific tips.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🤝</span>
+      <div class="feature-title">Collab Finder</div>
+      <div class="feature-desc">Find creators at your size, in your niche, with a complementary audience. Includes outreach templates ready to send.</div>
+      <span class="feature-tag pro">Pro</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔥</span>
+      <div class="feature-title">Trend Tracker</div>
+      <div class="feature-desc">See what's trending right now in your niche across YouTube, TikTok, Instagram, and Facebook. Jump on trends before they peak.</div>
+      <span class="feature-tag pro">Pro</span>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📚</span>
+      <div class="feature-title">Creator Resources</div>
+      <div class="feature-desc">A curated library of the best free and freemium tools for creators — editing, design, music, analytics, streaming, and more.</div>
+      <span class="feature-tag free">Free</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto 48px">
+    <div class="section-tag">Simple by Design</div>
+    <div class="section-title">Up and running in minutes</div>
+    <div class="section-desc" style="margin:0 auto">No setup, no learning curve. Just tell us about your content and let the AI do the work.</div>
+  </div>
+
+  <div class="how-grid reveal">
+    <div class="how-card">
+      <div class="how-icon">📝</div>
+      <div class="how-title">Tell us about your content</div>
+      <div class="how-desc">Enter your niche, platform, style, and what you're working on. No complicated setup — just a few fields.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">⚡</div>
+      <div class="how-title">AI generates your strategy</div>
+      <div class="how-desc">Our AI analyzes your input and generates titles, hooks, tags, schedules, and insights tailored specifically to you.</div>
+    </div>
+    <div class="how-card">
+      <div class="how-icon">📈</div>
+      <div class="how-title">Publish and grow</div>
+      <div class="how-desc">Copy, apply, and watch your numbers move. Come back anytime to analyze, refine, and keep growing.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PLATFORMS -->
+<section id="platforms">
+  <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto 48px">
+    <div class="section-tag">Every Platform</div>
+    <div class="section-title">Built for where you create</div>
+    <div class="section-desc" style="margin:0 auto">Whether you're uploading, going live, or posting Reels — we've got tools built specifically for how each platform works.</div>
+  </div>
+
+  <div class="platforms-showcase reveal">
+    <div class="platform-card">
+      <div class="platform-card-icon">▶️</div>
+      <div class="platform-card-name">YouTube</div>
+      <div class="platform-card-desc">Titles, hooks, tags, thumbnails, analytics, monetization tracking</div>
+    </div>
+    <div class="platform-card">
+      <div class="platform-card-icon">🟣</div>
+      <div class="platform-card-name">Twitch</div>
+      <div class="platform-card-desc">Stream titles, affiliate tracker, schedule optimizer, collab finder</div>
+    </div>
+    <div class="platform-card">
+      <div class="platform-card-icon">🎵</div>
+      <div class="platform-card-name">TikTok</div>
+      <div class="platform-card-desc">Hook generator, hashtag analyzer, trend tracker, monetization</div>
+    </div>
+    <div class="platform-card">
+      <div class="platform-card-icon">🟢</div>
+      <div class="platform-card-name">Kick</div>
+      <div class="platform-card-desc">Stream planning, monetization tracker, vertical streaming tips</div>
+    </div>
+    <div class="platform-card">
+      <div class="platform-card-icon">📷</div>
+      <div class="platform-card-name">Instagram</div>
+      <div class="platform-card-desc">Reels hooks, hashtag strategy, trend tracker, monetization</div>
+    </div>
+    <div class="platform-card">
+      <div class="platform-card-icon">🔴</div>
+      <div class="platform-card-name">Rumble</div>
+      <div class="platform-card-desc">Title generator, monetization tracker, growth strategy</div>
+    </div>
+    <div class="platform-card">
+      <div class="platform-card-icon">🎮</div>
+      <div class="platform-card-name">Facebook Gaming</div>
+      <div class="platform-card-desc">Stream titles, community content strategy, monetization</div>
+    </div>
+    <div class="platform-card">
+      <div class="platform-card-icon">🌐</div>
+      <div class="platform-card-name">More Coming</div>
+      <div class="platform-card-desc">New platforms and features added regularly based on creator feedback</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto 48px">
+    <div class="section-tag">Simple Pricing</div>
+    <div class="section-title">Start free. Upgrade when you're ready.</div>
+    <div class="section-desc" style="margin:0 auto">No hidden fees. No complicated tiers. Free gets you far — Pro takes you all the way.</div>
+  </div>
+
+  <div class="pricing-toggle reveal">
+    Billed monthly or yearly — pick below
+    <span class="save-badge">Save $29 on yearly</span>
+  </div>
+
+  <div class="pricing-grid reveal">
+    <div class="pricing-card">
+      <div class="pricing-name">Free</div>
+      <div class="pricing-price">$0<span>/mo</span></div>
+      <div class="pricing-period">Forever free. No card needed.</div>
+      <ul class="pricing-features">
+        <li>Title & Hook Generator (5/day)</li>
+        <li>CTA Builder</li>
+        <li>Content Ideas</li>
+        <li>Tag & Hashtag Analyzer</li>
+        <li>Thumbnail Analyzer (3/day)</li>
+        <li>AI Thumbnail Prompt Generator</li>
+        <li>Competitor Research (3/day)</li>
+        <li>Monetization Tracker</li>
+        <li>Stream Planner (5/day)</li>
+        <li>Schedule & Calendar Builder</li>
+        <li>Creator Resources Library</li>
+        <li class="locked">Collab Finder</li>
+        <li class="locked">Trend Tracker</li>
+        <li class="locked">Unlimited generations</li>
+      </ul>
+      <a href="creatornexushq-app.html" class="pricing-btn free">Get Started Free</a>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="pricing-popular">MOST POPULAR</div>
+      <div class="pricing-name">Pro</div>
+      <div class="pricing-price">$9<span>/mo</span></div>
+      <div class="pricing-period">Or $79/yr — save $29</div>
+      <ul class="pricing-features">
+        <li>Everything in Free</li>
+        <li>Unlimited AI generations</li>
+        <li>Collab Finder + outreach templates</li>
+        <li>Trend Tracker — all platforms</li>
+        <li>Monetization action plans</li>
+        <li>Cross-platform growth strategy</li>
+        <li>Priority support</li>
+        <li>Early access to new features</li>
+      </ul>
+      <a href="creatornexushq-app.html" class="pricing-btn pro-monthly" style="margin-bottom:10px;display:block">Start Pro — $9/mo</a>
+      <a href="creatornexushq-app.html" class="pricing-btn pro-yearly">Best Value — $79/yr</a>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto 48px">
+    <div class="section-tag">FAQ</div>
+    <div class="section-title">Questions answered</div>
+  </div>
+
+  <div class="faq-list reveal">
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        Do I need a credit card to start?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">No. The free plan requires zero payment information. Just go to the app and start using it immediately.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        What platforms does CreatorNexusHQ support?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">YouTube, Twitch, TikTok, Kick, Instagram, Rumble, and Facebook Gaming. We're constantly adding support for new platforms based on creator feedback.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        How is this different from vidIQ or TubeBuddy?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">vidIQ and TubeBuddy are great YouTube-specific tools focused on keyword data. CreatorNexusHQ covers every platform, goes beyond keywords into full content strategy, and uses AI to generate actual content — not just data.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        Is it good for small creators just starting out?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">Absolutely — that's exactly who it's built for. The monetization tracker helps you see your path, the title generator levels the playing field, and the free tier gives you everything you need to get started without spending a dollar.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        Can I cancel my Pro subscription anytime?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">Yes. Cancel anytime with no questions asked. You'll keep Pro access until the end of your billing period.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFAQ(this)">
+        Do I need to connect my social accounts?
+        <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer">No — all the AI tools work without connecting anything. Connecting your accounts unlocks automatic stat pulling and more personalized insights, but it's completely optional.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="final-cta reveal">
+  <h2>Your channel won't grow<br>by waiting.</h2>
+  <p>Every day you post without a strategy is a missed opportunity. Start using CreatorNexusHQ today — for free.</p>
+  <a href="creatornexushq-app.html" class="btn-primary" style="display:inline-flex">🚀 Launch Your Growth — It's Free</a>
+  <div style="margin-top:16px;font-size:13px;color:var(--muted)">No credit card · No setup · Start in 60 seconds</div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
-
-  <!-- TITLES & HOOKS -->
-  <div id="tab-titles" class="tool-section active">
-    <div class="form-card">
-      <h2>Title & Hook Generator</h2>
-      <p>Tell us about your clip or video and we'll generate click-worthy titles and scroll-stopping hooks.</p>
-
-      <div class="form-grid">
-        <div class="field">
-          <label>Platform</label>
-          <div class="platform-pills">
-            <div class="pill selected" onclick="selectPill(this, 'platform-titles')">YouTube</div>
-            <div class="pill" onclick="selectPill(this, 'platform-titles')">TikTok</div>
-            <div class="pill" onclick="selectPill(this, 'platform-titles')">Instagram</div>
-            <div class="pill" onclick="selectPill(this, 'platform-titles')">Twitch</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Content Type</label>
-          <select id="title-content-type">
-            <option>Gaming clip</option>
-            <option>Funny/reaction moment</option>
-            <option>Tutorial / how-to</option>
-            <option>Challenge</option>
-            <option>Vlog / story</option>
-            <option>Meta / loadout</option>
-            <option>Rage moment</option>
-            <option>Clutch play</option>
-          </select>
-        </div>
-        <div class="field full-width">
-          <label>Describe your video</label>
-          <textarea id="title-desc" rows="3" placeholder="e.g. I 1v4'd a squad and quickscoped the last guy to finish it..."></textarea>
-        </div>
-        <div class="field">
-          <label>Tone</label>
-          <select id="title-tone">
-            <option>Hype / excited</option>
-            <option>Funny / mocking</option>
-            <option>Cocky / confident</option>
-            <option>Disbelief / shocked</option>
-            <option>Rage / frustrated</option>
-            <option>Wholesome</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Video length</label>
-          <select id="title-length">
-            <option>Under 60s (Short)</option>
-            <option>1–5 minutes</option>
-            <option>5–15 minutes</option>
-            <option>15+ minutes</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="gen-btn" onclick="generate('titles')" id="btn-titles">
-        <span>✦</span> Generate Titles & Hooks
-      </button>
-    </div>
-
-    <div class="results-card" id="results-titles"></div>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Creator<span>NexusHQ</span></div>
+  <div class="footer-links">
+    <a href="creatornexushq-app.html" class="footer-link">Tools</a>
+    <a href="creatornexushq-platforms.html" class="footer-link">Platforms</a>
+    <a href="creatornexushq-resources.html" class="footer-link">Resources</a>
+    <a href="#pricing" class="footer-link">Pricing</a>
+    <a href="#faq" class="footer-link">FAQ</a>
   </div>
-
-  <!-- CTAs -->
-  <div id="tab-ctas" class="tool-section">
-    <div class="form-card">
-      <h2>CTA Builder</h2>
-      <p>Get subscribe, follow, and engagement CTAs tailored to your content style and platform.</p>
-
-      <div class="form-grid">
-        <div class="field">
-          <label>Platform</label>
-          <div class="platform-pills">
-            <div class="pill selected" onclick="selectPill(this, 'platform-ctas')">YouTube</div>
-            <div class="pill" onclick="selectPill(this, 'platform-ctas')">TikTok</div>
-            <div class="pill" onclick="selectPill(this, 'platform-ctas')">Instagram</div>
-            <div class="pill" onclick="selectPill(this, 'platform-ctas')">Twitch</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>CTA Goal</label>
-          <select id="cta-goal">
-            <option>Get subscribers / followers</option>
-            <option>Get likes</option>
-            <option>Drive comments</option>
-            <option>Promote another video</option>
-            <option>Get stream viewers</option>
-          </select>
-        </div>
-        <div class="field full-width">
-          <label>Your content niche</label>
-          <input type="text" id="cta-niche" placeholder="e.g. Warzone gaming clips, funny moments...">
-        </div>
-        <div class="field">
-          <label>Tone / personality</label>
-          <select id="cta-tone">
-            <option>Funny / casual</option>
-            <option>Hype / energetic</option>
-            <option>Chill / laid back</option>
-            <option>Confident / direct</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Video format</label>
-          <select id="cta-format">
-            <option>Short (under 60s)</option>
-            <option>Long form video</option>
-            <option>Live stream</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="gen-btn" onclick="generate('ctas')" id="btn-ctas">
-        <span>✦</span> Generate CTAs
-      </button>
-    </div>
-
-    <div class="results-card" id="results-ctas"></div>
-  </div>
-
-  <!-- CONTENT IDEAS -->
-  <div id="tab-ideas" class="tool-section">
-    <div class="form-card">
-      <h2>Content Ideas</h2>
-      <p>Get a batch of fresh video ideas based on your niche, style, and what's trending.</p>
-
-      <div class="form-grid">
-        <div class="field">
-          <label>Platform</label>
-          <div class="platform-pills">
-            <div class="pill selected" onclick="selectPill(this, 'platform-ideas')">YouTube</div>
-            <div class="pill" onclick="selectPill(this, 'platform-ideas')">TikTok</div>
-            <div class="pill" onclick="selectPill(this, 'platform-ideas')">Instagram</div>
-            <div class="pill" onclick="selectPill(this, 'platform-ideas')">Twitch</div>
-          </div>
-        </div>
-        <div class="field">
-          <label>Content niche</label>
-          <input type="text" id="ideas-niche" placeholder="e.g. Warzone, cooking, fitness...">
-        </div>
-        <div class="field full-width">
-          <label>What's working for you lately?</label>
-          <textarea id="ideas-working" rows="2" placeholder="e.g. Reaction clips and 1v4 moments get the most views..."></textarea>
-        </div>
-        <div class="field">
-          <label>Subscriber count</label>
-          <select id="ideas-subs">
-            <option>Under 1K</option>
-            <option>1K–10K</option>
-            <option>10K–100K</option>
-            <option>100K+</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>How many ideas?</label>
-          <select id="ideas-count">
-            <option>5 ideas</option>
-            <option>10 ideas</option>
-            <option>15 ideas</option>
-          </select>
-        </div>
-      </div>
-
-      <button class="gen-btn" onclick="generate('ideas')" id="btn-ideas">
-        <span>✦</span> Generate Ideas
-      </button>
-    </div>
-
-    <div class="results-card" id="results-ideas"></div>
-  </div>
-
-  <!-- ANALYTICS ADVICE -->
-  <div id="tab-analytics" class="tool-section">
-    <div class="form-card">
-      <h2>Analytics Advice</h2>
-      <p>Paste in your channel stats and get specific, actionable advice on what to improve.</p>
-
-      <div class="form-grid">
-        <div class="field">
-          <label>Views (last 28 days)</label>
-          <input type="text" id="an-views" placeholder="e.g. 21,300">
-        </div>
-        <div class="field">
-          <label>Subscribers gained</label>
-          <input type="text" id="an-subs" placeholder="e.g. +13">
-        </div>
-        <div class="field">
-          <label>Watch time (hours)</label>
-          <input type="text" id="an-watchtime" placeholder="e.g. 64.8">
-        </div>
-        <div class="field">
-          <label>Avg view percentage</label>
-          <input type="text" id="an-avp" placeholder="e.g. 55%">
-        </div>
-        <div class="field full-width">
-          <label>Top performing content</label>
-          <textarea id="an-top" rows="3" placeholder="e.g. No Better Feeling 4.7K views, 1v4 clip 2.8K views..."></textarea>
-        </div>
-        <div class="field full-width">
-          <label>What's your biggest challenge right now?</label>
-          <textarea id="an-challenge" rows="2" placeholder="e.g. Getting views but not converting to subscribers..."></textarea>
-        </div>
-      </div>
-
-      <button class="gen-btn" onclick="generate('analytics')" id="btn-analytics">
-        <span>✦</span> Get Analytics Advice
-      </button>
-    </div>
-
-    <div class="results-card" id="results-analytics"></div>
-  </div>
-
-  <!-- SCRIPTS (PRO) -->
-  <div id="tab-scripts" class="tool-section">
-    <div class="locked-overlay">
-      <div class="lock-icon">✍️</div>
-      <h2>Video Script Writer</h2>
-      <p>Get full video scripts with hooks, story structure, CTAs, and outro — written in your voice. Upgrade to Pro to unlock.</p>
-      <button class="gen-btn" style="max-width: 280px;margin:0 auto" onclick="openModal()">
-        <span>★</span> Unlock with Pro
-      </button>
-    </div>
-  </div>
-
-  <!-- THUMBNAILS (PRO) -->
-  <div id="tab-thumbnails" class="tool-section">
-    <div class="locked-overlay">
-      <div class="lock-icon">🖼️</div>
-      <h2>Thumbnail Feedback</h2>
-      <p>Upload your thumbnail and get detailed feedback on what's working, what's not, and how to improve click-through rate.</p>
-      <button class="gen-btn" style="max-width: 280px;margin:0 auto" onclick="openModal()">
-        <span>★</span> Unlock with Pro
-      </button>
-    </div>
-  </div>
-
-  <!-- COACH (PRO) -->
-  <div id="tab-coach" class="tool-section">
-    <div class="locked-overlay">
-      <div class="lock-icon">🚀</div>
-      <h2>Growth Strategy Coach</h2>
-      <p>Have a real conversation with your AI growth coach. Get a custom 30-day plan, posting schedule, and strategy tailored to your channel.</p>
-      <button class="gen-btn" style="max-width: 280px;margin:0 auto" onclick="openModal()">
-        <span>★</span> Unlock with Pro
-      </button>
-    </div>
-  </div>
-
-</div>
-
-<!-- PRICING MODAL -->
-<div class="modal-overlay" id="pricingModal" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Upgrade to Pro ★</h2>
-      <button class="close-btn" onclick="closeModal()">✕</button>
-    </div>
-    <p>Unlock unlimited generations, scripts, thumbnail feedback, and your personal AI growth coach.</p>
-
-    <div class="plans">
-      <div class="plan-card">
-        <div class="plan-name">Monthly</div>
-        <div class="plan-price">$9<span>/mo</span></div>
-        <div class="plan-desc">Billed monthly, cancel anytime</div>
-        <ul class="plan-features">
-          <li>Unlimited generations</li>
-          <li>Video script writer</li>
-          <li>Thumbnail feedback</li>
-          <li>Growth strategy coach</li>
-          <li>Priority support</li>
-        </ul>
-        <button class="plan-btn monthly" onclick="selectPlan('monthly')">Start Monthly — $9/mo</button>
-      </div>
-
-      <div class="plan-card recommended">
-        <div class="rec-tag">BEST VALUE</div>
-        <div class="plan-name">Yearly</div>
-        <div class="plan-price">$79<span>/yr</span></div>
-        <div class="plan-desc">Save $29 vs monthly billing</div>
-        <ul class="plan-features">
-          <li>Everything in Monthly</li>
-          <li>2 months free</li>
-          <li>Early access to new tools</li>
-          <li>Dedicated growth reviews</li>
-          <li>Priority support</li>
-        </ul>
-        <button class="plan-btn yearly" onclick="selectPlan('yearly')">Start Yearly — $79/yr</button>
-      </div>
-    </div>
-
-    <div class="modal-note">🔒 Secure checkout · Cancel anytime · No hidden fees</div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+  <div class="footer-copy">© 2026 CreatorNexusHQ. All rights reserved.</div>
+</footer>
 
 <script>
-  let usageLeft = 5;
-  let isPro = false;
-  let selectedPlatforms = {};
-
-  // TAB SWITCHING
-  function switchTab(name, btn) {
-    document.querySelectorAll('.tool-section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
-    btn.classList.add('active');
+  // FAQ toggle
+  function toggleFAQ(btn) {
+    const answer = btn.nextElementSibling;
+    const isOpen = btn.classList.contains('open');
+    document.querySelectorAll('.faq-question').forEach(q => { q.classList.remove('open'); q.nextElementSibling.classList.remove('open'); });
+    if (!isOpen) { btn.classList.add('open'); answer.classList.add('open'); }
   }
 
-  // PLATFORM PILLS
-  function selectPill(pill, group) {
-    const container = pill.parentElement;
-    container.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-    pill.classList.add('selected');
-    selectedPlatforms[group] = pill.textContent;
-  }
-
-  // USAGE
-  function updateUsage() {
-    document.getElementById('usageCount').textContent = usageLeft;
-    const pct = (usageLeft / 5) * 100;
-    document.getElementById('usageFill').style.width = pct + '%';
-    document.getElementById('usageFill').style.background =
-      pct > 50 ? 'linear-gradient(90deg, var(--accent), var(--accent3))' :
-      pct > 20 ? 'linear-gradient(90deg, var(--gold), #f97316)' :
-                 'linear-gradient(90deg, var(--red), #f97316)';
-    if (isPro) {
-      document.getElementById('usageBar').style.display = 'none';
-    }
-  }
-
-  // GENERATE
-  // Filled in once the Worker is deployed (see worker/README or ask Claude
-  // to update this after `wrangler deploy` prints the real *.workers.dev URL).
-  const WORKER_URL = 'https://creatornexushq-api.tjlangston15.workers.dev/generate';
-
-  async function generate(tool) {
-    if (!window.__currentUser) {
-      window.location.href = 'creatornexushq-auth.html';
-      return;
-    }
-
-    const btn = document.getElementById('btn-' + tool);
-    const resultsEl = document.getElementById('results-' + tool);
-
-    btn.disabled = true;
-    btn.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Generating...';
-
-    resultsEl.className = 'results-card visible';
-    resultsEl.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> CreatorNexusHQ is thinking...</div>';
-
-    try {
-      const idToken = await window.__currentUser.getIdToken();
-      const response = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + idToken,
-        },
-        body: JSON.stringify({ tool, ...collectFields(tool) }),
-      });
-
-      if (response.status === 401) {
-        window.location.href = 'creatornexushq-auth.html';
-        return;
-      }
-
-      if (response.status === 429) {
-        const data = await response.json().catch(() => ({}));
-        openModal();
-        showToast(data.message || 'You\'ve used all your free generations today. Upgrade to Pro for unlimited access!');
-        resultsEl.className = 'results-card';
-        return;
-      }
-
-      const data = await response.json();
-
-      if (!response.ok || !data.text) {
-        let msg = data.message || 'Something went wrong. Please try again.';
-        if (data.detail) msg += '<br><span style="color:var(--muted);font-size:12px">' + String(data.detail).slice(0, 400) + '</span>';
-        resultsEl.innerHTML = '<p style="color:var(--red);font-size:14px">' + msg + '</p>';
-        return;
-      }
-
-      if (typeof data.remaining === 'number') {
-        usageLeft = data.remaining;
-        updateUsage();
-      }
-
-      renderResults(tool, resultsEl, data.text);
-
-    } catch (err) {
-      resultsEl.innerHTML = '<p style="color:var(--gold);font-size:14px">🔧 Our AI backend is still being connected. This tool isn\'t live yet — check back soon.</p>';
-    } finally {
-      // Runs on every exit path (success, 401, 429, error, or thrown
-      // exception) so the button never gets stuck on "Generating...".
-      btn.disabled = false;
-      btn.innerHTML = '<span>✦</span> Generate ' + getToolLabel(tool);
-    }
-  }
-
-  function getToolLabel(tool) {
-    const labels = { titles: 'Titles & Hooks', ctas: 'CTAs', ideas: 'Ideas', analytics: 'Analytics Advice' };
-    return labels[tool] || '';
-  }
-
-  // Collects form field values into a plain object. Prompt text itself is
-  // now built server-side (see worker/src/index.js) so the API key never
-  // has to touch the browser.
-  function collectFields(tool) {
-    if (tool === 'titles') {
-      return {
-        platform: document.querySelector('#tab-titles .pill.selected')?.textContent || 'YouTube',
-        contentType: document.getElementById('title-content-type').value,
-        description: document.getElementById('title-desc').value,
-        tone: document.getElementById('title-tone').value,
-        length: document.getElementById('title-length').value,
-      };
-    }
-
-    if (tool === 'ctas') {
-      return {
-        platform: document.querySelector('#tab-ctas .pill.selected')?.textContent || 'YouTube',
-        goal: document.getElementById('cta-goal').value,
-        niche: document.getElementById('cta-niche').value,
-        tone: document.getElementById('cta-tone').value,
-        format: document.getElementById('cta-format').value,
-      };
-    }
-
-    if (tool === 'ideas') {
-      return {
-        platform: document.querySelector('#tab-ideas .pill.selected')?.textContent || 'YouTube',
-        niche: document.getElementById('ideas-niche').value,
-        working: document.getElementById('ideas-working').value,
-        subs: document.getElementById('ideas-subs').value,
-        count: document.getElementById('ideas-count').value.split(' ')[0],
-      };
-    }
-
-    if (tool === 'analytics') {
-      return {
-        views: document.getElementById('an-views').value,
-        subs: document.getElementById('an-subs').value,
-        watchtime: document.getElementById('an-watchtime').value,
-        avp: document.getElementById('an-avp').value,
-        top: document.getElementById('an-top').value,
-        challenge: document.getElementById('an-challenge').value,
-      };
-    }
-  }
-
-  function renderResults(tool, el, text) {
-    el.innerHTML = '';
-
-    const header = document.createElement('div');
-    header.className = 'results-header';
-    header.innerHTML = `
-      <span class="results-title">✦ Results</span>
-      <button class="copy-all-btn" onclick="copyAll('${tool}')">Copy All</button>
-    `;
-    el.appendChild(header);
-
-    // Parse into items
-    const lines = text.split('\n').filter(l => l.trim());
-    let hasItems = false;
-
-    lines.forEach(line => {
-      const trimmed = line.trim();
-      if (!trimmed) return;
-
-      // Check if it's a labeled item
-      const match = trimmed.match(/^([A-Z][A-Z\s\d]+):\s*(.+)/);
-      if (match) {
-        hasItems = true;
-        const item = document.createElement('div');
-        item.className = 'result-item';
-        item.innerHTML = `
-          <span class="result-item-text"><strong style="color:var(--accent3);font-size:11px;letter-spacing:0.5px;text-transform:uppercase">${match[1]}</strong><br>${match[2]}</span>
-          <button class="copy-btn" onclick="copyItem(this, \`${match[2].replace(/`/g, '\\`')}\`)">Copy</button>
-        `;
-        el.appendChild(item);
-      } else {
-        // Plain text
-        const p = document.createElement('p');
-        p.className = 'result-text';
-        p.style.cssText = 'font-size:14px;color:var(--muted);line-height:1.7;padding:8px 0';
-        p.textContent = trimmed;
-        el.appendChild(p);
-      }
-    });
-
-    if (!hasItems) {
-      const p = document.createElement('p');
-      p.className = 'result-text';
-      p.textContent = text;
-      el.appendChild(p);
-    }
-
-    // Store text for copy all
-    el.dataset.rawText = text;
-  }
-
-  function copyItem(btn, text) {
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = '✓';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
-    });
-  }
-
-  function copyAll(tool) {
-    const el = document.getElementById('results-' + tool);
-    navigator.clipboard.writeText(el.dataset.rawText || '').then(() => {
-      showToast('All results copied to clipboard!');
-    });
-  }
-
-  // MODAL
-  function openModal() {
-    document.getElementById('pricingModal').classList.add('open');
-  }
-
-  function closeModal() {
-    document.getElementById('pricingModal').classList.remove('open');
-  }
-
-  function closeModalOutside(e) {
-    if (e.target === document.getElementById('pricingModal')) closeModal();
-  }
-
-  function selectPlan(type) {
-    isPro = true;
-    usageLeft = 999;
-    const badge = document.getElementById('sidebarPlan');
-    if (badge) {
-      badge.textContent = '★ PRO PLAN';
-      badge.classList.add('pro');
-    }
-    updateUsage();
-    closeModal();
-    showToast('🎉 Welcome to Pro! All features unlocked.');
-  }
-
-  // TOAST
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3000);
-  }
-
-  updateUsage();
-</script>
-</div></div>
-
-
-
-
-</div></div>
-</div>
-</div>
-<!-- EMAIL CAPTURE MODAL -->
-<div id="emailCaptureModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:9998;align-items:center;justify-content:center;padding:20px">
-  <div style="background:#0e0e1a;border:1px solid #252540;border-radius:20px;padding:32px;max-width:460px;width:100%;position:relative">
-    <button onclick="closeEmailCapture()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#5a5a90;font-size:20px;cursor:pointer">✕</button>
-    <div style="font-size:32px;margin-bottom:14px">🚀</div>
-    <div style="font-family:Syne,sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">You have hit your daily limit</div>
-    <div style="font-size:13px;color:#5a5a90;margin-bottom:22px;line-height:1.6">Create a free account to unlock more generations and save your work. No credit card needed.</div>
-    <a href="creatornexushq-auth.html" style="display:flex;align-items:center;justify-content:center;width:100%;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:12px;padding:14px;color:white;font-family:Syne,sans-serif;font-size:14px;font-weight:800;text-decoration:none;margin-bottom:10px">Create Free Account →</a>
-    <a href="creatornexushq-auth.html" style="display:flex;align-items:center;justify-content:center;width:100%;background:none;border:1px solid #252540;border-radius:12px;padding:12px;color:#eeeeff;font-family:Syne,sans-serif;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:18px">Already have an account? Log in</a>
-    <div style="border-top:1px solid #1a1a2e;padding-top:16px">
-      <div style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;color:#5a5a90;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Upgrade to Pro for unlimited access</div>
-      <div style="display:flex;gap:8px">
-        <a href="creatornexushq-auth.html" style="flex:1;text-align:center;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:10px;padding:11px;color:#000;font-family:Syne,sans-serif;font-size:12px;font-weight:800;text-decoration:none">★ Pro — $9/mo</a>
-        <a href="creatornexushq-auth.html" style="flex:1;text-align:center;background:linear-gradient(135deg,#f59e0b,#f97316);border-radius:10px;padding:11px;color:#000;font-family:Syne,sans-serif;font-size:12px;font-weight:800;text-decoration:none">Best Value — $79/yr</a>
-      </div>
-    </div>
-  </div>
-</div>
-<script>
-function showEmailCapture(){document.getElementById("emailCaptureModal").style.display="flex";}
-function closeEmailCapture(){document.getElementById("emailCaptureModal").style.display="none";}
-document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("emailCaptureModal");if(m)m.addEventListener("click",function(e){if(e.target===this)closeEmailCapture();});});
-</script>
-
-<!-- FIREBASE AUTH GATE — the AI tools need a real logged-in user so the
-     Worker can enforce per-account usage limits server-side. -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc",
-    authDomain: "creatornexushq-eaf70.firebaseapp.com",
-    projectId: "creatornexushq-eaf70",
-    storageBucket: "creatornexushq-eaf70.firebasestorage.app",
-    messagingSenderId: "867089002449",
-    appId: "1:867089002449:web:cadae5b363375020cdbaf0"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-
-  // Disable generate buttons until we know whether the visitor is logged in,
-  // so a click during that brief window can't slip through with no token.
-  document.querySelectorAll('.gen-btn').forEach(b => b.disabled = true);
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = 'creatornexushq-auth.html';
-      return;
-    }
-    window.__currentUser = user;
-    document.querySelectorAll('.gen-btn').forEach(b => b.disabled = false);
-
-    const emailEl = document.getElementById('accountEmail');
-    if (emailEl) emailEl.textContent = user.email || user.displayName || 'Signed in';
-  });
-
-  async function handleSignOut() {
-    try {
-      await signOut(auth);
-    } finally {
-      window.location.href = 'creatornexushq-auth.html';
-    }
-  }
-
-  const signOutBtn = document.getElementById('signOutBtn');
-  if (signOutBtn) signOutBtn.addEventListener('click', handleSignOut);
-
-  const mobileSignOutBtn = document.getElementById('mobileSignOutBtn');
-  if (mobileSignOutBtn) mobileSignOutBtn.addEventListener('click', handleSignOut);
+  // Scroll reveal — rootMargin triggers the reveal slightly before an
+  // element enters the viewport so fast scrolling (common on mobile)
+  // doesn't show a blank gap while waiting for the fade-in.
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
 </body>
 </html>

@@ -43,8 +43,14 @@ nav {
 .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; background: linear-gradient(135deg, #c084fc, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
 .nav-logo span { -webkit-text-fill-color: var(--text); }
 .nav-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
-.nav-right a { color: var(--accent3); text-decoration: none; font-weight: 600; }
+.nav-right a { color: var(--accent3); text-decoration: none; font-weight: 600; white-space: nowrap; }
 .nav-right a:hover { text-decoration: underline; }
+
+@media (max-width: 480px) {
+  nav { padding: 14px 16px; }
+  .nav-logo { font-size: 16px; }
+  #nav-prompt { display: none; }
+}
 
 /* MAIN */
 .main {
@@ -312,7 +318,7 @@ footer {
 
 <!-- NAV -->
 <nav>
-  <a href="creatornexushq-landing.html" class="nav-logo">Creator<span>NexusHQ</span></a>
+  <a href="index.html" class="nav-logo">Creator<span>NexusHQ</span></a>
   <div class="nav-right">
     <span id="nav-prompt">Already have an account?</span>
     <a href="#" id="nav-switch" onclick="switchToLogin()">Log in</a>
@@ -453,10 +459,10 @@ footer {
 
 <!-- FOOTER -->
 <footer>
-  <a href="creatornexushq-landing.html" class="footer-link">Home</a>
+  <a href="index.html" class="footer-link">Home</a>
   <a href="creatornexushq-terms.html" class="footer-link">Terms</a>
   <a href="creatornexushq-privacy.html" class="footer-link">Privacy</a>
-  <a href="index.html" class="footer-link">App</a>
+  <a href="creatornexushq-app.html" class="footer-link">App</a>
   <span style="font-size:12px;color:var(--muted)">© 2026 CreatorNexusHQ</span>
 </footer>
 
@@ -486,7 +492,7 @@ footer {
   // Check if already logged in
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      window.location.href = 'index.html';
+      window.location.href = 'creatornexushq-app.html';
     }
   });
 
@@ -529,7 +535,7 @@ footer {
       await updateProfile(result.user, { displayName: name });
       await saveUserToFirestore(result.user, { name, platform });
       showAlert(alert, 'success', 'Account created! Redirecting...');
-      setTimeout(() => window.location.href = 'index.html', 1200);
+      setTimeout(() => window.location.href = 'creatornexushq-app.html', 1200);
     } catch(err) {
       btn.disabled = false;
       btn.innerHTML = 'Create Free Account';
@@ -553,7 +559,7 @@ footer {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = 'index.html';
+      window.location.href = 'creatornexushq-app.html';
     } catch(err) {
       btn.disabled = false;
       btn.innerHTML = 'Log In to CreatorNexusHQ';
@@ -566,7 +572,7 @@ footer {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       await saveUserToFirestore(result.user);
-      window.location.href = 'index.html';
+      window.location.href = 'creatornexushq-app.html';
     } catch(err) {
       const alertEl = document.getElementById('signup-alert') || document.getElementById('login-alert');
       showAlert(alertEl, 'error', 'Google sign-in failed. Please try again.');
