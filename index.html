@@ -102,10 +102,23 @@ nav {
 }
 .nav-cta:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
 
+.nav-login {
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.nav-login:hover { background: var(--surface); color: var(--accent3); }
+
 @media (max-width: 768px) {
   nav { padding: 16px 20px; }
   .nav-links .nav-link { display: none; }
   .nav-logo { font-size: 17px; }
+  .nav-login { font-size: 12px; padding: 8px 8px; }
   .nav-cta {
     font-size: 12px;
     padding: 8px 14px;
@@ -596,7 +609,8 @@ footer {
     <a href="#platforms" class="nav-link">Platforms</a>
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="#faq" class="nav-link">FAQ</a>
-    <a href="creatornexushq-app.html" class="nav-cta">Start for Free →</a>
+    <a href="creatornexushq-auth.html?mode=login" class="nav-login">Log In</a>
+    <a href="creatornexushq-auth.html" class="nav-cta">Sign Up Free →</a>
   </div>
 </nav>
 
@@ -852,8 +866,9 @@ footer {
         <li>Priority support</li>
         <li>Early access to new features</li>
       </ul>
-      <a href="creatornexushq-app.html" class="pricing-btn pro-monthly" style="margin-bottom:10px;display:block">Start Pro — $9/mo</a>
-      <a href="creatornexushq-app.html" class="pricing-btn pro-yearly">Best Value — $79/yr</a>
+      <a href="creatornexushq-auth.html" class="pricing-btn pro-monthly" style="margin-bottom:10px;display:block">Start Pro — $9/mo</a>
+      <a href="creatornexushq-auth.html" class="pricing-btn pro-yearly">Best Value — $79/yr</a>
+      <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5">Pro billing launches soon — create a free account today and you'll be first in line.</div>
     </div>
   </div>
 </section>

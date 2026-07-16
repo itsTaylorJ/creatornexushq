@@ -640,6 +640,12 @@ footer {
 
   function switchToLogin() { switchTab('login'); return false; }
 
+  // Deep-link support: ?mode=login opens the Log In tab directly
+  // (used by the home page's "Log In" nav link).
+  if (new URLSearchParams(window.location.search).get('mode') === 'login') {
+    switchTab('login');
+  }
+
   function selectPill(pill) {
     pill.closest('.platform-pills').querySelectorAll('.ppill').forEach(p => p.classList.remove('selected'));
     pill.classList.add('selected');

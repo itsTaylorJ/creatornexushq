@@ -1755,16 +1755,10 @@ nav {
   }
 
   function selectPlan(type) {
-    isPro = true;
-    usageLeft = 999;
-    const badge = document.getElementById('sidebarPlan');
-    if (badge) {
-      badge.textContent = '★ PRO PLAN';
-      badge.classList.add('pro');
-    }
-    updateUsage();
+    // Pro billing isn't live yet — be honest about it rather than
+    // fake-activating a plan the server doesn't recognize.
     closeModal();
-    showToast('🎉 Welcome to Pro! All features unlocked.');
+    showToast('Pro billing launches soon — you\'re on the free plan for now.');
   }
 
   // TOAST
