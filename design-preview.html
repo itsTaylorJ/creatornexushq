@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Design Directions — CreatorNexusHQ (internal preview)</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #101014;
+  color: #eeeeff;
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 32px 16px 80px;
+}
+.page-head { max-width: 860px; margin: 0 auto 36px; }
+.page-head h1 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+.page-head p { font-size: 14px; color: #9a9ab5; max-width: 60ch; }
+
+.direction {
+  max-width: 860px;
+  margin: 0 auto 40px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.d-label {
+  padding: 14px 24px;
+  font-size: 13px;
+  display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.d-label strong { font-size: 15px; }
+.d-label span { color: #9a9ab5; }
+
+.d-body { padding: 28px 24px 32px; background: var(--bg); color: var(--text); }
+
+.mini-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
+.mini-logo { font-weight: 700; font-size: 17px; background: var(--gradlogo); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mini-logo span { -webkit-text-fill-color: var(--text); }
+.mini-cta {
+  background: var(--gradbtn);
+  color: var(--btntext);
+  font-size: 12px; font-weight: 700;
+  padding: 9px 18px; border-radius: 10px; text-decoration: none; white-space: nowrap;
+}
+
+.mini-hero { text-align: center; margin-bottom: 34px; }
+.mini-hero h2 { font-size: clamp(28px, 5vw, 40px); font-weight: 700; line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 10px; }
+.mini-hero h2 .grad { background: var(--gradtext); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.mini-hero p { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+.mini-primary {
+  display: inline-block;
+  background: var(--gradbtn);
+  color: var(--btntext);
+  font-size: 14px; font-weight: 700;
+  padding: 13px 28px; border-radius: 12px; text-decoration: none;
+  box-shadow: 0 8px 28px var(--btnglow);
+}
+
+.mini-row { display: flex; gap: 16px; flex-wrap: wrap; }
+.mini-card {
+  flex: 1 1 260px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+}
+.mini-card-icon {
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--gradbtn);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 12px;
+}
+.mini-card-icon svg { width: 18px; height: 18px; stroke: var(--btntext); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mini-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.mini-card p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+.mini-tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 9px; border-radius: 5px; background: var(--freebg); color: var(--freetext); border: 1px solid var(--freeborder); }
+
+.mini-side {
+  flex: 1 1 200px;
+  background: var(--sidebg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 10px;
+}
+.mini-side a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px; margin-bottom: 2px;
+  font-size: 13px; font-weight: 600; text-decoration: none;
+  color: var(--muted); border: 1px solid transparent;
+}
+.mini-side a.active { color: var(--activetext); background: var(--activebg); border-color: var(--activeborder); }
+.mini-side svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ============ A — CURRENT: NEBULA ============ */
+.t-nebula {
+  --bg: #07070f; --surface: #0e0e1a; --sidebg: #0a0a14;
+  --border: #1a1a2e; --text: #eeeeff; --muted: #5a5a90;
+  --gradlogo: linear-gradient(135deg, #c084fc, #06b6d4);
+  --gradtext: linear-gradient(135deg, #a855f7, #06b6d4);
+  --gradbtn: linear-gradient(135deg, #7c3aed, #a855f7);
+  --btntext: #ffffff; --btnglow: rgba(124,58,237,0.3);
+  --freebg: rgba(16,185,129,0.1); --freetext: #10b981; --freeborder: rgba(16,185,129,0.2);
+  --activetext: #c084fc; --activebg: rgba(124,58,237,0.12); --activeborder: rgba(124,58,237,0.2);
+}
+
+/* ============ B — EMBER ============ */
+.t-ember {
+  --bg: #0d0a07; --surface: #171208; --sidebg: #120e08;
+  --border: #2c2314; --text: #f7f0e3; --muted: #9c8b6d;
+  --gradlogo: linear-gradient(135deg, #fbbf24, #fb7185);
+  --gradtext: linear-gradient(135deg, #f59e0b, #fb7185);
+  --gradbtn: linear-gradient(135deg, #f59e0b, #f97316);
+  --btntext: #1c1204; --btnglow: rgba(245,158,11,0.25);
+  --freebg: rgba(251,113,133,0.1); --freetext: #fb7185; --freeborder: rgba(251,113,133,0.25);
+  --activetext: #fbbf24; --activebg: rgba(245,158,11,0.12); --activeborder: rgba(245,158,11,0.25);
+}
+
+/* ============ C — VOLT ============ */
+.t-volt {
+  --bg: #070c09; --surface: #0d1510; --sidebg: #0a110c;
+  --border: #1c2b20; --text: #eafff2; --muted: #64826f;
+  --gradlogo: linear-gradient(135deg, #a3e635, #2dd4bf);
+  --gradtext: linear-gradient(135deg, #a3e635, #2dd4bf);
+  --gradbtn: linear-gradient(135deg, #a3e635, #4ade80);
+  --btntext: #08130a; --btnglow: rgba(163,230,53,0.22);
+  --freebg: rgba(45,212,191,0.1); --freetext: #2dd4bf; --freeborder: rgba(45,212,191,0.25);
+  --activetext: #a3e635; --activebg: rgba(163,230,53,0.1); --activeborder: rgba(163,230,53,0.22);
+}
+
+/* ============ D — STUDIO LIGHT ============ */
+.t-studio {
+  --bg: #f7f7fa; --surface: #ffffff; --sidebg: #ffffff;
+  --border: #e3e3ee; --text: #16162a; --muted: #6d6d8c;
+  --gradlogo: linear-gradient(135deg, #4f46e5, #0891b2);
+  --gradtext: linear-gradient(135deg, #4f46e5, #7c3aed);
+  --gradbtn: linear-gradient(135deg, #4f46e5, #6d28d9);
+  --btntext: #ffffff; --btnglow: rgba(79,70,229,0.25);
+  --freebg: rgba(5,150,105,0.08); --freetext: #059669; --freeborder: rgba(5,150,105,0.25);
+  --activetext: #4f46e5; --activebg: rgba(79,70,229,0.08); --activeborder: rgba(79,70,229,0.2);
+}
+</style>
+</head>
+<body>
+
+<div class="page-head">
+  <h1>Design directions — pick your favorite</h1>
+  <p>Same UI rendered four ways. A is what's live today. Look at each on desktop and your phone, and judge: which one feels like the brand you want creators to remember?</p>
+</div>
+
+<!-- A -->
+<div class="direction t-nebula">
+  <div class="d-label"><strong>A — Nebula (current)</strong><span>Dark + purple→cyan. Familiar to streamers (Twitch energy). Cohesive, safe, but a common "AI SaaS" look.</span></div>
+  <div class="d-body">
+    <div class="mini-nav">
+      <div class="mini-logo">Creator<span>NexusHQ</span></div>
+      <a class="mini-cta" href="#">Sign Up Free →</a>
+    </div>
+    <div class="mini-hero">
+      <h2>Stop Guessing.<br><span class="grad">Start Growing.</span></h2>
+      <p>The all-in-one AI growth platform for content creators.</p>
+      <a class="mini-primary" href="#">Launch Your Growth — It's Free</a>
+    </div>
+    <div class="mini-row">
+      <div class="mini-card">
+        <div class="mini-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h3>Title &amp; Hook Generator</h3>
+        <p>Scroll-stopping titles and first-second hooks that make viewers click.</p>
+        <span class="mini-tag">FREE</span>
+      </div>
+      <div class="mini-side">
+        <a href="#" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Tools</a>
+        <a href="#"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Analyze</a>
+        <a href="#"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Monetization</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- B -->
+<div class="direction t-ember">
+  <div class="d-label"><strong>B — Ember</strong><span>Dark + amber→coral. Warm, premium, energetic — stands apart from the purple AI crowd. "Creator heat."</span></div>
+  <div class="d-body">
+    <div class="mini-nav">
+      <div class="mini-logo">Creator<span>NexusHQ</span></div>
+      <a class="mini-cta" href="#">Sign Up Free →</a>
+    </div>
+    <div class="mini-hero">
+      <h2>Stop Guessing.<br><span class="grad">Start Growing.</span></h2>
+      <p>The all-in-one AI growth platform for content creators.</p>
+      <a class="mini-primary" href="#">Launch Your Growth — It's Free</a>
+    </div>
+    <div class="mini-row">
+      <div class="mini-card">
+        <div class="mini-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h3>Title &amp; Hook Generator</h3>
+        <p>Scroll-stopping titles and first-second hooks that make viewers click.</p>
+        <span class="mini-tag">FREE</span>
+      </div>
+      <div class="mini-side">
+        <a href="#" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Tools</a>
+        <a href="#"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Analyze</a>
+        <a href="#"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Monetization</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- C -->
+<div class="direction t-volt">
+  <div class="d-label"><strong>C — Volt</strong><span>Dark + electric lime→teal. Gaming energy (Kick/Spotify lineage). Loud, young, unmistakable.</span></div>
+  <div class="d-body">
+    <div class="mini-nav">
+      <div class="mini-logo">Creator<span>NexusHQ</span></div>
+      <a class="mini-cta" href="#">Sign Up Free →</a>
+    </div>
+    <div class="mini-hero">
+      <h2>Stop Guessing.<br><span class="grad">Start Growing.</span></h2>
+      <p>The all-in-one AI growth platform for content creators.</p>
+      <a class="mini-primary" href="#">Launch Your Growth — It's Free</a>
+    </div>
+    <div class="mini-row">
+      <div class="mini-card">
+        <div class="mini-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h3>Title &amp; Hook Generator</h3>
+        <p>Scroll-stopping titles and first-second hooks that make viewers click.</p>
+        <span class="mini-tag">FREE</span>
+      </div>
+      <div class="mini-side">
+        <a href="#" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Tools</a>
+        <a href="#"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Analyze</a>
+        <a href="#"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Monetization</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- D -->
+<div class="direction t-studio">
+  <div class="d-label"><strong>D — Studio Light</strong><span>Light + indigo. Clean, professional, daytime-tool feel (vidIQ-adjacent). Widest departure from today.</span></div>
+  <div class="d-body">
+    <div class="mini-nav">
+      <div class="mini-logo">Creator<span>NexusHQ</span></div>
+      <a class="mini-cta" href="#">Sign Up Free →</a>
+    </div>
+    <div class="mini-hero">
+      <h2>Stop Guessing.<br><span class="grad">Start Growing.</span></h2>
+      <p>The all-in-one AI growth platform for content creators.</p>
+      <a class="mini-primary" href="#">Launch Your Growth — It's Free</a>
+    </div>
+    <div class="mini-row">
+      <div class="mini-card">
+        <div class="mini-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h3>Title &amp; Hook Generator</h3>
+        <p>Scroll-stopping titles and first-second hooks that make viewers click.</p>
+        <span class="mini-tag">FREE</span>
+      </div>
+      <div class="mini-side">
+        <a href="#" class="active"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>Tools</a>
+        <a href="#"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Analyze</a>
+        <a href="#"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Monetization</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
