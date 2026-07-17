@@ -6,6 +6,11 @@ const DAILY_FREE_LIMIT = 5;
 // Free tier today; ANTHROPIC_MODEL/ANTHROPIC_API_KEY are reserved for a future
 // paid tier once Stripe/plan-tracking exists (see ROADMAP.md).
 const GROQ_MODEL = 'openai/gpt-oss-120b';
+// Vision-capable model for the Thumbnail Analyzer (Groq free tier;
+// marked "Preview" by Groq as of 2026-07 — acceptable for beta).
+const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
+// ~4MB image → ~5.3M base64 chars. Reject above this before hitting Groq.
+const MAX_IMAGE_BASE64_CHARS = 5_600_000;
 const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
 
 const JWKS = createRemoteJWKSet(
@@ -364,11 +369,11 @@ Video details:
 - Thumbnail style: ${f.style}
 - Main subject: ${f.subject}
 - Color scheme: ${f.colors}
-- AI tool: ${f.tool}
+- AI tool: ${f.aiTool}
 - Target emotion: ${f.emotion}
 - Specific elements: ${f.elements || 'None specified'}
 
-Generate 3 prompts optimized for ${f.tool}. Format EXACTLY like this:
+Generate 3 prompts optimized for ${f.aiTool}. Format EXACTLY like this:
 
 PROMPT 1 NAME: [short descriptive name e.g. "Dramatic Action Shot"]
 PROMPT 1:
@@ -395,7 +400,7 @@ NEGATIVE PROMPT 3: [exclusions]
 ---
 
 BEST PICK: Prompt [number] — [one sentence on why]
-PRO TIP: [one specific tip for getting the best results in ${f.tool}]
+PRO TIP: [one specific tip for getting the best results in ${f.aiTool}]
 CANVA TIP: [one tip on how to finish the thumbnail in Canva after generating the image]`,
   },
 
@@ -434,14 +439,21 @@ async function callModel(env, tool, fields) {
 
   const promptText = def.build(fields);
 
+  let model = GROQ_MODEL;
+  let userContent = promptText;
+
   if (def.isVision) {
-    // gpt-oss-120b (the current free-tier model) is text-only. Vision tools
-    // aren't wired to any client yet (creatornexushq-thumbnail.html isn't
-    // pointed at this Worker), so this is a clear stub, not a silent gap.
     if (!fields.imageBase64 || !fields.imageType) {
-      return { error: 'missing_image' };
+      return { error: 'missing_image', detail: 'Upload a thumbnail image first.' };
     }
-    return { error: 'vision_not_supported', detail: 'Image analysis needs a vision-capable model — not available on the current free-tier setup yet.' };
+    if (fields.imageBase64.length > MAX_IMAGE_BASE64_CHARS) {
+      return { error: 'image_too_large', detail: 'Image is too large — please use an image under 4MB.' };
+    }
+    model = GROQ_VISION_MODEL;
+    userContent = [
+      { type: 'text', text: promptText },
+      { type: 'image_url', image_url: { url: 'data:' + fields.imageType + ';base64,' + fields.imageBase64 } },
+    ];
   }
 
   const apiKey = (env.GROQ_API_KEY || '').trim();
@@ -453,11 +465,11 @@ async function callModel(env, tool, fields) {
       'Authorization': 'Bearer ' + apiKey,
     },
     body: JSON.stringify({
-      model: GROQ_MODEL,
+      model: model,
       max_tokens: 1000,
       messages: [
         { role: 'system', content: def.system },
-        { role: 'user', content: promptText },
+        { role: 'user', content: userContent },
       ],
     }),
   });

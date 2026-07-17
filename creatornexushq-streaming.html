@@ -51,6 +51,10 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
 .sidebar-upgrade-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: white; }
 .sidebar-upgrade-title { font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 700; color: #c084fc; }
 .sidebar-upgrade-sub { font-size: 11px; color: #5a5a90; margin-top: 1px; }
+.sidebar-account { margin-top: 12px; padding: 10px 8px 2px; border-top: 1px solid #1a1a2e; }
+.sidebar-account-email { font-size: 12px; color: #8a8ac0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px; padding: 0 2px; }
+.sidebar-signout { display: block; width: 100%; background: none; border: 1px solid #252540; border-radius: 8px; padding: 8px 10px; color: #9a9ac5; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; }
+.sidebar-signout:hover { border-color: #ef4444; color: #ef4444; }
 
 /* MOBILE */
 .mobile-topbar { display: none; align-items: center; justify-content: space-between; padding: 14px 16px; background: rgba(7,7,15,0.95); border-bottom: 1px solid #1a1a2e; position: sticky; top: 0; z-index: 200; }
@@ -235,6 +239,15 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   <div class="sidebar-upgrade">
     <div class="sidebar-upgrade-icon">★</div>
     <div><div class="sidebar-upgrade-title">Upgrade to Pro</div><div class="sidebar-upgrade-sub">$9/mo or $79/yr</div></div>
+  </div>
+  <div class="sidebar-account">
+    <div id="sidebarAccountLoggedIn" style="display:none">
+      <div class="sidebar-account-email" id="accountEmail">&nbsp;</div>
+      <button class="sidebar-signout" id="signOutBtn">Sign Out</button>
+    </div>
+    <div id="sidebarAccountLoggedOut" style="display:none">
+      <a href="creatornexushq-auth.html" class="sidebar-signout" style="display:block;text-decoration:none;box-sizing:border-box">Sign In</a>
+    </div>
   </div>
 </div>
 <div class="app-main">
@@ -442,8 +455,10 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
     document.getElementById('usageFill').style.width = (usageLeft / 5 * 100) + '%';
   }
 
+  const WORKER_URL = 'https://creatornexushq-api.tjlangston15.workers.dev/generate';
+
   async function generateTitles() {
-    if (usageLeft <= 0) { showEmailCapture(); return; }
+    if (!window.__currentUser) { showSignInPrompt(); return; }
 
     const game = document.getElementById('game').value;
     if (!game.trim()) { showToast('Please enter a game or content type first.'); return; }
@@ -453,6 +468,7 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
     const resultsContent = document.getElementById('resultsContent');
     const placeholder = document.getElementById('placeholder');
 
+    if (!btn.dataset.orig) btn.dataset.orig = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Generating...';
 
@@ -460,59 +476,59 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
     resultsCard.className = 'results-card visible';
     resultsContent.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Writing your titles...</div>';
 
-    const platform = platformData[currentPlatform].name;
-    const vibe = document.getElementById('vibe').value;
-    const size = document.getElementById('size').value;
-    const specific = document.getElementById('specific').value;
-    const personality = document.getElementById('personality').value;
-
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const idToken = await window.__currentUser.getIdToken();
+      const res = await fetch(WORKER_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + idToken,
+        },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 1000,
-          system: `You are CreatorNexusHQ's stream title specialist. You write stream titles that are optimized for each platform's specific algorithm, audience, and culture. You know that Twitch titles need to stand out in directories, YouTube Live titles need SEO, Kick titles need authenticity, Facebook Gaming needs community language, and TikTok Live needs punchy hooks. Always write platform-native titles. Be specific and creative — never generic.`,
-          messages: [{
-            role: 'user',
-            content: `Generate 8 stream titles for ${platform}.
-
-Details:
-- Game / Content: ${game}
-- Stream vibe: ${vibe}
-- Channel size: ${size}
-- Specific details: ${specific || 'Nothing specific'}
-- Personality: ${personality}
-
-Format exactly like this:
-TITLE 1: [title]
-TYPE 1: [one word describing the style — e.g. Hype, Chill, Challenge, Milestone]
-
-TITLE 2: [title]
-TYPE 2: [style]
-
-(continue for all 8)
-
-BEST PICK: Title [number] — [one sentence on why this one will perform best for this platform and channel size]
-
-PLATFORM NOTE: [one specific tip about what makes titles work on ${platform} right now]`
-          }]
+          tool: 'stream-titles',
+          platform: platformData[currentPlatform].name,
+          game: game,
+          vibe: document.getElementById('vibe').value,
+          size: document.getElementById('size').value,
+          specific: document.getElementById('specific').value,
+          personality: document.getElementById('personality').value,
         })
       });
 
+      if (res.status === 401) {
+        window.__currentUser = null;
+        showSignInPrompt();
+        resultsCard.className = 'results-card';
+        return;
+      }
+
+      if (res.status === 429) {
+        showLimitPrompt();
+        resultsCard.className = 'results-card';
+        return;
+      }
+
       const data = await res.json();
-      const text = data.content?.[0]?.text || 'Something went wrong.';
-      usageLeft = Math.max(0, usageLeft - 1);
-      updateUsage();
-      renderTitles(text, resultsContent);
+
+      if (!res.ok || !data.text) {
+        let msg = data.message || 'Something went wrong. Please try again.';
+        if (data.detail) msg += '<br><span style="color:var(--muted);font-size:12px">' + String(data.detail).slice(0, 400) + '</span>';
+        resultsContent.innerHTML = '<p style="color:var(--red);font-size:13px">' + msg + '</p>';
+        return;
+      }
+
+      if (typeof data.remaining === 'number') {
+        usageLeft = data.remaining;
+        updateUsage();
+      }
+      renderTitles(data.text, resultsContent);
 
     } catch(err) {
-      resultsContent.innerHTML = '<p style="color:var(--gold);font-size:13px">🔧 Our AI backend is still being connected. This tool isn\'t live yet — check back soon.</p>';
+      resultsContent.innerHTML = '<p style="color:var(--gold);font-size:13px">🔧 Couldn\'t reach the AI backend. Check your connection and try again.</p>';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = btn.dataset.orig;
     }
-
-    btn.disabled = false;
-    btn.innerHTML = '<span>🎮</span> Generate Stream Titles';
   }
 
   function renderTitles(text, el) {
@@ -593,9 +609,9 @@ PLATFORM NOTE: [one specific tip about what makes titles work on ${platform} rig
 <div id="emailCaptureModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:9998;align-items:center;justify-content:center;padding:20px">
   <div style="background:#0e0e1a;border:1px solid #252540;border-radius:20px;padding:32px;max-width:460px;width:100%;position:relative">
     <button onclick="closeEmailCapture()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#5a5a90;font-size:20px;cursor:pointer">✕</button>
-    <div style="font-size:32px;margin-bottom:14px">🚀</div>
-    <div style="font-family:'DM Sans',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px">You have hit your daily limit</div>
-    <div style="font-size:13px;color:#5a5a90;margin-bottom:22px;line-height:1.6">Create a free account to unlock more generations and save your work. No credit card needed.</div>
+    <div style="font-size:32px;margin-bottom:14px" id="emailCaptureIcon">🚀</div>
+    <div style="font-family:'DM Sans',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px" id="emailCaptureTitle">You have hit your daily limit</div>
+    <div style="font-size:13px;color:#5a5a90;margin-bottom:22px;line-height:1.6" id="emailCaptureBody">Create a free account to unlock more generations and save your work. No credit card needed.</div>
     <a href="creatornexushq-auth.html" style="display:flex;align-items:center;justify-content:center;width:100%;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:12px;padding:14px;color:white;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none;margin-bottom:10px">Create Free Account →</a>
     <a href="creatornexushq-auth.html" style="display:flex;align-items:center;justify-content:center;width:100%;background:none;border:1px solid #252540;border-radius:12px;padding:12px;color:#eeeeff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:18px">Already have an account? Log in</a>
     <div style="border-top:1px solid #1a1a2e;padding-top:16px">
@@ -611,6 +627,68 @@ PLATFORM NOTE: [one specific tip about what makes titles work on ${platform} rig
 function showEmailCapture(){document.getElementById("emailCaptureModal").style.display="flex";}
 function closeEmailCapture(){document.getElementById("emailCaptureModal").style.display="none";}
 document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("emailCaptureModal");if(m)m.addEventListener("click",function(e){if(e.target===this)closeEmailCapture();});});
+
+function showSignInPrompt(){
+  document.getElementById("emailCaptureIcon").textContent = "🔒";
+  document.getElementById("emailCaptureTitle").textContent = "Sign in to generate";
+  document.getElementById("emailCaptureBody").textContent = "Create a free account to save your work and keep using CreatorNexusHQ's tools. No credit card needed.";
+  showEmailCapture();
+}
+
+function showLimitPrompt(){
+  document.getElementById("emailCaptureIcon").textContent = "🚀";
+  document.getElementById("emailCaptureTitle").textContent = "You have hit your daily limit";
+  document.getElementById("emailCaptureBody").textContent = "You've used all your free generations today. Come back tomorrow, or upgrade to Pro when it launches for unlimited access.";
+  showEmailCapture();
+}
+</script>
+
+<!-- FIREBASE AUTH — the AI tools need a real logged-in user so the Worker
+     can enforce per-account usage limits server-side. Page stays browsable
+     while logged out; generateTitles() prompts sign-in at point of use. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc",
+    authDomain: "creatornexushq-eaf70.firebaseapp.com",
+    projectId: "creatornexushq-eaf70",
+    storageBucket: "creatornexushq-eaf70.firebasestorage.app",
+    messagingSenderId: "867089002449",
+    appId: "1:867089002449:web:cadae5b363375020cdbaf0"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    window.__currentUser = user || null;
+
+    const loggedIn = document.getElementById('sidebarAccountLoggedIn');
+    const loggedOut = document.getElementById('sidebarAccountLoggedOut');
+
+    if (user) {
+      const emailEl = document.getElementById('accountEmail');
+      if (emailEl) emailEl.textContent = user.email || user.displayName || 'Signed in';
+      if (loggedIn) loggedIn.style.display = 'block';
+      if (loggedOut) loggedOut.style.display = 'none';
+    } else {
+      if (loggedIn) loggedIn.style.display = 'none';
+      if (loggedOut) loggedOut.style.display = 'block';
+    }
+  });
+
+  async function handleSignOut() {
+    try {
+      await signOut(auth);
+    } finally {
+      window.location.href = 'creatornexushq-auth.html';
+    }
+  }
+
+  const signOutBtn = document.getElementById('signOutBtn');
+  if (signOutBtn) signOutBtn.addEventListener('click', handleSignOut);
 </script>
 </body>
 </html>
