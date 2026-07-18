@@ -3,6 +3,9 @@ import { jwtVerify, createRemoteJWKSet } from 'jose';
 const FIREBASE_PROJECT_ID = 'creatornexushq-eaf70';
 const ALLOWED_ORIGIN = 'https://creatornexushq-eaf70.web.app';
 const DAILY_FREE_LIMIT = 5;
+// Site-wide cap across all users (Pro included) — protects the free Groq
+// token quota from being drained in one afternoon of beta testing.
+const GLOBAL_DAILY_LIMIT = 150;
 // Free tier today; ANTHROPIC_MODEL/ANTHROPIC_API_KEY are reserved for a future
 // paid tier once Stripe/plan-tracking exists (see ROADMAP.md).
 const GROQ_MODEL = 'openai/gpt-oss-120b';
@@ -45,25 +48,47 @@ async function verifyFirebaseToken(request) {
       issuer: `https://securetoken.google.com/${FIREBASE_PROJECT_ID}`,
       audience: FIREBASE_PROJECT_ID,
     });
-    return payload.sub || null; // Firebase uid
+    if (!payload.sub) return null;
+    return { uid: payload.sub, email: String(payload.email || '').toLowerCase() };
   } catch {
     return null;
   }
 }
 
+// Pro entitlements are granted by the site owner directly in KV — no
+// billing required. Key "pro:<email>" holds the last day (YYYY-MM-DD,
+// UTC) the grant is active. Grant/revoke via wrangler; see ROADMAP.md.
+async function checkProGrant(env, email) {
+  if (!email) return false;
+  const until = await env.RATE_LIMIT.get('pro:' + email);
+  if (!until) return false;
+  const today = new Date().toISOString().slice(0, 10);
+  return today <= until.trim();
+}
+
 // Read-only check — does NOT spend a credit. Call incrementUsage() only
 // after a generation actually succeeds, so failed/errored attempts don't
 // burn the user's daily allowance.
-async function checkUsage(env, uid) {
+async function checkUsage(env, uid, isPro) {
   const day = new Date().toISOString().slice(0, 10); // UTC YYYY-MM-DD
-  const key = `usage:${uid}:${day}`;
-  const current = parseInt((await env.RATE_LIMIT.get(key)) || '0', 10);
-  return { allowed: current < DAILY_FREE_LIMIT, current, key };
+  const userKey = `usage:${uid}:${day}`;
+  const globalKey = `usage:global:${day}`;
+  const userCount = parseInt((await env.RATE_LIMIT.get(userKey)) || '0', 10);
+  const globalCount = parseInt((await env.RATE_LIMIT.get(globalKey)) || '0', 10);
+  if (globalCount >= GLOBAL_DAILY_LIMIT) {
+    return { allowed: false, reason: 'global' };
+  }
+  if (!isPro && userCount >= DAILY_FREE_LIMIT) {
+    return { allowed: false, reason: 'user' };
+  }
+  return { allowed: true, userKey, userCount, globalKey, globalCount };
 }
 
-async function incrementUsage(env, key, current) {
-  await env.RATE_LIMIT.put(key, String(current + 1), { expirationTtl: 60 * 60 * 48 });
-  return DAILY_FREE_LIMIT - (current + 1);
+async function incrementUsage(env, usage, isPro) {
+  await env.RATE_LIMIT.put(usage.globalKey, String(usage.globalCount + 1), { expirationTtl: 60 * 60 * 48 });
+  if (isPro) return null; // Pro has no per-user meter
+  await env.RATE_LIMIT.put(usage.userKey, String(usage.userCount + 1), { expirationTtl: 60 * 60 * 48 });
+  return DAILY_FREE_LIMIT - (usage.userCount + 1);
 }
 
 // ============================================================
@@ -498,8 +523,8 @@ export default {
       return json({ error: 'not_found' }, 404, origin);
     }
 
-    const uid = await verifyFirebaseToken(request);
-    if (!uid) {
+    const authUser = await verifyFirebaseToken(request);
+    if (!authUser) {
       return json({ error: 'unauthorized', message: 'Please sign in to use this tool.' }, 401, origin);
     }
 
@@ -515,8 +540,12 @@ export default {
       return json({ error: 'unknown_tool' }, 400, origin);
     }
 
-    const usage = await checkUsage(env, uid);
+    const isPro = await checkProGrant(env, authUser.email);
+    const usage = await checkUsage(env, authUser.uid, isPro);
     if (!usage.allowed) {
+      if (usage.reason === 'global') {
+        return json({ error: 'global_limit', message: "The beta has hit today's site-wide generation limit — it resets at midnight UTC. Thanks for stress-testing us!" }, 429, origin);
+      }
       return json({ error: 'daily_limit', message: "You've used all your free generations today. Upgrade to Pro for unlimited access!" }, 429, origin);
     }
 
@@ -530,7 +559,7 @@ export default {
     }
 
     // Only spend a credit once generation actually succeeded.
-    const remaining = await incrementUsage(env, usage.key, usage.current);
-    return json({ text: result.text, remaining }, 200, origin);
+    const remaining = await incrementUsage(env, usage, isPro);
+    return json({ text: result.text, remaining, plan: isPro ? 'pro' : 'free' }, 200, origin);
   },
 };

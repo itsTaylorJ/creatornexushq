@@ -962,6 +962,7 @@ nav {
     <div class="sidebar-upgrade-icon">★</div>
     <div><div class="sidebar-upgrade-title">Upgrade to Pro</div><div class="sidebar-upgrade-sub">$9/mo or $79/yr</div></div>
   </div>
+  <a class="sidebar-item" href="mailto:tjlangston15@gmail.com?subject=CreatorNexusHQ%20Beta%20Feedback" style="margin-top:10px"><span class="sidebar-icon"><svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Send Feedback</a>
   <div class="sidebar-account">
     <div id="sidebarAccountLoggedIn" style="display:none">
       <div class="sidebar-account-email" id="accountEmail">&nbsp;</div>
@@ -1556,6 +1557,12 @@ nav {
         usageLeft = data.remaining;
         updateUsage();
       }
+      if (data.plan === 'pro') {
+        const proBadge = document.getElementById('sidebarPlan');
+        if (proBadge) { proBadge.textContent = '★ PRO PLAN'; proBadge.classList.add('pro'); }
+        const uc = document.getElementById('usageCount'); if (uc) uc.textContent = '∞';
+        const uf = document.getElementById('usageFill'); if (uf) uf.style.width = '100%';
+      }
 
       if (type === 'calendar') {
         renderCalendar(data.text, document.getElementById('results-calendar-content'));
@@ -1881,6 +1888,12 @@ nav {
       if (typeof data.remaining === 'number') {
         usageLeft = data.remaining;
         updateUsage();
+      }
+      if (data.plan === 'pro') {
+        const proBadge = document.getElementById('sidebarPlan');
+        if (proBadge) { proBadge.textContent = '★ PRO PLAN'; proBadge.classList.add('pro'); }
+        const uc = document.getElementById('usageCount'); if (uc) uc.textContent = '∞';
+        const uf = document.getElementById('usageFill'); if (uf) uf.style.width = '100%';
       }
       renderResults(data.text, resultsContent, 'tags');
 

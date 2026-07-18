@@ -15,13 +15,13 @@ Live at https://creatornexushq-eaf70.web.app (Firebase Hosting for the static si
 | creatornexushq-monetization.html | Track progress to monetization | **Real** — pure client-side math, accurate thresholds |
 | creatornexushq-resources.html | Browse tool directory | **Real** — static, honest, no fake data |
 | creatornexushq-app.html | Titles, hooks, CTAs, ideas, analytics advice | **Real** — browsable while logged out; signing in is only required when you actually click Generate (soft gate via a modal, not a page redirect); real per-account daily limits |
-| creatornexushq-analyze.html | Tag Suggester (YouTube API) | **Partial** — real if user supplies their own YouTube key; write-up step not yet wired to the new backend |
-| creatornexushq-thumbnail.html | Thumbnail scoring & prompts | Upload/preview works; not yet wired to the new backend (Worker already supports it — fast-follow) |
-| creatornexushq-streaming.html | Stream title generator | Not yet wired to the new backend (Worker already supports it — fast-follow) |
+| creatornexushq-analyze.html | Six analyzers + Tag Suggester | **Real** — wired to the Worker; Tag Suggester still uses the user's own YouTube key client-side for live competitor data |
+| creatornexushq-thumbnail.html | Thumbnail scoring & prompts | **Real** — prompt generator + vision analysis (Groq Llama 4 Scout, Preview model — watch quality) |
+| creatornexushq-streaming.html | Stream title generator | **Real** — wired to the Worker |
 | creatornexushq-competitor.html | Competitor research | **Coming Soon** gate — was asking the AI to invent real channel names, deliberately not shipped as-is |
 | creatornexushq-collab.html | Find collab partners | **Coming Soon** gate — was asking the AI to invent real people, deliberately not shipped as-is |
 | creatornexushq-trends.html | Live trend tracking | **Coming Soon** gate — LLMs have no real-time data, deliberately not shipped as-is |
-| creatornexushq-platforms.html | Connect YouTube/Twitch/etc. | Fake OAuth, hardcoded mock stats — crash bug fixed, replacement with honest manual entry still pending |
+| creatornexushq-platforms.html | Connect YouTube/Twitch/etc. | OAuth connect now shows an honest "coming soon"; manual stat entry (Kick/Rumble style) still works and is honest |
 
 ## Path to a testable beta (no billing yet)
 
@@ -47,10 +47,27 @@ Live at https://creatornexushq-eaf70.web.app (Firebase Hosting for the static si
 - Full 14-page mobile audit done this round (375×812 screenshots of every page): fixed two header-overflow bugs (landing page CTA button, auth page "Log in" link both clipping/wrapping), removed dead legacy CSS on `creatornexushq-analyze.html`/`creatornexushq-platforms.html` that was pinning a nav bar to the bottom and overlapping content, fixed a translucent-nav text-bleed issue on the three Coming Soon pages, and tightened the landing page's scroll-reveal animation so fast mobile scrolling doesn't show blank gaps.
 - Still to do: replace the fake OAuth "Connect" buttons on `creatornexushq-platforms.html` with the honest manual-entry pattern the Monetization Tracker already uses.
 
-**Phase 4 — Minimal safety net before inviting anyone**
-- Consider Cloudflare's built-in bot/rate protections or Turnstile on the Worker to block scripted abuse.
-- A low-friction feedback link (Google Form or mailto) in the sidebar.
-- A billing alert on the Anthropic console once a real key is added, so a bug can't produce a surprise bill mid-beta.
+**Phase 4 — Minimal safety net before inviting anyone — ✅ done**
+- "Send Feedback" mailto link in every app-shell sidebar (10 pages).
+- Global daily generation cap in the Worker (150/day site-wide, all users incl. Pro) so beta testing can't drain the free Groq token quota; distinct 429 message when hit.
+- Per-account 5/day limit unchanged for free users; both counters reset at midnight UTC.
+
+## Granting Pro (comps / free trials — no billing needed)
+The Worker checks Cloudflare KV for `pro:<email>` (the email the person signs in with, lowercased). Value = last day the grant is active (YYYY-MM-DD, UTC). Pro = unlimited generations (global cap still applies).
+
+Grant a week (run in your own terminal, from anywhere):
+```
+wrangler kv key put --namespace-id=1df69e401a134d08829ef71f645d5f88 "pro:friend@example.com" "2026-07-25" --remote
+```
+Revoke early:
+```
+wrangler kv key delete --namespace-id=1df69e401a134d08829ef71f645d5f88 "pro:friend@example.com" --remote
+```
+List active grants:
+```
+wrangler kv key list --namespace-id=1df69e401a134d08829ef71f645d5f88 --remote
+```
+The user sees "★ PRO PLAN" in the sidebar and an ∞ usage counter after their first generation. Grants expire automatically — no cleanup needed.
 
 **Phase 5 — Invite the first users**
 - Manual end-to-end pass (signup → generate → copy result) on desktop and mobile before sending the link out.
