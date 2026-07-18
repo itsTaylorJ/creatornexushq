@@ -53,7 +53,9 @@ Live at https://creatornexushq-eaf70.web.app (Firebase Hosting for the static si
 - Per-account 5/day limit unchanged for free users; both counters reset at midnight UTC.
 
 ## Granting Pro (comps / free trials — no billing needed)
-The Worker checks Cloudflare KV for `pro:<email>` (the email the person signs in with, lowercased). Value = last day the grant is active (YYYY-MM-DD, UTC). Pro = unlimited generations (global cap still applies).
+**Automatic trial:** every account gets a 7-day Pro trial that starts at its *first generation* (not signup). Stored as KV key `trial:<uid>`, created automatically by the Worker, permanent record so a lapsed trial can't restart. During trial the user sees "★ PRO TRIAL" and unlimited generations; afterward they fall back to free 5/day.
+
+**Manual comps** (extend someone past the trial, or re-comp): the Worker checks Cloudflare KV for `pro:<email>` (the email the person signs in with, lowercased). Value = last day the grant is active (YYYY-MM-DD, UTC). Pro = unlimited generations (global cap still applies). Manual grants take precedence over trial state.
 
 Grant a week (run in your own terminal, from anywhere):
 ```

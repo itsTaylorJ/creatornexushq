@@ -755,9 +755,9 @@ body::before {
         usageLeft = data.remaining;
         updateUsage();
       }
-      if (data.plan === 'pro') {
+      if (data.plan === 'pro' || data.plan === 'trial') {
         const proBadge = document.getElementById('sidebarPlan');
-        if (proBadge) { proBadge.textContent = '★ PRO PLAN'; proBadge.classList.add('pro'); }
+        if (proBadge) { proBadge.textContent = data.plan === 'trial' ? '★ PRO TRIAL' : '★ PRO PLAN'; proBadge.classList.add('pro'); }
         const uc = document.getElementById('usageCount'); if (uc) uc.textContent = '∞';
         const uf = document.getElementById('usageFill'); if (uf) uf.style.width = '100%';
       }
@@ -940,9 +940,9 @@ body::before {
         usageLeft = data.remaining;
         updateUsage();
       }
-      if (data.plan === 'pro') {
+      if (data.plan === 'pro' || data.plan === 'trial') {
         const proBadge = document.getElementById('sidebarPlan');
-        if (proBadge) { proBadge.textContent = '★ PRO PLAN'; proBadge.classList.add('pro'); }
+        if (proBadge) { proBadge.textContent = data.plan === 'trial' ? '★ PRO TRIAL' : '★ PRO PLAN'; proBadge.classList.add('pro'); }
         const uc = document.getElementById('usageCount'); if (uc) uc.textContent = '∞';
         const uf = document.getElementById('usageFill'); if (uf) uf.style.width = '100%';
       }

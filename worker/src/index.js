@@ -66,6 +66,23 @@ async function checkProGrant(env, email) {
   return today <= until.trim();
 }
 
+const TRIAL_DAYS = 7;
+
+// Every account gets an automatic Pro trial starting from its FIRST
+// generation (not signup — nobody burns trial days before trying the
+// product). The trial record is permanent (no TTL) so a lapsed trial
+// can't restart by the key expiring out of KV.
+async function checkTrial(env, uid) {
+  const key = 'trial:' + uid;
+  let until = await env.RATE_LIMIT.get(key);
+  if (!until) {
+    until = new Date(Date.now() + TRIAL_DAYS * 86400000).toISOString().slice(0, 10);
+    await env.RATE_LIMIT.put(key, until);
+  }
+  const today = new Date().toISOString().slice(0, 10);
+  return today <= until.trim();
+}
+
 // Read-only check — does NOT spend a credit. Call incrementUsage() only
 // after a generation actually succeeds, so failed/errored attempts don't
 // burn the user's daily allowance.
@@ -541,7 +558,13 @@ export default {
     }
 
     const isPro = await checkProGrant(env, authUser.email);
-    const usage = await checkUsage(env, authUser.uid, isPro);
+    let plan = isPro ? 'pro' : 'free';
+    let unlimited = isPro;
+    if (!isPro) {
+      const onTrial = await checkTrial(env, authUser.uid);
+      if (onTrial) { plan = 'trial'; unlimited = true; }
+    }
+    const usage = await checkUsage(env, authUser.uid, unlimited);
     if (!usage.allowed) {
       if (usage.reason === 'global') {
         return json({ error: 'global_limit', message: "The beta has hit today's site-wide generation limit — it resets at midnight UTC. Thanks for stress-testing us!" }, 429, origin);
@@ -559,7 +582,7 @@ export default {
     }
 
     // Only spend a credit once generation actually succeeded.
-    const remaining = await incrementUsage(env, usage, isPro);
-    return json({ text: result.text, remaining, plan: isPro ? 'pro' : 'free' }, 200, origin);
+    const remaining = await incrementUsage(env, usage, unlimited);
+    return json({ text: result.text, remaining, plan }, 200, origin);
   },
 };
