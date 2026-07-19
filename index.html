@@ -189,7 +189,7 @@ nav {
 /* HERO */
 .hero {
   text-align: center;
-  padding: 100px 24px 80px;
+  padding: 72px 24px 56px;
   max-width: 860px;
   margin: 0 auto;
   position: relative;
@@ -336,7 +336,7 @@ nav {
 .stat-label { font-size: 13px; color: var(--muted); }
 
 /* SECTION */
-section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+section { padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
 
 .section-tag {
   font-family: 'DM Sans', sans-serif;
@@ -825,6 +825,62 @@ footer {
       <div class="feature-title">Trend Tracker</div>
       <div class="feature-desc">See what's trending right now in your niche across YouTube, TikTok, Instagram, and Facebook. Jump on trends before they peak.</div>
       <span class="feature-tag pro">Pro</span></a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- SEE IT IN ACTION -->
+<style>
+.ex-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 8px; }
+.ex-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; text-align: left; display: flex; flex-direction: column; }
+.ex-tool { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; margin-bottom: 14px; }
+.ex-tool .ex-emoji { font-size: 18px; }
+.ex-in { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+.ex-in strong { color: var(--text); font-weight: 600; }
+.ex-out { background: rgba(124,58,237,0.06); border: 1px solid var(--border); border-radius: 10px; padding: 14px; font-size: 13px; line-height: 1.55; color: var(--text); }
+.ex-out .ex-line { padding: 3px 0; }
+.ex-note { margin-top: 10px; font-size: 12.5px; color: var(--cyan); line-height: 1.5; }
+.ex-score { font-weight: 700; color: var(--text); }
+@media (max-width: 860px) { .ex-grid { grid-template-columns: 1fr; } }
+</style>
+<section id="examples">
+  <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto 40px">
+    <div class="section-tag">See It In Action</div>
+    <div class="section-title">Real inputs. Real outputs.</div>
+    <div class="section-desc" style="margin:0 auto">No mockups. This is the kind of result you get from a few seconds of typing — whatever you create.</div>
+  </div>
+
+  <div class="ex-grid reveal">
+
+    <div class="ex-card">
+      <div class="ex-tool"><span class="ex-emoji">🎯</span> Title &amp; Hook Generator</div>
+      <div class="ex-in">You type: <strong>Warzone 1v4 clutch in solo ranked</strong></div>
+      <div class="ex-out">
+        <div class="ex-line">▸ I 1v4'd a Full Squad in Ranked… Then This Happened 😳</div>
+        <div class="ex-line">▸ They Third-Partied Me. Big Mistake.</div>
+        <div class="ex-line">▸ Solo vs Squads: The Clutch That Ended My Losing Streak</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <div class="ex-tool"><span class="ex-emoji">🏷️</span> Tag &amp; Hashtag Analyzer</div>
+      <div class="ex-in">You type: <strong>Pokémon card mystery box opening</strong></div>
+      <div class="ex-out">
+        <div class="ex-line">#pokemoncards #mysterybox #cardopening #pokemontcg #boosterbox #unboxing</div>
+        <div class="ex-note">You're missing <strong style="color:var(--text)">#hittheboard</strong> and <strong style="color:var(--text)">#pullrate</strong> — both are climbing in unboxing right now.</div>
+      </div>
+    </div>
+
+    <div class="ex-card">
+      <div class="ex-tool"><span class="ex-emoji">🖼️</span> Thumbnail Analyzer</div>
+      <div class="ex-in">You upload: <strong>your video thumbnail</strong></div>
+      <div class="ex-out">
+        <div class="ex-line"><span class="ex-score">CTR Score 74 / 100</span></div>
+        <div class="ex-note">Strong facial emotion. Your text competes with a busy background — move it to the empty top-left and add a dark outline so it stays readable at thumbnail size.</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
