@@ -402,7 +402,7 @@ API TIP: Add your YouTube API key above to scan real competitor tags instead of 
 
   // ---- creatornexushq-thumbnail.html ----
   'thumbnail-prompt': {
-    system: `You are CreatorNexusHQ's AI thumbnail prompt specialist. You write highly detailed, optimized AI image generation prompts specifically for YouTube thumbnails. You know how to write prompts for Midjourney, DALL-E, Adobe Firefly, and other tools. Your prompts always include: composition details, lighting, color palette, mood, style references, aspect ratio (16:9 for thumbnails), and negative prompts to avoid bad results. Always make prompts specific to gaming/creator content. Write prompts that will generate thumbnail backgrounds and scenes — not final thumbnails with text overlay (text is added in Canva after).`,
+    system: `You are CreatorNexusHQ's AI thumbnail prompt specialist. You write highly detailed, optimized AI image generation prompts specifically for YouTube thumbnails. You know how to write prompts for Midjourney, DALL-E, Adobe Firefly, and other tools. Your prompts always include: composition details, lighting, color palette, mood, style references, aspect ratio (16:9 for thumbnails), and negative prompts to avoid bad results. Tailor every prompt to the creator's actual niche — whether that's gaming, Pokémon/TCG card openings, blind-box or mystery unboxings, vlogs, podcast clips, beauty, fitness, cooking, tech reviews, IRL, commentary, or anything else they describe. Write prompts that will generate thumbnail backgrounds and scenes — not final thumbnails with text overlay (text is added in Canva after).`,
     build: (f) => `Generate AI image prompts for a YouTube thumbnail.
 
 Video details:
