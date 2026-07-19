@@ -1,3 +1,6 @@
 .firebase/
 node_modules/
 .DS_Store
+
+# UI/UX Pro Max skills (installed per-dev via `uipro init`)
+.claude/skills/

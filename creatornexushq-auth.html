@@ -60,6 +60,8 @@ nav {
 .nav-right { display: flex; align-items: center; gap: 12px; font-size: 13px; color: var(--muted); }
 .nav-right a { color: var(--accent3); text-decoration: none; font-weight: 600; white-space: nowrap; }
 .nav-right a:hover { text-decoration: underline; }
+/* Refined premium accent line under nav (consistent with landing) */
+nav::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: linear-gradient(90deg, transparent, rgba(124,58,237,0.5), rgba(6,182,212,0.5), transparent); pointer-events: none; }
 
 @media (max-width: 480px) {
   nav { padding: 14px 16px; }
