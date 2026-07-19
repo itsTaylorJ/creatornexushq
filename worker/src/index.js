@@ -527,6 +527,61 @@ async function callModel(env, tool, fields) {
   return { text };
 }
 
+const CONTACT_DAILY_LIMIT = 60; // anti-spam ceiling on contact submissions/day
+
+async function handleContact(request, env, origin) {
+  let body;
+  try { body = await request.json(); } catch { return json({ error: 'invalid_json' }, 400, origin); }
+
+  // Honeypot — bots fill hidden fields; real users leave it blank.
+  if (body.website) return json({ ok: true }, 200, origin); // silently accept + drop
+
+  const name = String(body.name || '').trim().slice(0, 120);
+  const email = String(body.email || '').trim().slice(0, 200);
+  const subject = String(body.subject || '').trim().slice(0, 200);
+  const message = String(body.message || '').trim().slice(0, 5000);
+
+  if (!name || !email || !subject || !message) {
+    return json({ error: 'missing_fields', message: 'Please fill in every field.' }, 400, origin);
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return json({ error: 'bad_email', message: 'Please enter a valid email address.' }, 400, origin);
+  }
+
+  const day = new Date().toISOString().slice(0, 10);
+  const countKey = 'contact:count:' + day;
+  const count = parseInt((await env.RATE_LIMIT.get(countKey)) || '0', 10);
+  if (count >= CONTACT_DAILY_LIMIT) {
+    return json({ error: 'rate_limited', message: 'We\'re getting a lot of messages right now — please email us directly at tjlangston15@gmail.com.' }, 429, origin);
+  }
+
+  const record = { name, email, subject, message, at: new Date().toISOString() };
+  const id = 'contact:' + record.at + ':' + Math.random().toString(36).slice(2, 8);
+  // Keep submissions 90 days; read them with `wrangler kv key list`.
+  await env.RATE_LIMIT.put(id, JSON.stringify(record), { expirationTtl: 60 * 60 * 24 * 90 });
+  await env.RATE_LIMIT.put(countKey, String(count + 1), { expirationTtl: 60 * 60 * 48 });
+
+  // Email delivery is optional — activates once RESEND_API_KEY is set as a
+  // Worker secret (see ROADMAP.md). Until then, submissions are stored in KV.
+  if (env.RESEND_API_KEY) {
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + env.RESEND_API_KEY.trim() },
+        body: JSON.stringify({
+          from: 'CreatorNexusHQ <onboarding@resend.dev>',
+          to: ['tjlangston15@gmail.com'],
+          reply_to: email,
+          subject: '[Contact] ' + subject,
+          text: `From: ${name} <${email}>\n\n${message}`,
+        }),
+      });
+    } catch (e) { console.log('resend error: ' + e); }
+  }
+
+  return json({ ok: true }, 200, origin);
+}
+
 export default {
   async fetch(request, env) {
     const origin = request.headers.get('Origin') || '';
@@ -536,6 +591,12 @@ export default {
     }
 
     const url = new URL(request.url);
+
+    // Contact form — no auth (visitors aren't signed in).
+    if (url.pathname === '/contact' && request.method === 'POST') {
+      return handleContact(request, env, origin);
+    }
+
     if (url.pathname !== '/generate' || request.method !== 'POST') {
       return json({ error: 'not_found' }, 404, origin);
     }

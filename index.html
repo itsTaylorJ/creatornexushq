@@ -114,11 +114,70 @@ nav {
 }
 .nav-login:hover { background: var(--surface); color: var(--accent3); }
 
+/* TOOLS DROPDOWN */
+.nav-dropdown { position: relative; }
+.nav-dropdown-btn {
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.nav-dropdown-btn:hover, .nav-dropdown.open .nav-dropdown-btn { color: var(--text); background: var(--surface); }
+.nav-dropdown-btn .chev { transition: transform 0.2s; }
+.nav-dropdown.open .nav-dropdown-btn .chev { transform: rotate(180deg); }
+.nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  width: 300px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  box-shadow: 0 16px 44px rgba(0,0,0,0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.18s ease;
+  z-index: 200;
+}
+.nav-dropdown.open .nav-dropdown-menu { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+.nav-dd-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.15s;
+}
+.nav-dd-link:hover { color: var(--text); background: var(--surface2); }
+.nav-dd-link svg { width: 15px; height: 15px; flex-shrink: 0; }
+.nav-dd-link .soon-dot { color: var(--cyan); font-size: 8px; margin-left: -4px; }
+
 @media (max-width: 768px) {
   nav { padding: 16px 20px; }
   .nav-links .nav-link { display: none; }
   .nav-logo { font-size: 17px; }
   .nav-login { font-size: 12px; padding: 8px 8px; }
+  .nav-dropdown-btn { font-size: 13px; padding: 8px 10px; }
+  .nav-dropdown-menu { width: 264px; left: 0; transform: translateX(0) translateY(-6px); }
+  .nav-dropdown.open .nav-dropdown-menu { transform: translateX(0) translateY(0); }
   .nav-cta {
     font-size: 12px;
     padding: 8px 14px;
@@ -422,24 +481,27 @@ section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
 /* PRICING */
 .pricing-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  max-width: 800px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  max-width: 1020px;
   margin: 0 auto;
+  align-items: start;
 }
-@media (max-width: 600px) { .pricing-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; max-width: 460px; } }
 
 .pricing-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 32px;
+  padding: 28px 26px;
   position: relative;
 }
 .pricing-card.featured {
-  border-color: var(--gold);
-  background: linear-gradient(135deg, var(--surface), rgba(245,158,11,0.03));
+  border: 2px solid var(--accent);
+  background: linear-gradient(135deg, var(--surface), rgba(124,58,237,0.05));
+  box-shadow: 0 12px 40px rgba(124,58,237,0.12);
 }
+@media (min-width: 901px) { .pricing-card.featured { transform: scale(1.04); } }
 
 .pricing-popular {
   position: absolute;
@@ -467,6 +529,12 @@ section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
 .pricing-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
 .pricing-features li.locked::before { content: '—'; color: var(--border2); }
 .pricing-features li.locked { opacity: 0.5; }
+.pricing-features li.soon { color: var(--muted); }
+.pricing-features li.soon::before { content: '✓'; color: var(--accent3); }
+.pricing-features li .soon-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--cyan); background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); border-radius: 4px; padding: 1px 5px; margin-left: auto; flex-shrink: 0; }
+.pricing-tier-desc { font-size: 12px; color: var(--muted); margin: -4px 0 18px; min-height: 32px; }
+.pricing-btn.creator { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; }
+.pricing-btn.creator:hover { opacity: 0.9; transform: translateY(-1px); }
 
 .pricing-btn {
   width: 100%;
@@ -574,6 +642,23 @@ section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
 }
 .final-cta p { font-size: 16px; color: var(--muted); margin-bottom: 36px; }
 
+/* CONTACT */
+.contact-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 13px 15px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.contact-input::placeholder { color: var(--muted); }
+.contact-input:focus { border-color: var(--accent); }
+@media (max-width: 500px) { .contact-row { grid-template-columns: 1fr !important; } }
+
 /* FOOTER */
 footer {
   padding: 40px;
@@ -605,8 +690,22 @@ footer {
 <nav>
   <div class="nav-logo">Creator<span>NexusHQ</span></div>
   <div class="nav-links">
+    <div class="nav-dropdown" id="toolsDropdown">
+      <button class="nav-dropdown-btn" onclick="toggleToolsMenu(event)" aria-haspopup="true" aria-expanded="false">Tools <svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+      <div class="nav-dropdown-menu">
+        <a class="nav-dd-link" href="creatornexushq-app.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Titles & Hooks</a>
+        <a class="nav-dd-link" href="creatornexushq-analyze.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Content Analyzer</a>
+        <a class="nav-dd-link" href="creatornexushq-thumbnail.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>Thumbnail Tools</a>
+        <a class="nav-dd-link" href="creatornexushq-streaming.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4"/><path d="M8 10v4"/><path d="M15 13h.01"/><path d="M18 11h.01"/></svg>Stream Planner</a>
+        <a class="nav-dd-link" href="creatornexushq-monetization.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Monetization</a>
+        <a class="nav-dd-link" href="creatornexushq-platforms.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Platforms</a>
+        <a class="nav-dd-link" href="creatornexushq-resources.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Resources</a>
+        <a class="nav-dd-link" href="creatornexushq-competitor.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Competitor <span class="soon-dot">●</span></a>
+        <a class="nav-dd-link" href="creatornexushq-trends.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>Trends <span class="soon-dot">●</span></a>
+        <a class="nav-dd-link" href="creatornexushq-collab.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Collab <span class="soon-dot">●</span></a>
+      </div>
+    </div>
     <a href="#features" class="nav-link">Features</a>
-    <a href="#platforms" class="nav-link">Platforms</a>
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="#faq" class="nav-link">FAQ</a>
     <a href="creatornexushq-auth.html?mode=login" class="nav-login">Log In</a>
@@ -711,6 +810,11 @@ footer {
       <div class="feature-title">Stream Planner</div>
       <div class="feature-desc">Generate optimized stream titles for Twitch, Kick, YouTube Live, Facebook Gaming, and TikTok Live with platform-specific tips.</div>
       <span class="feature-tag free">Free</span></a>
+    <a class="feature-card" href="creatornexushq-resources.html" style="text-decoration:none;color:inherit">
+      <span class="feature-icon">📚</span>
+      <div class="feature-title">Creator Resources</div>
+      <div class="feature-desc">A curated library of the best free and freemium tools for creators — editing, design, music, analytics, streaming, and more.</div>
+      <span class="feature-tag free">Free</span></a>
     <a class="feature-card" href="creatornexushq-collab.html" style="text-decoration:none;color:inherit">
       <span class="feature-icon">🤝</span>
       <div class="feature-title">Collab Finder</div>
@@ -721,11 +825,6 @@ footer {
       <div class="feature-title">Trend Tracker</div>
       <div class="feature-desc">See what's trending right now in your niche across YouTube, TikTok, Instagram, and Facebook. Jump on trends before they peak.</div>
       <span class="feature-tag pro">Pro</span></a>
-    <a class="feature-card" href="creatornexushq-resources.html" style="text-decoration:none;color:inherit">
-      <span class="feature-icon">📚</span>
-      <div class="feature-title">Creator Resources</div>
-      <div class="feature-desc">A curated library of the best free and freemium tools for creators — editing, design, music, analytics, streaming, and more.</div>
-      <span class="feature-tag free">Free</span></a>
   </div>
 </section>
 
@@ -818,58 +917,70 @@ footer {
 <section id="pricing">
   <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto 48px">
     <div class="section-tag">Simple Pricing</div>
-    <div class="section-title">Start free. Upgrade when you're ready.</div>
-    <div class="section-desc" style="margin:0 auto">No hidden fees. No complicated tiers. Free gets you far — Pro takes you all the way.</div>
-  </div>
-
-  <div class="pricing-toggle reveal">
-    Billed monthly or yearly — pick below
-    <span class="save-badge">Save $29 on yearly</span>
+    <div class="section-title">Pick the plan that fits<br>where you are.</div>
+    <div class="section-desc" style="margin:0 auto">Start free forever. Level up to Creator when you're posting weekly, or Pro when you're building a business.</div>
   </div>
 
   <div class="pricing-grid reveal">
+
     <div class="pricing-card">
       <div class="pricing-name">Free</div>
       <div class="pricing-price">$0<span>/mo</span></div>
-      <div class="pricing-period">Forever free. No card needed.</div>
+      <div class="pricing-tier-desc">For trying the platform out.</div>
       <ul class="pricing-features">
-        <li>Title & Hook Generator (5/day)</li>
-        <li>CTA Builder</li>
-        <li>Content Ideas</li>
+        <li>Title & Hook Generator</li>
+        <li>CTA Builder + Content Ideas</li>
         <li>Tag & Hashtag Analyzer</li>
-        <li>Thumbnail Analyzer (3/day)</li>
-        <li>AI Thumbnail Prompt Generator</li>
-        <li>Competitor Research (3/day)</li>
+        <li>Thumbnail Analyzer + AI Prompts</li>
+        <li>Stream Planner</li>
+        <li>Competitor Research</li>
         <li>Monetization Tracker</li>
-        <li>Stream Planner (5/day)</li>
         <li>Schedule & Calendar Builder</li>
         <li>Creator Resources Library</li>
-        <li class="locked">Collab Finder</li>
-        <li class="locked">Trend Tracker</li>
-        <li class="locked">Unlimited generations</li>
+        <li>5 AI generations / day</li>
       </ul>
       <a href="creatornexushq-app.html" class="pricing-btn free">Get Started Free</a>
     </div>
 
     <div class="pricing-card featured">
       <div class="pricing-popular">MOST POPULAR</div>
-      <div class="pricing-name">Pro</div>
-      <div class="pricing-price">$9<span>/mo</span></div>
-      <div class="pricing-period">Or $79/yr — save $29</div>
+      <div class="pricing-name">Creator</div>
+      <div class="pricing-price">$12<span>/mo</span></div>
+      <div class="pricing-tier-desc">For creators posting every week. <strong style="color:var(--text)">$120/yr — 2 months free.</strong></div>
       <ul class="pricing-features">
         <li>Everything in Free</li>
+        <li>250 AI generations / day</li>
+        <li>Unlimited titles, hooks & ideas</li>
+        <li>Unlimited stream plans & tags</li>
+        <li>Advanced Schedule Builder</li>
+        <li>Full Resource Library</li>
+        <li>Trend Tracker — YouTube <span class="soon-tag">soon</span></li>
+        <li>Collab Finder <span class="soon-tag">soon</span></li>
+        <li>Email support</li>
+      </ul>
+      <a href="creatornexushq-auth.html" class="pricing-btn creator">Start with Creator</a>
+    </div>
+
+    <div class="pricing-card">
+      <div class="pricing-name">Pro</div>
+      <div class="pricing-price">$29<span>/mo</span></div>
+      <div class="pricing-tier-desc">For creators building a business. <strong style="color:var(--text)">$290/yr — 2 months free.</strong></div>
+      <ul class="pricing-features">
+        <li>Everything in Creator</li>
         <li>Unlimited AI generations</li>
-        <li>Collab Finder + outreach templates</li>
-        <li>Trend Tracker — all platforms</li>
-        <li>Monetization action plans</li>
-        <li>Cross-platform growth strategy</li>
+        <li>Trend Tracker — all platforms <span class="soon-tag">soon</span></li>
+        <li>Unlimited Collab Finder + outreach <span class="soon-tag">soon</span></li>
+        <li>Monetization action plans <span class="soon-tag">soon</span></li>
+        <li>Cross-platform growth strategy <span class="soon-tag">soon</span></li>
         <li>Priority support</li>
         <li>Early access to new features</li>
       </ul>
-      <a href="creatornexushq-auth.html" class="pricing-btn pro-monthly" style="margin-bottom:10px;display:block">Start Pro — $9/mo</a>
-      <a href="creatornexushq-auth.html" class="pricing-btn pro-yearly">Best Value — $79/yr</a>
-      <div style="font-size:12px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.5">Pro billing launches soon — create a free account today and you'll be first in line.</div>
+      <a href="creatornexushq-auth.html" class="pricing-btn pro-monthly" style="display:block">Go Pro</a>
     </div>
+  </div>
+
+  <div style="text-align:center;max-width:560px;margin:28px auto 0;font-size:13px;color:var(--muted);line-height:1.6">
+    Paid plans launch after beta — <strong style="color:var(--text)">every new account gets a free 7-day Pro trial</strong> right now, so you can test everything. Items marked <span style="color:var(--cyan)">soon</span> are on the way.
   </div>
 </section>
 
@@ -936,6 +1047,28 @@ footer {
   <div style="margin-top:16px;font-size:13px;color:var(--muted)">No credit card · No setup · Start in 60 seconds</div>
 </div>
 
+<!-- CONTACT -->
+<section id="contact" style="max-width:560px">
+  <div class="reveal" style="text-align:center;margin-bottom:32px">
+    <div class="section-tag">Get In Touch</div>
+    <div class="section-title">Contact us</div>
+    <div class="section-desc" style="margin:0 auto">Questions, feedback, or a bug to report? Send it over — we read everything.</div>
+  </div>
+  <form id="contactForm" class="reveal" onsubmit="return submitContact(event)" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="contact-row">
+      <input type="text" id="c-name" required placeholder="Your name" class="contact-input">
+      <input type="email" id="c-email" required placeholder="you@email.com" class="contact-input">
+    </div>
+    <input type="text" id="c-subject" required placeholder="Subject" class="contact-input">
+    <textarea id="c-message" required rows="5" placeholder="Your question or issue…" class="contact-input" style="resize:vertical"></textarea>
+    <input type="text" id="c-website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+    <button type="submit" id="c-submit" class="btn-primary" style="justify-content:center">Send Message</button>
+    <div id="c-status" style="font-size:13px;text-align:center;min-height:18px"></div>
+  </form>
+</section>
+
+<div class="section-divider"></div>
+
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">Creator<span>NexusHQ</span></div>
@@ -945,11 +1078,63 @@ footer {
     <a href="creatornexushq-resources.html" class="footer-link">Resources</a>
     <a href="#pricing" class="footer-link">Pricing</a>
     <a href="#faq" class="footer-link">FAQ</a>
+    <a href="#contact" class="footer-link">Contact Us</a>
   </div>
   <div class="footer-copy">© 2026 CreatorNexusHQ. All rights reserved.</div>
 </footer>
 
 <script>
+  // Contact form
+  const CONTACT_URL = 'https://creatornexushq-api.tjlangston15.workers.dev/contact';
+  async function submitContact(e) {
+    e.preventDefault();
+    const status = document.getElementById('c-status');
+    const btn = document.getElementById('c-submit');
+    const payload = {
+      name: document.getElementById('c-name').value.trim(),
+      email: document.getElementById('c-email').value.trim(),
+      subject: document.getElementById('c-subject').value.trim(),
+      message: document.getElementById('c-message').value.trim(),
+      website: document.getElementById('c-website').value, // honeypot — real users leave blank
+    };
+    btn.disabled = true; btn.textContent = 'Sending…';
+    status.textContent = '';
+    try {
+      const res = await fetch(CONTACT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        document.getElementById('contactForm').reset();
+        status.style.color = 'var(--green)';
+        status.textContent = '✓ Thanks — your message is on its way. We\'ll get back to you soon.';
+      } else {
+        status.style.color = 'var(--red)';
+        status.textContent = data.message || 'Something went wrong. Please email us directly at tjlangston15@gmail.com.';
+      }
+    } catch (err) {
+      status.style.color = 'var(--red)';
+      status.textContent = 'Couldn\'t send right now. Please email us at tjlangston15@gmail.com.';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Send Message';
+    }
+    return false;
+  }
+
+  // Tools dropdown
+  function toggleToolsMenu(e) {
+    e.stopPropagation();
+    const dd = document.getElementById('toolsDropdown');
+    const open = dd.classList.toggle('open');
+    dd.querySelector('.nav-dropdown-btn').setAttribute('aria-expanded', open);
+  }
+  document.addEventListener('click', (e) => {
+    const dd = document.getElementById('toolsDropdown');
+    if (dd && !dd.contains(e.target)) { dd.classList.remove('open'); dd.querySelector('.nav-dropdown-btn').setAttribute('aria-expanded', 'false'); }
+  });
+
   // FAQ toggle
   function toggleFAQ(btn) {
     const answer = btn.nextElementSibling;
