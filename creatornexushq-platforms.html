@@ -1073,6 +1073,15 @@ nav {
     <div><div class="sidebar-upgrade-title">Upgrade to Pro</div><div class="sidebar-upgrade-sub">$9/mo or $79/yr</div></div>
   </div>
   <a class="sidebar-item" href="mailto:tjlangston15@gmail.com?subject=CreatorNexusHQ%20Beta%20Feedback" style="margin-top:10px"><span class="sidebar-icon"><svg class="nav-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Send Feedback</a>
+  <div class="sidebar-account">
+    <div id="sidebarAccountLoggedIn" style="display:none">
+      <div class="sidebar-account-email" id="accountEmail">&nbsp;</div>
+      <button class="sidebar-signout" id="signOutBtn">Sign Out</button>
+    </div>
+    <div id="sidebarAccountLoggedOut" style="display:none">
+      <a href="creatornexushq-auth.html" class="sidebar-signout" style="display:block;text-decoration:none;box-sizing:border-box">Sign In</a>
+    </div>
+  </div>
 </div>
 <div class="app-main">
 <!-- NAV -->
@@ -1676,6 +1685,45 @@ nav {
 function showEmailCapture(){document.getElementById("emailCaptureModal").style.display="flex";}
 function closeEmailCapture(){document.getElementById("emailCaptureModal").style.display="none";}
 document.addEventListener("DOMContentLoaded",function(){var m=document.getElementById("emailCaptureModal");if(m)m.addEventListener("click",function(e){if(e.target===this)closeEmailCapture();});});
+</script>
+<style>
+.sidebar-account { margin-top: 12px; padding: 10px 8px 2px; border-top: 1px solid #1a1a2e; }
+.sidebar-account-email { font-size: 12px; color: #8a8ac0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-bottom: 8px; padding: 0 2px; }
+.sidebar-signout { display: block; width: 100%; background: none; border: 1px solid #252540; border-radius: 8px; padding: 8px 10px; color: #9a9ac5; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; transition: all 0.15s; }
+.sidebar-signout:hover { border-color: #ef4444; color: #ef4444; }
+</style>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+  const firebaseConfig = {
+    apiKey: "AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc",
+    authDomain: "creatornexushq-eaf70.firebaseapp.com",
+    projectId: "creatornexushq-eaf70",
+    storageBucket: "creatornexushq-eaf70.firebasestorage.app",
+    messagingSenderId: "867089002449",
+    appId: "1:867089002449:web:cadae5b363375020cdbaf0"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  onAuthStateChanged(auth, (user) => {
+    window.__currentUser = user || null;
+    const loggedIn = document.getElementById('sidebarAccountLoggedIn');
+    const loggedOut = document.getElementById('sidebarAccountLoggedOut');
+    if (user) {
+      const emailEl = document.getElementById('accountEmail');
+      if (emailEl) emailEl.textContent = user.email || user.displayName || 'Signed in';
+      if (loggedIn) loggedIn.style.display = 'block';
+      if (loggedOut) loggedOut.style.display = 'none';
+    } else {
+      if (loggedIn) loggedIn.style.display = 'none';
+      if (loggedOut) loggedOut.style.display = 'block';
+    }
+  });
+  async function handleSignOut() {
+    try { await signOut(auth); } finally { window.location.href = 'creatornexushq-auth.html'; }
+  }
+  const signOutBtn = document.getElementById('signOutBtn');
+  if (signOutBtn) signOutBtn.addEventListener('click', handleSignOut);
 </script>
 </body>
 </html>
