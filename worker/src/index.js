@@ -617,7 +617,9 @@ async function callChatAPI(url, apiKey, model, system, userContent, label) {
       },
       body: JSON.stringify({
         model: model,
-        max_tokens: 1000,
+        // 2000 (was 1000): Gemini's internal reasoning tokens count against
+        // this budget — 1000 risked truncating long formatted outputs.
+        max_tokens: 2000,
         messages: [
           { role: 'system', content: system },
           { role: 'user', content: userContent },
