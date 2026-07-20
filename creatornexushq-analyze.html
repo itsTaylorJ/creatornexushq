@@ -2012,13 +2012,13 @@ nav {
   // Worker actually had live YouTube data.
   function buildYtTagPanel(yt) {
     const chips = yt.tagPool.slice(0, 20).map((t) =>
-      '<span style="display:inline-block;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.3);border-radius:999px;padding:4px 10px;margin:3px 4px 3px 0;font-size:12px;color:#c9c9e6">'
+      '<span style="display:inline-block;background:#181828;border:1px solid #2c2c46;border-radius:999px;padding:4px 10px;margin:3px 4px 3px 0;font-size:12px;color:#e6e6f5">'
       + escYtHtml(t.tag) + ' <span style="color:#06b6d4;font-weight:700">×' + t.count + '</span></span>'
     ).join('');
-    return '<div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:16px;margin-bottom:18px">'
-      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:700;color:#c084fc;margin-bottom:8px">📊 Tags used by videos ranking for &ldquo;' + escYtHtml(yt.query) + '&rdquo; right now</div>'
+    return '<div style="background:#0d0d18;border:1px solid #26263a;border-left:3px solid #7c3aed;border-radius:12px;padding:16px;margin-bottom:18px">'
+      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:700;color:#eeeeff;margin-bottom:8px">📊 Tags used by videos ranking for &ldquo;' + escYtHtml(yt.query) + '&rdquo; right now</div>'
       + '<div>' + chips + '</div>'
-      + '<div style="font-size:11.5px;color:#5a5a90;margin-top:9px">Live YouTube data — ×N = how many of the top results use that tag. The analysis below is scored against these.</div>'
+      + '<div style="font-size:11.5px;color:#8a8ab5;margin-top:9px">Live YouTube data — ×N = how many of the top results use that tag. The analysis below is scored against these.</div>'
       + '</div>';
   }
 </script>

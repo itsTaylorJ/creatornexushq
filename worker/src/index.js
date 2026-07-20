@@ -239,7 +239,10 @@ HOOK 4: [hook]
 HOOK 5: [hook]
 
 BEST COMBO: Title [X] + Hook [Y] — [one sentence explaining why]
-${yt ? 'DATA INSIGHT: [one sentence on the strongest pattern you saw in the ranking titles and how your titles exploit it]\n' : ''}
+${yt ? 'DATA INSIGHT: [one sentence on the strongest pattern you saw in the ranking titles and how your titles exploit it]\n' : ''}SUGGESTED HASHTAGS: [5-8 hashtags for the title/description on this platform, space-separated, most important first${yt ? ' — grounded in the live ranking data above where relevant' : ''}]
+SUGGESTED TAGS: [for YouTube: 10-14 video tags as one comma-separated list ready to paste into the tag box${yt ? ', drawn from tags ranking videos actually use' : ''}; for other platforms: the best searchable keywords]
+DESCRIPTION TO PASTE: [a ready-to-upload 2-3 sentence video description using the best title's angle, ending with the hashtags — ALL ON ONE LINE so it can be copied in one click]
+
 Make them punchy, platform-native, and emotionally compelling. No generic clickbait.`;
     },
   },

@@ -1731,15 +1731,15 @@ nav {
   // rendered when live data actually existed.
   function buildYtRankingPanel(yt) {
     const rows = yt.videos.slice(0, 6).map((v) =>
-      '<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(124,58,237,0.12)">'
-      + '<span style="font-size:13px;color:#c9c9e6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(v.title) + '</span>'
-      + '<span style="font-size:12px;color:#5a5a90;flex-shrink:0">' + escHtml(v.channel) + ' · ' + fmtViews(v.views) + ' views</span>'
+      '<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid #1a1a2e">'
+      + '<span style="font-size:13px;color:#e6e6f5;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(v.title) + '</span>'
+      + '<span style="font-size:12px;color:#8a8ab5;flex-shrink:0">' + escHtml(v.channel) + ' · ' + fmtViews(v.views) + ' views</span>'
       + '</div>'
     ).join('');
-    return '<div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:16px;margin-bottom:18px">'
-      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:700;color:#c084fc;margin-bottom:8px">📊 Ranking on YouTube right now for &ldquo;' + escHtml(yt.query) + '&rdquo;</div>'
+    return '<div style="background:#0d0d18;border:1px solid #26263a;border-left:3px solid #7c3aed;border-radius:12px;padding:16px;margin-bottom:18px">'
+      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:700;color:#eeeeff;margin-bottom:8px">📊 Ranking on YouTube right now for &ldquo;' + escHtml(yt.query) + '&rdquo;</div>'
       + rows
-      + '<div style="font-size:11.5px;color:#5a5a90;margin-top:9px">Live YouTube data — the titles below were generated to compete with these results.</div>'
+      + '<div style="font-size:11.5px;color:#8a8ab5;margin-top:9px">Live YouTube data — the titles below were generated to compete with these results.</div>'
       + '</div>';
   }
 
