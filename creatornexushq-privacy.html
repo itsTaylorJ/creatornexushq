@@ -167,14 +167,15 @@ footer { border-top: 1px solid var(--border); padding: 32px 40px; display: flex;
   <p>We do not sell your personal information to third parties. We may share your information in the following limited circumstances:</p>
 
   <h3>3.1 Service Providers</h3>
-  <p>We work with trusted third-party service providers who assist us in operating the platform:</p>
+  <p>We work with third-party service providers who assist us in operating the platform:</p>
   <ul>
-    <li><strong>Anthropic</strong> — AI processing for content generation tools</li>
-    <li><strong>Stripe</strong> — Payment processing</li>
-    <li><strong>GitHub Pages / Hosting providers</strong> — Website hosting</li>
-    <li><strong>Analytics providers</strong> — Usage analytics (anonymized)</li>
+    <li><strong>Groq</strong> — AI text generation. The text you submit to a tool (titles, descriptions, scripts, tags) is processed by Groq's API to generate your results. Per Groq's API policy, this data is not used to train their models.</li>
+    <li><strong>Google (Gemini API)</strong> — AI image analysis for the Thumbnail Analyzer, and backup text generation. <strong>Important:</strong> under the terms of Google's free API tier, content submitted (including uploaded thumbnail images) may be used by Google to improve its products and may be reviewed by humans. Please don't upload images containing sensitive personal information.</li>
+    <li><strong>Google Firebase</strong> — Website hosting, account authentication, and data storage</li>
+    <li><strong>Cloudflare</strong> — API infrastructure and rate limiting</li>
+    <li><strong>Resend</strong> — Delivery of contact-form emails</li>
   </ul>
-  <p>These providers are contractually obligated to protect your data and may only use it to provide services to us.</p>
+  <p>Some tools also use <strong>YouTube API Services</strong> to retrieve public search and video data. By using those tools you also agree to the <a href="https://www.youtube.com/t/terms" style="color:var(--accent3, #a855f7)">YouTube Terms of Service</a> and the <a href="https://policies.google.com/privacy" style="color:var(--accent3, #a855f7)">Google Privacy Policy</a>.</p>
 
   <h3>3.2 Legal Requirements</h3>
   <p>We may disclose your information if required to do so by law, court order, or governmental authority, or if we believe disclosure is necessary to protect our rights, your safety, or the safety of others.</p>

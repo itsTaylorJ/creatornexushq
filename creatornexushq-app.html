@@ -1697,6 +1697,12 @@ nav {
 
       renderResults(tool, resultsEl, data.text);
 
+      // Live "what's ranking" panel — only present when the Worker had
+      // real YouTube data for this generation (titles + platform=YouTube).
+      if (tool === 'titles' && data.ytData && Array.isArray(data.ytData.videos)) {
+        resultsEl.insertAdjacentHTML('afterbegin', buildYtRankingPanel(data.ytData));
+      }
+
     } catch (err) {
       resultsEl.innerHTML = '<p style="color:var(--gold);font-size:14px">🔧 Our AI backend is still being connected. This tool isn\'t live yet — check back soon.</p>';
     } finally {
@@ -1710,6 +1716,31 @@ nav {
   function getToolLabel(tool) {
     const labels = { titles: 'Titles & Hooks', ctas: 'CTAs', ideas: 'Ideas', analytics: 'Analytics Advice' };
     return labels[tool] || '';
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function fmtViews(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+    return String(n);
+  }
+  // "What's ranking on YouTube right now" — real Data API results the
+  // Worker used to inform this generation. Honest by construction: only
+  // rendered when live data actually existed.
+  function buildYtRankingPanel(yt) {
+    const rows = yt.videos.slice(0, 6).map((v) =>
+      '<div style="display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid rgba(124,58,237,0.12)">'
+      + '<span style="font-size:13px;color:#c9c9e6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(v.title) + '</span>'
+      + '<span style="font-size:12px;color:#5a5a90;flex-shrink:0">' + escHtml(v.channel) + ' · ' + fmtViews(v.views) + ' views</span>'
+      + '</div>'
+    ).join('');
+    return '<div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.25);border-radius:12px;padding:16px;margin-bottom:18px">'
+      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:700;color:#c084fc;margin-bottom:8px">📊 Ranking on YouTube right now for &ldquo;' + escHtml(yt.query) + '&rdquo;</div>'
+      + rows
+      + '<div style="font-size:11.5px;color:#5a5a90;margin-top:9px">Live YouTube data — the titles below were generated to compete with these results.</div>'
+      + '</div>';
   }
 
   // Collects form field values into a plain object. Prompt text itself is

@@ -15,6 +15,95 @@ const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
 // ~4MB image → ~5.3M base64 chars. Reject above this before hitting Groq.
 const MAX_IMAGE_BASE64_CHARS = 5_600_000;
 const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
+// Hybrid AI: Groq stays primary for text (speed + no-training privacy);
+// Gemini Flash handles vision (stronger than Groq's Preview model) and is
+// the text fallback if Groq errors. Activates once GEMINI_API_KEY is set.
+// "-latest" alias tracks Google's current stable Flash release.
+const GEMINI_MODEL = 'gemini-flash-latest';
+const GEMINI_OPENAI_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions';
+
+// ---- YouTube Data API (real search/competition data) ----
+// Free quota is 10,000 units/day; search.list costs 100 units. Budget 90
+// searches/day, cache results in KV so repeat topics are free.
+const YT_DAILY_SEARCH_BUDGET = 90;
+const YT_CACHE_TTL = 60 * 60 * 6; // 6h — ranking data stays fresh enough
+
+// Which tools get real YouTube data attached (when platform is YouTube).
+const YT_TOOLS = { 'titles': 'description', 'analyze-tags': 'title', 'tag-suggester': 'topic' };
+
+// Fetches what's ACTUALLY ranking on YouTube for a topic: top videos'
+// titles, view counts, channels, and tags. Returns null (never throws)
+// when the key is missing, quota is spent, or the API errors — callers
+// fall back to the LLM-only prompt path.
+async function fetchYouTubeData(env, query) {
+  const apiKey = (env.YOUTUBE_API_KEY || '').trim();
+  if (!apiKey || !query) return null;
+
+  const q = String(query).toLowerCase().trim().replace(/\s+/g, ' ').slice(0, 120);
+  if (q.length < 3) return null;
+
+  const cacheKey = 'yt:q:' + q;
+  try {
+    const cached = await env.RATE_LIMIT.get(cacheKey, { type: 'json' });
+    if (cached) return cached;
+  } catch { /* cache miss */ }
+
+  // Daily quota guard (only uncached searches spend units).
+  const day = new Date().toISOString().slice(0, 10);
+  const quotaKey = 'yt:quota:' + day;
+  const used = parseInt((await env.RATE_LIMIT.get(quotaKey)) || '0', 10);
+  if (used >= YT_DAILY_SEARCH_BUDGET) return null;
+
+  try {
+    const searchRes = await fetch(
+      'https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=8&order=relevance'
+      + '&q=' + encodeURIComponent(q) + '&key=' + apiKey
+    );
+    if (!searchRes.ok) {
+      console.log('yt search error: ' + searchRes.status + ' ' + (await searchRes.text()).slice(0, 300));
+      return null;
+    }
+    const search = await searchRes.json();
+    const ids = (search.items || []).map((i) => i.id?.videoId).filter(Boolean);
+    if (!ids.length) return null;
+
+    const videosRes = await fetch(
+      'https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=' + ids.join(',') + '&key=' + apiKey
+    );
+    if (!videosRes.ok) return null;
+    const videos = await videosRes.json();
+
+    const items = (videos.items || []).map((v) => ({
+      title: v.snippet?.title || '',
+      channel: v.snippet?.channelTitle || '',
+      views: parseInt(v.statistics?.viewCount || '0', 10),
+      tags: (v.snippet?.tags || []).slice(0, 25),
+    })).filter((v) => v.title);
+    if (!items.length) return null;
+
+    const data = {
+      query: q,
+      videos: items.map(({ title, channel, views }) => ({ title, channel, views })),
+      // De-duped tag pool across all ranking videos, most-frequent first.
+      tagPool: [...items.reduce((m, v) => { v.tags.forEach((t) => m.set(t.toLowerCase(), (m.get(t.toLowerCase()) || 0) + 1)); return m; }, new Map())]
+        .sort((a, b) => b[1] - a[1]).slice(0, 40).map(([tag, count]) => ({ tag, count })),
+      fetchedAt: new Date().toISOString(),
+    };
+
+    await env.RATE_LIMIT.put(quotaKey, String(used + 1), { expirationTtl: 60 * 60 * 48 });
+    await env.RATE_LIMIT.put(cacheKey, JSON.stringify(data), { expirationTtl: YT_CACHE_TTL });
+    return data;
+  } catch (e) {
+    console.log('yt fetch error: ' + e);
+    return null;
+  }
+}
+
+function formatViews(n) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+  return String(n);
+}
 
 const JWKS = createRemoteJWKSet(
   new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com')
@@ -120,14 +209,22 @@ const TOOLS = {
   // ---- index.html ----
   titles: {
     system: INDEX_SYSTEM,
-    build: (f) => `Generate 5 scroll-stopping titles and 5 hooks for a ${f.platform || 'YouTube'} creator.
+    build: (f) => {
+      const yt = f.__yt;
+      const rankingBlock = yt
+        ? `\nLIVE DATA — these videos are ranking on YouTube for this topic RIGHT NOW:
+${yt.videos.map((v, i) => `${i + 1}. "${v.title}" — ${formatViews(v.views)} views (${v.channel})`).join('\n')}
+
+Study the patterns in what's actually winning (structure, emotional angle, specificity, length) and write titles that can compete with these — similar enough to rank for the same searches, different enough to stand out in the results.\n`
+        : '';
+      return `Generate 5 scroll-stopping titles and 5 hooks for a ${f.platform || 'YouTube'} creator.
 
 Video details:
 - Content type: ${f.contentType}
 - Description: ${f.description}
 - Tone: ${f.tone}
 - Video length: ${f.length}
-
+${rankingBlock}
 Format exactly like this:
 TITLE 1: [title]
 TITLE 2: [title]
@@ -142,8 +239,9 @@ HOOK 4: [hook]
 HOOK 5: [hook]
 
 BEST COMBO: Title [X] + Hook [Y] — [one sentence explaining why]
-
-Make them punchy, platform-native, and emotionally compelling. No generic clickbait.`,
+${yt ? 'DATA INSIGHT: [one sentence on the strongest pattern you saw in the ranking titles and how your titles exploit it]\n' : ''}
+Make them punchy, platform-native, and emotionally compelling. No generic clickbait.`;
+    },
   },
 
   ctas: {
@@ -340,27 +438,58 @@ KEY PRINCIPLE: [the one rule to follow with this schedule]`,
 
   'analyze-tags': {
     system: `You are CreatorNexusHQ's content analysis engine. You give specific, data-informed, actionable feedback to content creators. Be direct, concrete, and helpful. Never be generic. Always give specific examples and rewrites where relevant. Format your responses with clear labeled sections using ALL CAPS labels followed by a colon.`,
-    build: (f) => `Analyze these ${f.platform || 'YouTube'} tags/hashtags for a ${f.contentType} creator in the ${f.niche} niche with ${f.channelSize}.
+    build: (f) => {
+      const yt = f.__yt;
+      const dataBlock = yt
+        ? `\nLIVE DATA — tags used by the videos actually ranking on YouTube for this topic right now (tag, and how many of the top ${yt.videos.length} videos use it):
+${yt.tagPool.map((t) => `- "${t.tag}" (${t.count})`).join('\n')}
+
+Score the creator's tags AGAINST this real data: a tag is STRONG if ranking videos use it, MISSING if it's common in the data but absent from their set, and DEAD WEIGHT if nothing ranking uses it.\n`
+        : '';
+      return `Analyze these ${f.platform || 'YouTube'} tags/hashtags for a ${f.contentType} creator in the ${f.niche} niche with ${f.channelSize}.
 
 VIDEO TITLE: ${f.title}
 CURRENT TAGS: ${f.currentTags}
-
+${dataBlock}
 Analyze in these exact sections:
-OVERALL SCORE: [X/100] — [one sentence verdict on the tag strategy]
-STRONG TAGS: [which tags are working and why]
-WEAK TAGS: [which tags to remove and why — too broad, too competitive, irrelevant]
-MISSING TAGS: [specific tags they should be using but aren't]
+OVERALL SCORE: [X/100] — [one sentence verdict on the tag strategy${yt ? ', grounded in the live ranking data' : ''}]
+STRONG TAGS: [which tags are working and why${yt ? ' — cite how many ranking videos use each' : ''}]
+WEAK TAGS: [which tags to remove and why — too broad, too competitive, irrelevant${yt ? ', or absent from every ranking video' : ''}]
+MISSING TAGS: [specific tags they should be using but aren't${yt ? ' — prioritize tags multiple ranking videos share' : ''}]
 COMPETITION LEVEL: [are these tags too competitive for their channel size?]
 TAG STRATEGY: [short vs long tail balance, branded vs generic, niche vs broad]
 OPTIMIZED TAG SET: [a complete replacement set of 10-15 tags/hashtags ready to copy and paste]
 HASHTAG ORDER: [for platforms like TikTok/Instagram, the ideal order to place hashtags]
-ONE BIG INSIGHT: [the single most important thing wrong with their current tag strategy]`,
+ONE BIG INSIGHT: [the single most important thing wrong with their current tag strategy]`;
+    },
   },
 
   // ---- creatornexushq-analyze.html (Tag Suggester — reads real YouTube data if the client supplied it) ----
   'tag-suggester': {
     system: `You are a YouTube SEO expert at CreatorNexusHQ. Give specific, actionable tag recommendations. Always consider channel size when recommending tags — smaller channels need more niche tags they can actually rank for.`,
     build: (f) => {
+      // Server-fetched ranking data (preferred) or client-supplied API data.
+      if (f.__yt) {
+        const titles = f.__yt.videos.slice(0, 6).map((v, i) => `${i + 1}. "${v.title}" — ${formatViews(v.views)} views`).join('\n');
+        const tags = f.__yt.tagPool.map((t) => `${t.tag} (used by ${t.count})`).join(', ');
+        return `A YouTube creator with ${f.channelSize} is making a video about: "${f.topic}"
+
+LIVE DATA — videos ranking on YouTube for this topic right now:
+${titles}
+
+Tags those ranking videos actually use (with how many of them use each):
+${tags}
+
+Analyze the real competitor tags and suggest the best ones for a channel with ${f.channelSize}. Format your response as:
+
+COMPETITOR TITLES SCANNED: [number]
+TOP COMPETITOR TAGS: [the most common/relevant tags appearing across ranking videos — cite usage counts]
+TOO COMPETITIVE: [tags that are too broad to rank for at this channel size]
+BEST TAGS TO USE: [10-15 tags perfectly sized for their channel — mix of niche and broad]
+LONG TAIL GEMS: [3-5 specific long-tail tags competitors missed that could rank easily]
+READY TO COPY: [the final optimized tag set as a single comma-separated list]
+STRATEGY NOTE: [one insight about the competitive tag landscape for this topic]`;
+      }
       const hasRealData = Array.isArray(f.competitorTags) && f.competitorTags.length > 0;
       if (hasRealData) {
         const titles = (f.competitorTitles || []).slice(0, 5).map((t, i) => `${i + 1}. ${t}`).join('\n');
@@ -475,15 +604,52 @@ COMPETITOR EDGE: [how it compares to what typically performs well in this niche]
   },
 };
 
+// Calls one OpenAI-compatible chat endpoint. Returns { text } or
+// { error, status, detail } — never throws.
+async function callChatAPI(url, apiKey, model, system, userContent, label) {
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + apiKey,
+      },
+      body: JSON.stringify({
+        model: model,
+        max_tokens: 1000,
+        messages: [
+          { role: 'system', content: system },
+          { role: 'user', content: userContent },
+        ],
+      }),
+    });
+  } catch (e) {
+    console.log(label + ' network error: ' + e);
+    return { error: 'model_error', status: 0, detail: String(e) };
+  }
+
+  if (!res.ok) {
+    const errBody = await res.text();
+    console.log(label + ' error: status=' + res.status + ' body=' + errBody.slice(0, 500));
+    return { error: 'model_error', status: res.status, detail: errBody };
+  }
+
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content || '';
+  if (!text) return { error: 'model_error', status: 200, detail: label + ' returned empty content' };
+  return { text };
+}
+
 async function callModel(env, tool, fields) {
   const def = TOOLS[tool];
   if (!def) return { error: 'unknown_tool' };
 
   const promptText = def.build(fields);
+  const groqKey = (env.GROQ_API_KEY || '').trim();
+  const geminiKey = (env.GEMINI_API_KEY || '').trim();
 
-  let model = GROQ_MODEL;
   let userContent = promptText;
-
   if (def.isVision) {
     if (!fields.imageBase64 || !fields.imageType) {
       return { error: 'missing_image', detail: 'Upload a thumbnail image first.' };
@@ -491,40 +657,39 @@ async function callModel(env, tool, fields) {
     if (fields.imageBase64.length > MAX_IMAGE_BASE64_CHARS) {
       return { error: 'image_too_large', detail: 'Image is too large — please use an image under 4MB.' };
     }
-    model = GROQ_VISION_MODEL;
     userContent = [
       { type: 'text', text: promptText },
       { type: 'image_url', image_url: { url: 'data:' + fields.imageType + ';base64,' + fields.imageBase64 } },
     ];
   }
 
-  const apiKey = (env.GROQ_API_KEY || '').trim();
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey,
-    },
-    body: JSON.stringify({
-      model: model,
-      max_tokens: 1000,
-      messages: [
-        { role: 'system', content: def.system },
-        { role: 'user', content: userContent },
-      ],
-    }),
-  });
-
-  if (!res.ok) {
-    const errBody = await res.text();
-    console.log('groq error: status=' + res.status + ' body=' + errBody.slice(0, 500));
-    return { error: 'model_error', status: res.status, detail: errBody };
+  if (def.isVision) {
+    // Vision: prefer Gemini Flash (stronger than Groq's Preview model);
+    // Groq vision remains the fallback so the tool works with either key.
+    if (geminiKey) {
+      const g = await callChatAPI(GEMINI_OPENAI_URL, geminiKey, GEMINI_MODEL, def.system, userContent, 'gemini-vision');
+      if (!g.error) return g;
+    }
+    if (groqKey) {
+      return callChatAPI('https://api.groq.com/openai/v1/chat/completions', groqKey, GROQ_VISION_MODEL, def.system, userContent, 'groq-vision');
+    }
+    return { error: 'backend_not_configured', detail: 'No vision-capable API key configured.' };
   }
 
-  const data = await res.json();
-  const text = data.choices?.[0]?.message?.content || '';
-  return { text };
+  // Text: Groq primary (fast, no-training privacy), Gemini fallback.
+  if (groqKey) {
+    const r = await callChatAPI('https://api.groq.com/openai/v1/chat/completions', groqKey, GROQ_MODEL, def.system, userContent, 'groq');
+    if (!r.error) return r;
+    if (geminiKey) {
+      const g = await callChatAPI(GEMINI_OPENAI_URL, geminiKey, GEMINI_MODEL, def.system, userContent, 'gemini-fallback');
+      if (!g.error) return g;
+    }
+    return r; // surface the primary provider's error
+  }
+  if (geminiKey) {
+    return callChatAPI(GEMINI_OPENAI_URL, geminiKey, GEMINI_MODEL, def.system, userContent, 'gemini');
+  }
+  return { error: 'backend_not_configured', detail: 'No AI API key configured.' };
 }
 
 const CONTACT_DAILY_LIMIT = 60; // anti-spam ceiling on contact submissions/day
@@ -633,8 +798,19 @@ export default {
       return json({ error: 'daily_limit', message: "You've used all your free generations today. Upgrade to Pro for unlimited access!" }, 429, origin);
     }
 
-    if (!env.GROQ_API_KEY) {
-      return json({ error: 'backend_not_configured', message: 'AI backend not yet configured — no Groq API key set.' }, 500, origin);
+    if (!env.GROQ_API_KEY && !env.GEMINI_API_KEY) {
+      return json({ error: 'backend_not_configured', message: 'AI backend not yet configured — no AI API key set.' }, 500, origin);
+    }
+
+    // Real YouTube ranking data for the flagship tools. 'tag-suggester' is
+    // YouTube-only by design; the others only fetch when platform=YouTube.
+    if (YT_TOOLS[tool]) {
+      const isYouTube = tool === 'tag-suggester' || /youtube/i.test(String(fields.platform || ''));
+      if (isYouTube) {
+        const query = String(fields[YT_TOOLS[tool]] || fields.niche || '').trim();
+        const yt = await fetchYouTubeData(env, query);
+        if (yt) fields.__yt = yt;
+      }
     }
 
     const result = await callModel(env, tool, fields);
@@ -644,6 +820,9 @@ export default {
 
     // Only spend a credit once generation actually succeeded.
     const remaining = await incrementUsage(env, usage, unlimited);
-    return json({ text: result.text, remaining, plan }, 200, origin);
+    const payload = { text: result.text, remaining, plan };
+    // Ship the ranking data so the client can render "what's ranking now".
+    if (fields.__yt) payload.ytData = fields.__yt;
+    return json(payload, 200, origin);
   },
 };
