@@ -224,6 +224,13 @@ body::before { content: ''; position: fixed; inset: 0; background: radial-gradie
   .mdrawer-overlay{display:none !important}
 }
 </style>
+<style id="cnx-contrast">
+/* Readability: active/selected states keep their purple tint background +
+   border as the "selected" signal, but the TEXT goes near-white. Purple
+   text on purple tint passes WCAG yet reads muddy (same hue family). */
+.sidebar-item.active,.md-link.active,.nav-tab.active,.mobile-nav a.active,.mobile-nav-item.active,.pill.selected,.ppill.selected{color:#f0f0ff !important}
+.sidebar-upgrade-title{color:#f0f0ff !important}
+</style>
 </head>
 <style>
 /* ===== SIDEBAR ===== */
