@@ -1613,7 +1613,7 @@ nav {
       </div>
     </div>
 
-    <div class="modal-note">🔒 Secure checkout · Cancel anytime · No hidden fees</div>
+    <div class="modal-note">Billing launches after beta — every new account gets a free 7-day Pro trial today.</div>
   </div>
 </div>
 
@@ -1723,8 +1723,16 @@ nav {
       if (data.plan === 'pro' || data.plan === 'trial') {
         const proBadge = document.getElementById('sidebarPlan');
         if (proBadge) { proBadge.textContent = data.plan === 'trial' ? '★ PRO TRIAL' : '★ PRO PLAN'; proBadge.classList.add('pro'); }
-        const uc = document.getElementById('usageCount'); if (uc) uc.textContent = '∞';
-        const uf = document.getElementById('usageFill'); if (uf) uf.style.width = '100%';
+        // Pro is unmetered (∞); trial is metered at 50/day — show the truth.
+        const uc = document.getElementById('usageCount');
+        const uf = document.getElementById('usageFill');
+        if (data.remaining === null || data.remaining === undefined) {
+          if (uc) uc.textContent = '∞';
+          if (uf) uf.style.width = '100%';
+        } else {
+          if (uc) uc.textContent = data.remaining;
+          if (uf) uf.style.width = Math.max(0, Math.min(100, (data.remaining / 50) * 100)) + '%';
+        }
       }
 
       renderResults(tool, resultsEl, data.text);

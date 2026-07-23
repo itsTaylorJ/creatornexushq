@@ -4,8 +4,9 @@ const FIREBASE_PROJECT_ID = 'creatornexushq-eaf70';
 const ALLOWED_ORIGIN = 'https://creatornexushq-eaf70.web.app';
 const DAILY_FREE_LIMIT = 5;
 // Site-wide cap across all users (Pro included) — protects the free Groq
-// token quota from being drained in one afternoon of beta testing.
-const GLOBAL_DAILY_LIMIT = 150;
+// request quota (~1,000/day) while leaving headroom for its token limits.
+// 150 was too tight once several testers are active at once.
+const GLOBAL_DAILY_LIMIT = 800;
 // Free tier today; ANTHROPIC_MODEL/ANTHROPIC_API_KEY are reserved for a future
 // paid tier once Stripe/plan-tracking exists (see ROADMAP.md).
 const GROQ_MODEL = 'openai/gpt-oss-120b';
@@ -156,6 +157,9 @@ async function checkProGrant(env, email) {
 }
 
 const TRIAL_DAYS = 7;
+// Trial users are metered (generous, but real) so one tester can't
+// single-handedly drain GLOBAL_DAILY_LIMIT for everyone else.
+const TRIAL_DAILY_LIMIT = 50;
 
 // Every account gets an automatic Pro trial starting from its FIRST
 // generation (not signup — nobody burns trial days before trying the
@@ -174,8 +178,8 @@ async function checkTrial(env, uid) {
 
 // Read-only check — does NOT spend a credit. Call incrementUsage() only
 // after a generation actually succeeds, so failed/errored attempts don't
-// burn the user's daily allowance.
-async function checkUsage(env, uid, isPro) {
+// burn the user's daily allowance. dailyLimit === null means unmetered (Pro).
+async function checkUsage(env, uid, dailyLimit) {
   const day = new Date().toISOString().slice(0, 10); // UTC YYYY-MM-DD
   const userKey = `usage:${uid}:${day}`;
   const globalKey = `usage:global:${day}`;
@@ -184,17 +188,17 @@ async function checkUsage(env, uid, isPro) {
   if (globalCount >= GLOBAL_DAILY_LIMIT) {
     return { allowed: false, reason: 'global' };
   }
-  if (!isPro && userCount >= DAILY_FREE_LIMIT) {
+  if (dailyLimit !== null && userCount >= dailyLimit) {
     return { allowed: false, reason: 'user' };
   }
   return { allowed: true, userKey, userCount, globalKey, globalCount };
 }
 
-async function incrementUsage(env, usage, isPro) {
+async function incrementUsage(env, usage, dailyLimit) {
   await env.RATE_LIMIT.put(usage.globalKey, String(usage.globalCount + 1), { expirationTtl: 60 * 60 * 48 });
-  if (isPro) return null; // Pro has no per-user meter
+  if (dailyLimit === null) return null; // Pro has no per-user meter
   await env.RATE_LIMIT.put(usage.userKey, String(usage.userCount + 1), { expirationTtl: 60 * 60 * 48 });
-  return DAILY_FREE_LIMIT - (usage.userCount + 1);
+  return dailyLimit - (usage.userCount + 1);
 }
 
 // ============================================================
@@ -878,17 +882,23 @@ export default {
 
     const isPro = await checkProGrant(env, authUser.email);
     let plan = isPro ? 'pro' : 'free';
-    let unlimited = isPro;
     if (!isPro) {
       const onTrial = await checkTrial(env, authUser.uid);
-      if (onTrial) { plan = 'trial'; unlimited = true; }
+      if (onTrial) plan = 'trial';
     }
-    const usage = await checkUsage(env, authUser.uid, unlimited);
+    // Per-plan daily caps. Trial is generous but METERED — an unmetered
+    // trial let one enthusiastic tester drain the site-wide budget and
+    // lock everyone else out. Pro stays unmetered.
+    const dailyLimit = plan === 'pro' ? null : plan === 'trial' ? TRIAL_DAILY_LIMIT : DAILY_FREE_LIMIT;
+    const usage = await checkUsage(env, authUser.uid, dailyLimit);
     if (!usage.allowed) {
       if (usage.reason === 'global') {
         return json({ error: 'global_limit', message: "The beta has hit today's site-wide generation limit — it resets at midnight UTC. Thanks for stress-testing us!" }, 429, origin);
       }
-      return json({ error: 'daily_limit', message: "You've used all your free generations today. Upgrade to Pro for unlimited access!" }, 429, origin);
+      const msg = plan === 'trial'
+        ? "You've hit today's trial limit of " + TRIAL_DAILY_LIMIT + " generations — it resets at midnight UTC."
+        : "You've used all your free generations today. Upgrade to Pro for unlimited access!";
+      return json({ error: 'daily_limit', message: msg }, 429, origin);
     }
 
     if (!env.GROQ_API_KEY && !env.GEMINI_API_KEY) {
@@ -914,7 +924,7 @@ export default {
     }
 
     // Only spend a credit once generation actually succeeded.
-    const remaining = await incrementUsage(env, usage, unlimited);
+    const remaining = await incrementUsage(env, usage, dailyLimit);
     const payload = { text: normalizeModelText(result.text), remaining, plan };
     // Ship the ranking data so the client can render "what's ranking now".
     if (fields.__yt) payload.ytData = fields.__yt;
