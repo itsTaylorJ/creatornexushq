@@ -1327,6 +1327,10 @@ nav {
           <label>Describe your video</label>
           <textarea id="title-desc" rows="3" placeholder="e.g. I 1v4'd a squad and quickscoped the last guy to finish it..."></textarea>
         </div>
+        <div class="field full-width">
+          <label>Target keyword <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(optional — what someone would search)</span></label>
+          <input type="text" id="title-keyword" placeholder="e.g. pokemon card unboxing, warzone solo tips...">
+        </div>
         <div class="field">
           <label>Tone</label>
           <select id="title-tone">
@@ -1336,6 +1340,14 @@ nav {
             <option>Disbelief / shocked</option>
             <option>Rage / frustrated</option>
             <option>Wholesome</option>
+            <option>Educational / clear</option>
+            <option>Story / emotional</option>
+            <option>Analytical / honest</option>
+            <option>Mysterious / intriguing</option>
+            <option>Urgent / breaking</option>
+            <option>Chill / relaxed</option>
+            <option>Inspirational / motivating</option>
+            <option>Sarcastic / dry</option>
           </select>
         </div>
         <div class="field">
@@ -1398,6 +1410,12 @@ nav {
             <option>Hype / energetic</option>
             <option>Chill / laid back</option>
             <option>Confident / direct</option>
+            <option>Educational / clear</option>
+            <option>Story / emotional</option>
+            <option>Wholesome</option>
+            <option>Urgent / breaking</option>
+            <option>Inspirational / motivating</option>
+            <option>Sarcastic / dry</option>
           </select>
         </div>
         <div class="field">
@@ -1759,6 +1777,7 @@ nav {
         platform: document.querySelector('#tab-titles .pill.selected')?.textContent || 'YouTube',
         contentType: document.getElementById('title-content-type').value,
         description: document.getElementById('title-desc').value,
+        keyword: document.getElementById('title-keyword').value.trim(),
         tone: document.getElementById('title-tone').value,
         length: document.getElementById('title-length').value,
       };
@@ -1807,23 +1826,59 @@ nav {
     `;
     el.appendChild(header);
 
-    // Parse into items
-    const lines = text.split('\n').filter(l => l.trim());
+    // Parse into items (no blank-line filter: FULL DESCRIPTION keeps its paragraphs)
+    const lines = text.split('\n');
     let hasItems = false;
 
-    lines.forEach(line => {
-      const trimmed = line.trim();
-      if (!trimmed) return;
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      if (!trimmed) continue;
 
       // Check if it's a labeled item
-      const match = trimmed.match(/^([A-Z][A-Z\s\d]+):\s*(.+)/);
-      if (match) {
+      const match = trimmed.match(/^([A-Z][A-Z\s\d]+):\s*(.*)/);
+
+      // FULL DESCRIPTION spans multiple lines — capture everything up to
+      // the next ALL-CAPS label and render it as ONE copyable block so a
+      // single click grabs the whole upload-ready description.
+      if (match && match[1].trim() === 'FULL DESCRIPTION') {
         hasItems = true;
+        const parts = [match[2] || ''];
+        while (i + 1 < lines.length && !/^[A-Z][A-Z\s\d]+:\s/.test(lines[i + 1].trim())) {
+          i++;
+          parts.push(lines[i]);
+        }
+        const blockText = parts.join('\n').replace(/^\n+|\n+$/g, '');
+        const item = document.createElement('div');
+        item.className = 'result-item';
+        const span = document.createElement('span');
+        span.className = 'result-item-text';
+        span.innerHTML = '<strong style="color:var(--accent3);font-size:11px;letter-spacing:0.5px;text-transform:uppercase">FULL DESCRIPTION</strong>';
+        const block = document.createElement('div');
+        block.style.cssText = 'white-space:pre-wrap;margin-top:4px';
+        block.textContent = blockText;
+        span.appendChild(block);
+        const cbtn = document.createElement('button');
+        cbtn.className = 'copy-btn';
+        cbtn.textContent = 'Copy';
+        cbtn.addEventListener('click', () => copyItem(cbtn, blockText));
+        item.appendChild(span);
+        item.appendChild(cbtn);
+        el.appendChild(item);
+        continue;
+      }
+
+      if (match && match[2]) {
+        hasItems = true;
+        // Strip decorative wrapping quotes the model sometimes adds
+        let value = match[2];
+        if (/^(TITLE|CAPTION|HOOK)\b/.test(match[1])) {
+          value = value.replace(/^["“”'']+|["“”'']+$/g, '');
+        }
         const item = document.createElement('div');
         item.className = 'result-item';
         item.innerHTML = `
-          <span class="result-item-text"><strong style="color:var(--accent3);font-size:11px;letter-spacing:0.5px;text-transform:uppercase">${match[1]}</strong><br>${match[2]}</span>
-          <button class="copy-btn" onclick="copyItem(this, \`${match[2].replace(/`/g, '\\`')}\`)">Copy</button>
+          <span class="result-item-text"><strong style="color:var(--accent3);font-size:11px;letter-spacing:0.5px;text-transform:uppercase">${match[1]}</strong><br>${value}</span>
+          <button class="copy-btn" onclick="copyItem(this, \`${value.replace(/`/g, '\\`')}\`)">Copy</button>
         `;
         el.appendChild(item);
       } else {
@@ -1834,7 +1889,7 @@ nav {
         p.textContent = trimmed;
         el.appendChild(p);
       }
-    });
+    }
 
     if (!hasItems) {
       const p = document.createElement('p');

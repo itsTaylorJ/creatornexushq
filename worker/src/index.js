@@ -205,32 +205,109 @@ async function incrementUsage(env, usage, isPro) {
 
 const INDEX_SYSTEM = `You are CreatorNexusHQ, an expert AI coach for content creators, streamers, and YouTubers. You specialize in helping small to mid-size creators grow their audience with practical, specific, and high-impact advice. Your tone is direct, energetic, and encouraging — like a knowledgeable friend who's also a successful creator. Always give concrete, actionable outputs. Format your responses clearly with labels like TITLE 1:, HOOK 1:, IDEA 1: etc so they're easy to parse. Never be generic. Always tailor to the specific content described.`;
 
+// ============================================================
+// PLATFORM RULES — each platform is a different product with its
+// own discovery model. These get injected into title/caption
+// prompts so YouTube output is search-optimized while TikTok/IG
+// output is feed-optimized, instead of one title reused everywhere.
+// ============================================================
+const PLATFORM_RULES = {
+  youtube: `PLATFORM RULES — YouTube (search-driven):
+- Discovery = search + suggested. FRONT-LOAD the primary keyword in every title.
+- Titles: 60 characters max (longer truncates in search results).
+- NEVER put hashtags inside a YouTube title. Hashtags (2-3 max) belong in the description — YouTube shows the first 3 above the title.
+- Never wrap titles in quotation marks.`,
+  tiktok: `PLATFORM RULES — TikTok (feed-driven):
+- The caption IS the title. Discovery = algorithmic feed + hashtag topics.
+- The first 40 characters carry the hook — put the payoff there.
+- Bake 3-5 hashtags into the END of each caption. Hashtags are TikTok's primary topic classification.
+- Keep each full caption under 150 characters. Casual, native tone — not ad copy.`,
+  instagram: `PLATFORM RULES — Instagram Reels (feed-driven):
+- There is no title — only the caption. The first line is the hook (about 125 characters show before "...more").
+- Bake 3-5 hashtags into the END of each caption.
+- Conversational tone; write like a person, not a brand.`,
+  x: `PLATFORM RULES — X (timeline-driven):
+- The post text is the title. 280 character limit; strongest line first.
+- 1-2 inline hashtags maximum — more reads as spam on X.
+- Human voice; zero ad-speak.`,
+  snapchat: `PLATFORM RULES — Snapchat:
+- Short and punchy: under 80 characters.
+- 1-3 topical hashtags baked at the end.
+- Extremely casual, native tone.`,
+  facebook: `PLATFORM RULES — Facebook (feed + shares):
+- About 80 characters show before truncation; lead with the emotional core.
+- 1-2 hashtags at the end are fine; more hurts reach.
+- Plain-spoken, shareable phrasing.`,
+  twitch: `PLATFORM RULES — Twitch (category-driven):
+- Discovery = category directory; the title differentiates you inside it.
+- Under 100 characters. Lead with the moment/stakes, not the game name (the category already says it).
+- No hashtags. Never wrap titles in quotation marks.`,
+  kick: `PLATFORM RULES — Kick (category-driven):
+- Like Twitch: category does discovery, the title sells the moment.
+- Authenticity over polish — Kick culture rewards real over produced.
+- No hashtags. Never wrap titles in quotation marks.`,
+};
+
+// Feed platforms: output is captions with hashtags baked in.
+// Search/category platforms: clean titles, hashtags live elsewhere.
+const FEED_PLATFORMS = ['tiktok', 'instagram', 'x', 'snapchat', 'facebook'];
+
+function platformKey(p) {
+  const s = String(p || 'youtube').toLowerCase();
+  if (s.includes('tiktok')) return 'tiktok';
+  if (s.includes('instagram') || s.includes('reel')) return 'instagram';
+  if (s === 'x' || s.includes('twitter')) return 'x';
+  if (s.includes('snap')) return 'snapchat';
+  if (s.includes('facebook')) return 'facebook';
+  if (s.includes('twitch')) return 'twitch';
+  if (s.includes('kick')) return 'kick';
+  return 'youtube';
+}
+
 const TOOLS = {
   // ---- index.html ----
   titles: {
     system: INDEX_SYSTEM,
     build: (f) => {
       const yt = f.__yt;
+      const pk = platformKey(f.platform);
+      const isFeed = FEED_PLATFORMS.includes(pk);
+      const isYouTube = pk === 'youtube';
+      const label = isFeed ? 'CAPTION' : 'TITLE';
+      const kw = (f.keyword || '').trim();
+
       const rankingBlock = yt
         ? `\nLIVE DATA — these videos are ranking on YouTube for this topic RIGHT NOW:
 ${yt.videos.map((v, i) => `${i + 1}. "${v.title}" — ${formatViews(v.views)} views (${v.channel})`).join('\n')}
 
 Study the patterns in what's actually winning (structure, emotional angle, specificity, length) and write titles that can compete with these — similar enough to rank for the same searches, different enough to stand out in the results.\n`
         : '';
-      return `Generate 5 scroll-stopping titles and 5 hooks for a ${f.platform || 'YouTube'} creator.
+
+      const tail = isYouTube
+        ? `SUGGESTED HASHTAGS: [2-3 hashtags for the DESCRIPTION (YouTube shows the first 3 above the title), space-separated${yt ? ' — grounded in the live ranking data above' : ''}]
+SUGGESTED TAGS: [10-14 video tags as one comma-separated list ready to paste into the tag box${yt ? ', drawn from tags ranking videos actually use' : ''}]
+SHORT DESCRIPTION: [one punchy sentence for Shorts/community reuse — one line]
+FULL DESCRIPTION: [a complete upload-ready SEO description. Requirements: the primary keyword appears in the FIRST sentence (phrased naturally); MINIMUM 170 words of actual prose (aim for 180-230) across 2-3 short paragraphs; naturally repeat the keyword and 2-3 related search terms in the body; include a [LINKS] placeholder line and, if the video suits chapters, a [CHAPTERS] placeholder line; END with the 2-3 hashtags. Real line breaks between paragraphs.]`
+        : isFeed
+          ? `EXTRA HASHTAGS: [5-8 alternate hashtags to rotate across posts so reach doesn't stagnate, space-separated]`
+          : `SHORT DESCRIPTION: [one-line clip/VOD caption for socials]`;
+
+      return `Generate 5 scroll-stopping ${isFeed ? 'captions' : 'titles'} and 5 hooks for a ${f.platform || 'YouTube'} creator.
+
+${PLATFORM_RULES[pk]}
 
 Video details:
 - Content type: ${f.contentType}
-- Description: ${f.description}
+- Description: ${f.description}${kw ? `\n- PRIMARY TARGET KEYWORD: "${kw}" — weave this phrase (or a close natural variant) into the FIRST HALF of each ${label.toLowerCase()}, but NATURALLY: titles must read like a human wrote them. Never use the keyword as a robotic "keyword:" prefix; at most ONE ${label.toLowerCase()} may begin with the keyword itself.` : ''}
 - Tone: ${f.tone}
 - Video length: ${f.length}
 ${rankingBlock}
-Format exactly like this:
-TITLE 1: [title]
-TITLE 2: [title]
-TITLE 3: [title]
-TITLE 4: [title]
-TITLE 5: [title]
+Format exactly like this — PLAIN TEXT ONLY: no markdown, no asterisks, no bold; every label starts at the beginning of its line exactly as shown. Never wrap ${label.toLowerCase()}s in quotation marks:
+${label} 1: [${label.toLowerCase()}]
+${label} 2: [${label.toLowerCase()}]
+${label} 3: [${label.toLowerCase()}]
+${label} 4: [${label.toLowerCase()}]
+${label} 5: [${label.toLowerCase()}]
 
 HOOK 1: [hook - first 1-3 seconds spoken or on screen]
 HOOK 2: [hook]
@@ -238,10 +315,8 @@ HOOK 3: [hook]
 HOOK 4: [hook]
 HOOK 5: [hook]
 
-BEST COMBO: Title [X] + Hook [Y] — [one sentence explaining why]
-${yt ? 'DATA INSIGHT: [one sentence on the strongest pattern you saw in the ranking titles and how your titles exploit it]\n' : ''}SUGGESTED HASHTAGS: [5-8 hashtags for the title/description on this platform, space-separated, most important first${yt ? ' — grounded in the live ranking data above where relevant' : ''}]
-SUGGESTED TAGS: [for YouTube: 10-14 video tags as one comma-separated list ready to paste into the tag box${yt ? ', drawn from tags ranking videos actually use' : ''}; for other platforms: the best searchable keywords]
-DESCRIPTION TO PASTE: [a ready-to-upload 2-3 sentence video description using the best title's angle, ending with the hashtags — ALL ON ONE LINE so it can be copied in one click]
+BEST COMBO: ${label === 'CAPTION' ? 'Caption' : 'Title'} [X] + Hook [Y] — [one sentence explaining why]
+${yt ? 'DATA INSIGHT: [one sentence on the strongest pattern you saw in the ranking titles and how your titles exploit it]\n' : ''}${tail}
 
 Make them punchy, platform-native, and emotionally compelling. No generic clickbait.`;
     },
@@ -306,6 +381,8 @@ METRIC TO WATCH: [one number to focus on and why]`,
   'stream-titles': {
     system: `You are CreatorNexusHQ's stream title specialist. You write stream titles that are optimized for each platform's specific algorithm, audience, and culture. You know that Twitch titles need to stand out in directories, YouTube Live titles need SEO, Kick titles need authenticity, Facebook Gaming needs community language, and TikTok Live needs punchy hooks. Always write platform-native titles. Be specific and creative — never generic.`,
     build: (f) => `Generate 8 stream titles for ${f.platform}.
+
+${PLATFORM_RULES[platformKey(f.platform)]}
 
 Details:
 - Game / Content: ${f.game}
@@ -620,9 +697,10 @@ async function callChatAPI(url, apiKey, model, system, userContent, label) {
       },
       body: JSON.stringify({
         model: model,
-        // 2000 (was 1000): Gemini's internal reasoning tokens count against
-        // this budget — 1000 risked truncating long formatted outputs.
-        max_tokens: 2000,
+        // 3000 (was 2000): both providers spend internal reasoning tokens
+        // from this budget, and the platform-aware titles output (5 titles
+        // + hooks + tags + short & full descriptions) truncated at 2000.
+        max_tokens: 3000,
         messages: [
           { role: 'system', content: system },
           { role: 'user', content: userContent },
@@ -695,6 +773,16 @@ async function callModel(env, tool, fields) {
     return callChatAPI(GEMINI_OPENAI_URL, geminiKey, GEMINI_MODEL, def.system, userContent, 'gemini');
   }
   return { error: 'backend_not_configured', detail: 'No AI API key configured.' };
+}
+
+// Models drift into markdown despite plain-text instructions. Every client
+// parses "LABEL: value" at line starts, so strip decoration that would break
+// that: **LABEL:** / **LABEL**: / *LABEL:* and leading bullet markers.
+function normalizeModelText(text) {
+  return String(text || '')
+    .replace(/^([ \t]*)\*{1,2}([A-Z][A-Z\s\d]*?):\*{1,2}[ \t]*/gm, '$2: ')
+    .replace(/^([ \t]*)\*{1,2}([A-Z][A-Z\s\d]*?)\*{1,2}:[ \t]*/gm, '$2: ')
+    .replace(/^[-•][ \t]+(?=[A-Z][A-Z\s\d]*:)/gm, '');
 }
 
 const CONTACT_DAILY_LIMIT = 60; // anti-spam ceiling on contact submissions/day
@@ -812,7 +900,9 @@ export default {
     if (YT_TOOLS[tool]) {
       const isYouTube = tool === 'tag-suggester' || /youtube/i.test(String(fields.platform || ''));
       if (isYouTube) {
-        const query = String(fields[YT_TOOLS[tool]] || fields.niche || '').trim();
+        // An explicit target keyword is the best possible search query;
+        // fall back to the tool's mapped field, then niche.
+        const query = String(fields.keyword || fields[YT_TOOLS[tool]] || fields.niche || '').trim();
         const yt = await fetchYouTubeData(env, query);
         if (yt) fields.__yt = yt;
       }
@@ -825,7 +915,7 @@ export default {
 
     // Only spend a credit once generation actually succeeded.
     const remaining = await incrementUsage(env, usage, unlimited);
-    const payload = { text: result.text, remaining, plan };
+    const payload = { text: normalizeModelText(result.text), remaining, plan };
     // Ship the ranking data so the client can render "what's ranking now".
     if (fields.__yt) payload.ytData = fields.__yt;
     return json(payload, 200, origin);
