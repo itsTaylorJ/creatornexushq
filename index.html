@@ -345,6 +345,21 @@ nav.scrolled::after { opacity: 1; }
 .mm-cta:hover { opacity: 0.92; }
 @media (max-width: 768px) { .nav-hamburger { display: flex; } }
 
+/* Logged-in account UI (landing) */
+.nav-account { align-items: center; gap: 10px; }
+.acct { position: relative; }
+.acct-btn { display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--border2); border-radius: 9px; padding: 5px 8px 5px 5px; cursor: pointer; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; transition: border-color 0.2s; }
+.acct-btn:hover { border-color: var(--accent); }
+.acct-avatar { width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; text-transform: uppercase; }
+.acct-caret { color: var(--accent3); transition: transform 0.2s; }
+.acct.open .acct-caret { transform: rotate(180deg); }
+.acct-menu { position: absolute; top: calc(100% + 8px); right: 0; width: 230px; background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 8px; box-shadow: 0 16px 44px rgba(0,0,0,0.5); opacity: 0; visibility: hidden; transform: translateY(-6px); transition: all 0.16s ease; z-index: 200; }
+.acct.open .acct-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.acct-email { font-size: 12px; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--border); word-break: break-all; margin-bottom: 4px; }
+.acct-signout { display: block; width: 100%; text-align: left; background: none; border: 0; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; padding: 9px 10px; border-radius: 8px; cursor: pointer; }
+.acct-signout:hover { background: var(--surface2); color: #ff6b6b; }
+.mm-acct-email { font-size: 12px; color: var(--muted); padding: 2px 10px 12px; word-break: break-all; }
+
 /* HERO */
 .hero {
   text-align: center;
@@ -867,8 +882,21 @@ footer {
     <a href="#features" class="nav-link">Features</a>
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="#faq" class="nav-link">FAQ</a>
-    <a href="creatornexushq-auth.html?mode=login" class="nav-login">Log In</a>
-    <a href="creatornexushq-auth.html" class="nav-cta">Sign Up Free →</a>
+    <a href="creatornexushq-auth.html?mode=login" class="nav-login" data-auth="out">Log In</a>
+    <a href="creatornexushq-auth.html" class="nav-cta" data-auth="out">Sign Up Free →</a>
+    <div class="nav-account" data-auth="in" data-disp="flex" style="display:none">
+      <a href="creatornexushq-app.html" class="nav-cta" style="margin-left:0">Open App →</a>
+      <div class="acct" id="acctMenu">
+        <button class="acct-btn" onclick="toggleAcct(event)" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+          <span class="acct-avatar" aria-hidden="true">?</span>
+          <svg class="acct-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="acct-menu">
+          <div class="acct-email" data-acct-email>&nbsp;</div>
+          <button class="acct-signout" onclick="window.__cnxSignOut&&window.__cnxSignOut()">Sign Out</button>
+        </div>
+      </div>
+    </div>
   </div>
   <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -900,8 +928,13 @@ footer {
     <a class="mm-link" href="#pricing" onclick="closeMobileMenu()">Pricing</a>
     <a class="mm-link" href="#faq" onclick="closeMobileMenu()">FAQ</a>
     <div class="mm-divider"></div>
-    <a class="mm-login" href="creatornexushq-auth.html?mode=login">Log In</a>
-    <a class="mm-cta" href="creatornexushq-auth.html">Sign Up Free →</a>
+    <a class="mm-login" href="creatornexushq-auth.html?mode=login" data-auth="out">Log In</a>
+    <a class="mm-cta" href="creatornexushq-auth.html" data-auth="out">Sign Up Free →</a>
+    <div data-auth="in" data-disp="block" style="display:none">
+      <div class="mm-acct-email" data-acct-email>&nbsp;</div>
+      <a class="mm-cta" href="creatornexushq-app.html">Open App →</a>
+      <button class="mm-login" style="width:100%;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;margin-top:8px" onclick="window.__cnxSignOut&&window.__cnxSignOut()">Sign Out</button>
+    </div>
   </div>
 </div>
 
@@ -1399,6 +1432,24 @@ footer {
   }
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMobileMenu(); });
 
+  // Account dropdown (landing, logged-in)
+  function toggleAcct(e) {
+    e.stopPropagation();
+    const a = document.getElementById('acctMenu');
+    if (!a) return;
+    const open = a.classList.toggle('open');
+    const btn = a.querySelector('.acct-btn');
+    if (btn) btn.setAttribute('aria-expanded', open);
+  }
+  document.addEventListener('click', () => {
+    const a = document.getElementById('acctMenu');
+    if (a && a.classList.contains('open')) {
+      a.classList.remove('open');
+      const btn = a.querySelector('.acct-btn');
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
   // Nav elevation on scroll
   (function () {
     const navEl = document.querySelector('nav');
@@ -1423,6 +1474,45 @@ footer {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
   }, { threshold: 0.01, rootMargin: '0px 0px 150px 0px' });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+<!-- Firebase auth-gate: the landing page now knows if you're signed in,
+     so the nav reflects your real session instead of always showing
+     "Log In / Sign Up Free" (the cause of the "random sign-out" feeling). -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc",
+    authDomain: "creatornexushq-eaf70.firebaseapp.com",
+    projectId: "creatornexushq-eaf70",
+    storageBucket: "creatornexushq-eaf70.firebasestorage.app",
+    messagingSenderId: "867089002449",
+    appId: "1:867089002449:web:cadae5b363375020cdbaf0"
+  };
+
+  const auth = getAuth(initializeApp(firebaseConfig));
+
+  onAuthStateChanged(auth, (user) => {
+    window.__currentUser = user || null;
+    const ins = document.querySelectorAll('[data-auth="in"]');
+    const outs = document.querySelectorAll('[data-auth="out"]');
+    if (user) {
+      ins.forEach(el => { el.style.display = el.dataset.disp || 'block'; });
+      outs.forEach(el => { el.style.display = 'none'; });
+      const email = user.email || user.displayName || 'Signed in';
+      document.querySelectorAll('[data-acct-email]').forEach(el => { el.textContent = email; });
+      document.querySelectorAll('.acct-avatar').forEach(el => { el.textContent = (email.trim()[0] || '?'); });
+    } else {
+      ins.forEach(el => { el.style.display = 'none'; });
+      outs.forEach(el => { el.style.display = ''; });
+    }
+  });
+
+  window.__cnxSignOut = async () => {
+    try { await signOut(auth); } finally { window.location.reload(); }
+  };
 </script>
 </body>
 </html>

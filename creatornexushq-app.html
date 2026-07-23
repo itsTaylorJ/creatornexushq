@@ -1635,6 +1635,21 @@ nav {
   // to update this after `wrangler deploy` prints the real *.workers.dev URL).
   const WORKER_URL = 'https://creatornexushq-api.tjlangston15.workers.dev/generate';
 
+  // Fetch the Worker with the Firebase ID token. If it 401s, the token may
+  // have just expired — force-refresh once and retry before concluding the
+  // session is gone. Prevents a transient 401 from falsely signing the user out.
+  async function cnxFetch(url, body) {
+    const u = window.__currentUser;
+    const opts = (t) => ({ method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t }, body: JSON.stringify(body) });
+    let res = await fetch(url, opts(await u.getIdToken()));
+    if (res.status === 401) {
+      let fresh;
+      try { fresh = await u.getIdToken(true); } catch (e) { return res; }
+      res = await fetch(url, opts(fresh));
+    }
+    return res;
+  }
+
   async function generate(tool) {
     if (!window.__currentUser) {
       showSignInPrompt();
@@ -1651,15 +1666,7 @@ nav {
     resultsEl.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> CreatorNexusHQ is thinking...</div>';
 
     try {
-      const idToken = await window.__currentUser.getIdToken();
-      const response = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + idToken,
-        },
-        body: JSON.stringify({ tool, ...collectFields(tool) }),
-      });
+      const response = await cnxFetch(WORKER_URL, { tool, ...collectFields(tool) });
 
       if (response.status === 401) {
         window.__currentUser = null;
