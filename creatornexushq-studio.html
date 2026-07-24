@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio — CreatorNexusHQ</title>
+<meta name="description" content="Your creator growth workspace — titles, tags, thumbnails and channel insights that know your channel, on every platform.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#08080e; --surface:#0f0e17; --surface-2:#16141f; --surface-3:#1d1a29;
+    --border:#221f30; --border-2:#2f2b42;
+    --text:#f2f1fb; --text-soft:#cac8de; --muted:#8b889f; --faint:#5e5b76;
+    --violet:#8b5cf6; --violet-deep:#7c3aed; --violet-soft:#c4b5fd; --cyan:#22d3ee; --cyan-deep:#06b6d4;
+    --good:#34d399; --warn:#fbbf24; --bad:#f87171;
+    --grad:linear-gradient(120deg,#7c3aed,#06b6d4);
+    --sans:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+    --rail:248px; --ctxh:56px;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 34px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  a{color:inherit}
+  ::selection{background:rgba(139,92,246,.32)}
+  button{font-family:inherit}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+  /* ---------- FRAME ---------- */
+  .frame{display:flex;min-height:100vh}
+  .rail{width:var(--rail);flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);position:fixed;inset:0 auto 0 0;height:100vh;display:flex;flex-direction:column;padding:18px 12px;overflow-y:auto;z-index:40}
+  .main{margin-left:var(--rail);flex:1;min-width:0;display:flex;flex-direction:column}
+
+  .brand{display:flex;align-items:center;gap:9px;text-decoration:none;padding:4px 8px 2px}
+  .brand .logo{font-weight:800;font-size:18px;letter-spacing:-.02em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .brand .logo span{-webkit-text-fill-color:var(--text);color:var(--text)}
+  .rail-label{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:18px 10px 8px}
+
+  .navitem{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;cursor:pointer;color:var(--text-soft);font-size:13.5px;font-weight:600;padding:10px 11px;border-radius:10px;transition:background .15s,color .15s;text-decoration:none;position:relative}
+  .navitem svg{width:17px;height:17px;flex-shrink:0;stroke:currentColor}
+  .navitem:hover{background:var(--surface-2);color:var(--text)}
+  .navitem.active{color:var(--text);background:var(--surface-2)}
+  .navitem.active::before{content:"";position:absolute;left:-12px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--grad)}
+  .navitem .soon{margin-left:auto;font-size:9px;font-weight:700;letter-spacing:.08em;color:var(--faint);text-transform:uppercase}
+  .navitem .live-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--cyan)}
+
+  .rail-foot{margin-top:auto;padding-top:14px}
+  .acct{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border)}
+  .acct .av{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;text-transform:uppercase}
+  .acct .who{min-width:0;flex:1}
+  .acct .nm{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acct .pl{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acct .pl.pro{color:var(--warn);font-weight:700}
+  .acct-menu-btn{background:none;border:0;color:var(--muted);cursor:pointer;padding:4px;border-radius:6px;flex-shrink:0}
+  .acct-menu-btn:hover{color:var(--text);background:var(--surface-3)}
+  .signin-cta{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;border-radius:11px;background:var(--grad);color:#fff;font-weight:700;font-size:13px;text-decoration:none;border:0;cursor:pointer}
+
+  /* ---------- CONTEXT BAR ---------- */
+  .ctxbar{height:var(--ctxh);border-bottom:1px solid var(--border);background:rgba(15,14,23,.72);backdrop-filter:blur(16px);position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:0 clamp(16px,3vw,30px)}
+  .ctxbar .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);flex-shrink:0}
+  .ctx-chips{display:flex;align-items:center;gap:7px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+  .ctx-chips::-webkit-scrollbar{display:none}
+  .chip{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;padding:5px 11px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border-2);font-size:12.5px;font-weight:600;color:var(--text-soft);white-space:nowrap}
+  .chip .ck{color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .chip.empty{color:var(--faint);border-style:dashed}
+  .ctx-edit{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;background:none;border:1px solid var(--border-2);color:var(--text-soft);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
+  .ctx-edit:hover{border-color:var(--violet);color:var(--text)}
+  .ctx-edit svg{width:14px;height:14px;stroke:currentColor}
+
+  /* ---------- WORK AREA ---------- */
+  .work{flex:1;padding:clamp(20px,3vw,36px) clamp(16px,3vw,36px) 80px;max-width:1200px;width:100%;margin:0 auto}
+  .tool{display:none}
+  .tool.active{display:block;animation:rise .28s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .tool-head{margin-bottom:22px}
+  .tool-head .kicker{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--violet-soft);margin-bottom:8px}
+  .tool-head h1{font-size:clamp(24px,3.4vw,32px);font-weight:800;letter-spacing:-.025em;margin:0 0 6px;line-height:1.08}
+  .tool-head p{margin:0;color:var(--muted);font-size:14.5px;max-width:60ch}
+
+  .split{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start}
+  @media(max-width:900px){.split{grid-template-columns:1fr}}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px}
+  .field{margin-bottom:15px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--text-soft);margin-bottom:7px}
+  .field label .opt{font-weight:500;color:var(--faint);text-transform:none;letter-spacing:0}
+  .inp,textarea.inp,select.inp{width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;padding:11px 13px;transition:border-color .15s;outline:none}
+  textarea.inp{resize:vertical;min-height:78px;line-height:1.5}
+  .inp:focus,textarea.inp:focus,select.inp:focus{border-color:var(--violet)}
+  .inp::placeholder,textarea.inp::placeholder{color:var(--faint)}
+  select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b889f' stroke-width='3' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 13px center;padding-right:34px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+  .pills{display:flex;flex-wrap:wrap;gap:7px}
+  .pill-btn{padding:7px 13px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text-soft);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .14s}
+  .pill-btn:hover{border-color:var(--border-2);color:var(--text)}
+  .pill-btn.on{background:rgba(139,92,246,.16);border-color:var(--violet);color:#fff}
+
+  .gen{width:100%;margin-top:18px;padding:14px;border-radius:12px;border:0;background:var(--grad);color:#fff;font-weight:700;font-size:14.5px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s,transform .05s;box-shadow:0 6px 22px rgba(124,58,237,.28)}
+  .gen:hover{filter:brightness(1.06)}
+  .gen:active{transform:translateY(1px)}
+  .gen:disabled{opacity:.7;cursor:default;filter:none}
+
+  /* results */
+  .results{min-height:220px}
+  .placeholder{border:1px dashed var(--border-2);border-radius:16px;padding:52px 28px;text-align:center;color:var(--faint);font-size:13.5px}
+  .placeholder .big{font-size:30px;margin-bottom:12px;opacity:.8}
+  .loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;padding:36px;justify-content:center}
+  .dots{display:inline-flex;gap:4px}
+  .dots i{width:6px;height:6px;border-radius:50%;background:var(--violet);animation:bl 1s infinite ease-in-out}
+  .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+  @keyframes bl{0%,80%,100%{opacity:.25;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+  .score-hero{display:flex;align-items:center;gap:18px;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px 20px;margin-bottom:16px}
+  .ring{width:76px;height:76px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center}
+  .ring .num{font-family:var(--mono);font-weight:700;font-size:22px}
+  .score-hero .verdict{font-weight:800;font-size:15px;letter-spacing:-.01em;margin:0 0 3px}
+  .score-hero .sub{font-size:12.5px;color:var(--muted);margin:0}
+  .score-hero .factors{margin-top:9px;display:flex;flex-wrap:wrap;gap:6px}
+  .fchip{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:5px;background:var(--surface-2);border:1px solid var(--border)}
+  .fchip.pass{color:var(--good)} .fchip.warn{color:var(--warn)} .fchip.fail{color:var(--bad)}
+
+  .res-group{margin-bottom:18px}
+  .res-group h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;display:flex;align-items:center;gap:8px}
+  .res-group h3 .cnt{color:var(--faint)}
+  .item{display:flex;align-items:flex-start;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:8px}
+  .item .txt{flex:1;min-width:0;font-size:14.5px;line-height:1.5}
+  .item .txt .lab{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--violet-soft);margin-bottom:4px}
+  .item .txt .block{white-space:pre-wrap;color:var(--text-soft);font-size:13.5px;margin-top:4px}
+  .copy{flex-shrink:0;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text-soft);font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .14s}
+  .copy:hover{border-color:var(--violet);color:#fff}
+  .copy.done{color:var(--good);border-color:var(--good)}
+  .hashline{font-family:var(--mono);font-size:13px;color:var(--cyan);word-break:break-word}
+
+  .yt-panel{background:#0c0b14;border:1px solid var(--border);border-left:3px solid var(--violet-deep);border-radius:12px;padding:15px 17px;margin-bottom:16px}
+  .yt-panel .t{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:9px}
+  .yt-panel .rowd{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+  .yt-panel .rowd:last-child{border-bottom:0}
+  .yt-panel .rowd .v{color:var(--text-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .yt-panel .rowd .m{color:var(--muted);flex-shrink:0;font-family:var(--mono)}
+  .yt-note{font-size:11px;color:var(--muted);margin-top:9px}
+
+  .comingsoon{border:1px dashed var(--border-2);border-radius:16px;padding:48px 30px;text-align:center;max-width:520px}
+  .comingsoon .ic{font-size:32px;margin-bottom:14px}
+  .comingsoon h2{font-size:20px;font-weight:800;margin:0 0 8px}
+  .comingsoon p{color:var(--muted);font-size:14px;margin:0 0 20px}
+  .comingsoon a{display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text);font-weight:700;font-size:13.5px;text-decoration:none}
+  .comingsoon a:hover{border-color:var(--violet)}
+
+  /* ---------- MOBILE ---------- */
+  .mtop{display:none}
+  .drawer-scrim{display:none}
+  @media(max-width:820px){
+    .rail{transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);box-shadow:0 0 40px rgba(0,0,0,.6);z-index:60}
+    body.drawer .rail{transform:none}
+    .drawer-scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:opacity .2s;z-index:55}
+    body.drawer .drawer-scrim{opacity:1;visibility:visible}
+    .main{margin-left:0}
+    .mtop{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(8,8,14,.92);backdrop-filter:blur(14px);z-index:35}
+    .mtop .burger{width:40px;height:40px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border-2);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer}
+    .mtop .burger svg{width:20px;height:20px;stroke:currentColor}
+    .mtop .logo{font-weight:800;font-size:16px;letter-spacing:-.02em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .mtop .logo span{-webkit-text-fill-color:var(--text)}
+    .ctxbar{top:0;position:sticky}
+  }
+
+  /* ---------- MODALS ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(4,4,9,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+  .scrim.open{display:flex}
+  .modal{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:26px}
+  .modal h2{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
+  .modal .msub{color:var(--muted);font-size:13.5px;margin:0 0 20px}
+  .modal .why{font-size:11.5px;color:var(--faint);margin-top:6px}
+  .modal-actions{display:flex;gap:10px;margin-top:22px}
+  .btn-primary{flex:1;padding:13px;border-radius:12px;border:0;background:var(--grad);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+  .btn-ghost{padding:13px 18px;border-radius:12px;border:1px solid var(--border-2);background:none;color:var(--text-soft);font-weight:700;font-size:14px;cursor:pointer}
+  .btn-ghost:hover{color:var(--text);border-color:var(--violet)}
+  .check{display:flex;align-items:flex-start;gap:9px;font-size:12.5px;color:var(--text-soft);cursor:pointer;margin-top:12px;line-height:1.45}
+  .check input{margin-top:2px;accent-color:var(--violet)}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface-3);border:1px solid var(--border-2);color:var(--text);padding:11px 18px;border-radius:11px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:200;box-shadow:var(--shadow)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  :focus-visible{outline:2px solid var(--violet);outline-offset:2px}
+  @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<div class="drawer-scrim" onclick="closeDrawer()"></div>
+
+<div class="frame">
+  <!-- RAIL -->
+  <aside class="rail" id="rail">
+    <a class="brand" href="index.html"><span class="logo">Creator<span>NexusHQ</span></span></a>
+    <div class="rail-label">Studio</div>
+    <nav id="nav">
+      <button class="navitem active" data-tool="titles" onclick="switchTool('titles',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Titles &amp; Descriptions</button>
+      <button class="navitem" data-tool="tags" onclick="switchTool('tags',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h8.6l8 8a1.4 1.4 0 0 1 0 2z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>Tags &amp; Hashtags<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="thumbs" onclick="switchTool('thumbs',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>Thumbnails<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="ideas" onclick="switchTool('ideas',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>Ideas, Hooks &amp; CTAs<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="schedule" onclick="switchTool('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Posting Schedule<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="live" onclick="switchTool('live',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg>Live Titles<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="audit" onclick="switchTool('audit',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg>Channel Audit<span class="soon">soon</span></button>
+    </nav>
+    <div class="rail-foot">
+      <div class="acct" id="acctLoggedIn" style="display:none">
+        <div class="av" id="acctAv">?</div>
+        <div class="who"><div class="nm" id="acctName">Creator</div><div class="pl" id="acctPlan">Free plan</div></div>
+        <button class="acct-menu-btn" onclick="signOut()" title="Sign out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+      </div>
+      <a class="signin-cta" id="acctLoggedOut" href="creatornexushq-auth.html">Sign in to generate</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="mtop">
+      <button class="burger" onclick="openDrawer()" aria-label="Open menu"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <span class="logo">Creator<span>NexusHQ</span></span>
+    </div>
+
+    <!-- CONTEXT BAR -->
+    <div class="ctxbar">
+      <span class="lbl">Your channel</span>
+      <div class="ctx-chips" id="ctxChips"></div>
+      <button class="ctx-edit" onclick="openProfile()"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Edit</button>
+    </div>
+
+    <div class="work">
+      <!-- ============ TITLES & DESCRIPTIONS ============ -->
+      <section class="tool active" id="tool-titles">
+        <div class="tool-head">
+          <div class="kicker">Titles &amp; Descriptions</div>
+          <h1>Titles that get the click. Descriptions that get found.</h1>
+          <p>Built to beat what's ranking for your topic right now, and scored 0&ndash;100 so you know it works before you post.</p>
+        </div>
+        <div class="split">
+          <div class="card" id="t-form">
+            <div class="field">
+              <label>Platform</label>
+              <div class="pills" id="t-platform">
+                <button class="pill-btn on" onclick="pick(this)">YouTube</button>
+                <button class="pill-btn" onclick="pick(this)">TikTok</button>
+                <button class="pill-btn" onclick="pick(this)">Instagram</button>
+                <button class="pill-btn" onclick="pick(this)">X</button>
+                <button class="pill-btn" onclick="pick(this)">Facebook</button>
+                <button class="pill-btn" onclick="pick(this)">Snapchat</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>What's this video? <span class="opt">— a sentence is plenty</span></label>
+              <textarea class="inp" id="t-desc" placeholder="e.g. opening a sealed Pokémon booster box hunting a Charizard"></textarea>
+            </div>
+            <div class="field">
+              <label>Target keyword <span class="opt">— what someone would search (optional)</span></label>
+              <input class="inp" id="t-keyword" placeholder="e.g. pokemon card unboxing">
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label>Content type</label>
+                <select class="inp" id="t-type">
+                  <option>Gaming clip</option><option>Unboxing / TCG opening</option><option>Tutorial / how-to</option>
+                  <option>Vlog / story</option><option>Funny / reaction</option><option>Challenge</option>
+                  <option>Podcast / clip</option><option>Product review</option><option>IRL / lifestyle</option>
+                  <option>Commentary</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Tone</label>
+                <select class="inp" id="t-tone">
+                  <option>Hype / excited</option><option>Mysterious / intriguing</option><option>Funny / mocking</option>
+                  <option>Educational / clear</option><option>Story / emotional</option><option>Analytical / honest</option>
+                  <option>Cocky / confident</option><option>Urgent / breaking</option><option>Chill / relaxed</option>
+                  <option>Inspirational</option><option>Sarcastic / dry</option><option>Wholesome</option>
+                </select>
+              </div>
+            </div>
+            <div class="field">
+              <label>Video length</label>
+              <select class="inp" id="t-length">
+                <option>Under 60s (Short)</option><option>1–5 minutes</option><option>5–15 minutes</option><option>15+ minutes</option>
+              </select>
+            </div>
+            <button class="gen" id="t-gen" onclick="generateTitles()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5z"/></svg> Generate titles &amp; description</button>
+          </div>
+          <div class="results" id="t-results">
+            <div class="placeholder"><div class="big">✦</div>Your titles, hooks, tags and a full SEO description will appear here — with a live score.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ PLACEHOLDER TOOLS (link to current versions until migrated) ============ -->
+      <section class="tool" id="tool-tags"><div class="tool-head"><div class="kicker">Tags &amp; Hashtags</div><h1>Tags &amp; Hashtags</h1></div>
+        <div class="comingsoon"><div class="ic">🏷️</div><h2>Moving into the Studio next</h2><p>The cross-platform tag &amp; hashtag pack is being rebuilt here. The current version is fully working in the meantime.</p><a href="creatornexushq-analyze.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-thumbs"><div class="tool-head"><div class="kicker">Thumbnails</div><h1>Thumbnails</h1></div>
+        <div class="comingsoon"><div class="ic">🖼️</div><h2>Moving into the Studio next</h2><p>Thumbnail analysis and AI prompt generation are being rebuilt here.</p><a href="creatornexushq-thumbnail.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-ideas"><div class="tool-head"><div class="kicker">Ideas, Hooks &amp; CTAs</div><h1>Ideas, Hooks &amp; CTAs</h1></div>
+        <div class="comingsoon"><div class="ic">💡</div><h2>Moving into the Studio next</h2><p>Content ideas, hooks and CTAs are being rebuilt here.</p><a href="creatornexushq-app.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-schedule"><div class="tool-head"><div class="kicker">Posting Schedule</div><h1>Posting Schedule</h1></div>
+        <div class="comingsoon"><div class="ic">📅</div><h2>Moving into the Studio next</h2><p>The schedule and calendar are being combined and rebuilt here.</p><a href="creatornexushq-analyze.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-live"><div class="tool-head"><div class="kicker">Live Titles</div><h1>Live Titles</h1></div>
+        <div class="comingsoon"><div class="ic">🔴</div><h2>Moving into the Studio next</h2><p>Live stream titles — Twitch, Kick, YouTube Live, TikTok Live and more — are being rebuilt here.</p><a href="creatornexushq-streaming.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-audit"><div class="tool-head"><div class="kicker">Channel Audit</div><h1>Channel Audit</h1></div>
+        <div class="comingsoon"><div class="ic">📈</div><h2>Coming soon — your growth coach</h2><p>Connect YouTube or enter your numbers from any platform, and get benchmarked, diagnosed, and pointed at the exact tool that fixes your bottleneck.</p><a href="creatornexushq-analyze.html">Open the current analyzer →</a></div></section>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE / SURVEY MODAL -->
+<div class="scrim" id="profileScrim">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Your channel">
+    <h2 id="profileTitle">Welcome — let's set up your channel</h2>
+    <p class="msub">Two quick things so every tool is personalized to you. Change any of it per-video later.</p>
+    <div class="field"><label>First name</label><input class="inp" id="p-name" placeholder="Taylor"></div>
+    <div class="field"><label>What do you mostly make?</label>
+      <select class="inp" id="p-niche" onchange="toggleGameField()">
+        <option value="">Choose one…</option>
+        <option>Gaming</option><option>Pokémon / TCG</option><option>Vlogs &amp; lifestyle</option><option>Fitness</option>
+        <option>Tech &amp; reviews</option><option>Beauty</option><option>Music</option><option>Podcast / commentary</option>
+        <option>IRL / a bit of everything</option><option>Other</option>
+      </select>
+    </div>
+    <div class="field" id="p-game-field" style="display:none"><label>Which game(s)? <span class="opt">optional</span></label><input class="inp" id="p-game" placeholder="e.g. Warzone, Fortnite, Minecraft"></div>
+    <div class="row2">
+      <div class="field"><label>Main platform</label>
+        <select class="inp" id="p-platform"><option>YouTube</option><option>TikTok</option><option>Instagram</option><option>Twitch</option><option>Kick</option><option>YouTube Shorts</option></select>
+      </div>
+      <div class="field"><label>Channel size</label>
+        <select class="inp" id="p-size"><option>Just starting</option><option>Under 1K</option><option>1K–10K</option><option>10K–100K</option><option>100K+</option></select>
+      </div>
+    </div>
+    <label class="check"><input type="checkbox" id="p-optin"><span>Send me growth tips &amp; product news. No spam, unsubscribe anytime.</span></label>
+    <label class="check"><input type="checkbox" id="p-age"><span>I'm 13 or older.</span></label>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveProfile()">Save &amp; start</button>
+      <button class="btn-ghost" onclick="closeProfile()">Skip</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIGN-IN MODAL -->
+<div class="scrim" id="signinScrim">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div style="font-size:30px;margin-bottom:8px">✦</div>
+    <h2>Sign in to generate</h2>
+    <p class="msub">Create a free account to use the Studio — no credit card, 5 free generations a day, and a 7-day Pro trial on the house.</p>
+    <a class="btn-primary" href="creatornexushq-auth.html" style="display:block;text-decoration:none;padding:13px">Create free account →</a>
+    <button class="btn-ghost" onclick="closeSignin()" style="width:100%;margin-top:10px">Not now</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const WORKER_URL = 'https://creatornexushq-api.tjlangston15.workers.dev/generate';
+
+  /* ---------- context / profile (localStorage; Firestore sync comes next) ---------- */
+  function getProfile(){ try{ return JSON.parse(localStorage.getItem('cnx_profile')||'{}'); }catch(e){ return {}; } }
+  function setProfile(p){ localStorage.setItem('cnx_profile', JSON.stringify(p)); renderContext(); }
+
+  function renderContext(){
+    const p = getProfile();
+    const chips = [];
+    const primary = p.niche === 'Gaming' && p.game ? p.game : p.niche;
+    chips.push(chipHtml('Makes', primary || 'set your niche', !primary));
+    chips.push(chipHtml('Posts on', p.platform || 'set platform', !p.platform));
+    chips.push(chipHtml('Size', p.size || '—', !p.size));
+    if (p.keyword) chips.push(chipHtml('Keyword', p.keyword, false));
+    document.getElementById('ctxChips').innerHTML = chips.join('');
+    // seed tool defaults from profile
+    if (p.platform && document.getElementById('t-platform')){
+      const norm = p.platform.replace(/ shorts/i,'').trim();
+      document.querySelectorAll('#t-platform .pill-btn').forEach(b=>{
+        b.classList.toggle('on', b.textContent.trim().toLowerCase() === norm.toLowerCase());
+      });
+      if(!document.querySelector('#t-platform .pill-btn.on')) document.querySelector('#t-platform .pill-btn').classList.add('on');
+    }
+    if (p.keyword && !document.getElementById('t-keyword').value) document.getElementById('t-keyword').value = p.keyword;
+    const nm = document.getElementById('acctName');
+    if (p.name && nm && nm.textContent === 'Creator') nm.textContent = p.name;
+  }
+  function chipHtml(k,v,empty){ return '<span class="chip'+(empty?' empty':'')+'"><span class="ck">'+esc(k)+'</span>'+esc(v)+'</span>'; }
+
+  function openProfile(){ const p=getProfile();
+    document.getElementById('p-name').value=p.name||''; document.getElementById('p-niche').value=p.niche||'';
+    document.getElementById('p-game').value=p.game||''; document.getElementById('p-platform').value=p.platform||'YouTube';
+    document.getElementById('p-size').value=p.size||'Just starting'; document.getElementById('p-optin').checked=!!p.optin;
+    document.getElementById('p-age').checked=!!p.age;
+    document.getElementById('profileTitle').textContent = p.niche ? 'Your channel' : "Welcome — let's set up your channel";
+    toggleGameField(); document.getElementById('profileScrim').classList.add('open');
+  }
+  function closeProfile(){ document.getElementById('profileScrim').classList.remove('open'); }
+  function toggleGameField(){ document.getElementById('p-game-field').style.display = document.getElementById('p-niche').value==='Gaming' ? 'block':'none'; }
+  function saveProfile(){
+    const p = getProfile();
+    p.name=document.getElementById('p-name').value.trim(); p.niche=document.getElementById('p-niche').value;
+    p.game=document.getElementById('p-game').value.trim(); p.platform=document.getElementById('p-platform').value;
+    p.size=document.getElementById('p-size').value; p.optin=document.getElementById('p-optin').checked; p.age=document.getElementById('p-age').checked;
+    setProfile(p); closeProfile(); toast('Channel saved — tools are personalized to you.');
+  }
+
+  /* ---------- nav / drawer ---------- */
+  function switchTool(id, btn){
+    document.querySelectorAll('.tool').forEach(t=>t.classList.remove('active'));
+    document.getElementById('tool-'+id).classList.add('active');
+    document.querySelectorAll('.navitem').forEach(n=>n.classList.remove('active'));
+    (btn||document.querySelector('[data-tool="'+id+'"]')).classList.add('active');
+    closeDrawer();
+    document.querySelector('.work').scrollTo({top:0});
+  }
+  function openDrawer(){ document.body.classList.add('drawer'); }
+  function closeDrawer(){ document.body.classList.remove('drawer'); }
+
+  /* ---------- platform pills ---------- */
+  function pick(btn){ btn.parentElement.querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+  function selectedPlatform(){ return (document.querySelector('#t-platform .pill-btn.on')||{}).textContent?.trim() || 'YouTube'; }
+
+  /* ---------- deterministic SEO scorer (transparent vs vidIQ) ---------- */
+  const STOP = new Set(('the a an and or but of to in on for with my your our this that is it i we you how why what when new best top vs get make do does did will can are was were be been being at as by from up out').split(' '));
+  function inferKeyword(t){ const c={}; (t.toLowerCase().match(/[a-z0-9']{3,}/g)||[]).forEach(w=>{ if(!STOP.has(w)) c[w]=(c[w]||0)+1; }); let b='',n=0; for(const w in c) if(c[w]>n){n=c[w];b=w;} return b; }
+  function seoScore(title, desc, keyword){
+    title=(title||'').trim(); desc=(desc||'').trim();
+    const tl=title.toLowerCase(), dl=desc.toLowerCase();
+    const inferred=!keyword; let kw=(keyword||'').trim().toLowerCase(); if(!kw) kw=inferKeyword(title);
+    const words=desc.split(/\s+/).filter(Boolean), wc=words.length;
+    const first=(desc.split(/[.!?\n]/)[0]||'').toLowerCase();
+    const tags=desc.match(/#[\p{L}\d_]+/gu)||[];
+    const kwc=kw?dl.split(kw).length-1:0;
+    const link=/(https?:\/\/|\[links?\]|link in|link below|👇)/i.test(desc);
+    const chap=/(\[chapters?\]|(?:^|\s)\d{1,2}:\d{2}\b|chapters?:)/im.test(desc);
+    const hook=/(\d|[A-Z]{2,}|\?|!|🔥|💀|😳|😱|\bhow\b|\bwhy\b|\bbest\b|\bvs\b|\bnever\b|\bstop\b)/.test(title);
+    const tlen=title.length;
+    const f=[]; const add=(l,ok,mx,partial)=>f.push({l,state:ok?'pass':partial?'warn':'fail',got:ok?mx:partial?Math.round(mx/2):0,mx});
+    add('Keyword in title', kw&&tl.includes(kw),15);
+    add('Keyword in first line', kw&&first.includes(kw),15);
+    add('Title 20–60 chars', tlen>=20&&tlen<=60,10, tlen>=15&&tlen<=70);
+    add('Description 170+ words', wc>=170,20, wc>=80);
+    add('Keyword 2–4× in body', kwc>=2&&kwc<=4,10, kwc===1||(kwc>=5&&kwc<=6));
+    add('2–3 hashtags', tags.length>=2&&tags.length<=3,10, tags.length===1||(tags.length>=4&&tags.length<=5));
+    add('Has a link', link,8);
+    add('Chapters / timestamps', chap,7);
+    add('Title has a hook', hook,5);
+    return { score:f.reduce((s,x)=>s+x.got,0), factors:f, keyword:kw, inferred };
+  }
+
+  /* ---------- generate ---------- */
+  async function generateTitles(){
+    if(!window.__currentUser){ openSignin(); return; }
+    const desc = document.getElementById('t-desc').value.trim();
+    if(!desc){ toast('Tell us what the video is about first.'); document.getElementById('t-desc').focus(); return; }
+    const btn=document.getElementById('t-gen'); const res=document.getElementById('t-results');
+    if(!btn.dataset.orig) btn.dataset.orig=btn.innerHTML;
+    btn.disabled=true; btn.innerHTML='<span class="dots"><i></i><i></i><i></i></span> Generating…';
+    res.innerHTML='<div class="loading"><span class="dots"><i></i><i></i><i></i></span> CreatorNexusHQ is studying what ranks…</div>';
+    const body={ tool:'titles', platform:selectedPlatform(), contentType:document.getElementById('t-type').value,
+      description:desc, keyword:document.getElementById('t-keyword').value.trim(),
+      tone:document.getElementById('t-tone').value, length:document.getElementById('t-length').value };
+    try{
+      const r=await cnxFetch(WORKER_URL, body);
+      if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
+      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      const d=await r.json();
+      if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
+      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      renderTitles(d.text, d.ytData, body.keyword);
+    }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
+    finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
+  }
+
+  function renderTitles(text, yt, keyword){
+    const res=document.getElementById('t-results');
+    const lines=text.split('\n');
+    const titles=[], hooks=[], meta={}; let full='';
+    for(let i=0;i<lines.length;i++){
+      const t=lines[i].trim(); if(!t) continue;
+      const m=t.match(/^([A-Z][A-Z\s\d]+):\s*(.*)/); if(!m) continue;
+      const key=m[1].trim(); let val=m[2];
+      if(/^(TITLE|CAPTION)\b/.test(key)){ titles.push(strip(val)); }
+      else if(/^HOOK\b/.test(key)){ hooks.push(strip(val)); }
+      else if(key==='FULL DESCRIPTION'){ const parts=[val]; while(i+1<lines.length && !/^[A-Z][A-Z\s\d]+:\s/.test(lines[i+1].trim())){ i++; parts.push(lines[i]); } full=parts.join('\n').replace(/^\n+|\n+$/g,''); }
+      else { meta[key]=val; }
+    }
+    const bestTitle=titles[0]||'';
+    const sc=seoScore(bestTitle, full||meta['SHORT DESCRIPTION']||'', keyword);
+    let html='';
+    // score hero
+    const col = sc.score>=80?'var(--good)':sc.score>=55?'var(--warn)':'var(--bad)';
+    const verdict = sc.score>=80?'Strong — ready to publish.':sc.score>=55?'Good — a few tweaks lift it.':'Needs work — see the reds.';
+    const fchips = sc.factors.slice().sort((a,b)=>(a.state==='fail'?0:a.state==='warn'?1:2)-(b.state==='fail'?0:b.state==='warn'?1:2)).slice(0,4)
+      .map(x=>'<span class="fchip '+x.state+'">'+(x.state==='pass'?'✓':x.state==='warn'?'△':'✗')+' '+esc(x.l)+'</span>').join('');
+    html+='<div class="score-hero"><div class="ring" id="ring"></div><div><p class="verdict">SEO Score <span class="mono" style="color:'+col+'">'+sc.score+'</span>/100</p><p class="sub">'+verdict+(sc.inferred&&sc.keyword?' · scored on inferred keyword "'+esc(sc.keyword)+'"':'')+'</p><div class="factors">'+fchips+'</div></div></div>';
+    if(yt&&yt.videos&&yt.videos.length){
+      html+='<div class="yt-panel"><div class="t">📊 Ranking on YouTube right now</div>'+
+        yt.videos.slice(0,5).map(v=>'<div class="rowd"><span class="v">'+esc(v.title)+'</span><span class="m">'+fmtViews(v.views)+'</span></div>').join('')+
+        '<div class="yt-note">Live data — your titles were written to compete with these.</div></div>';
+    }
+    html+=group(titles.length&&/tiktok|instagram|^x$|snap|facebook/i.test(selectedPlatform())?'Captions':'Titles', titles);
+    html+=group('Hooks', hooks);
+    if(meta['BEST COMBO']) html+=metaItem('Best combo', meta['BEST COMBO']);
+    if(meta['SUGGESTED HASHTAGS']||meta['HASHTAGS FOR CAPTION']||meta['EXTRA HASHTAGS']){ const h=meta['HASHTAGS FOR CAPTION']||meta['SUGGESTED HASHTAGS']; if(h) html+=hashItem('Hashtags', h); if(meta['EXTRA HASHTAGS']) html+=hashItem('Extra hashtags to rotate', meta['EXTRA HASHTAGS']); }
+    if(meta['SUGGESTED TAGS']) html+=metaItem('Tags (paste into the tag box)', meta['SUGGESTED TAGS']);
+    if(meta['SHORT DESCRIPTION']) html+=metaItem('Short description', meta['SHORT DESCRIPTION']);
+    if(full) html+=blockItem('Full description', full);
+    res.innerHTML=html;
+    animateRing(document.getElementById('ring'), sc.score, col);
+  }
+  function group(label, arr){ if(!arr.length) return ''; return '<div class="res-group"><h3>'+label+' <span class="cnt">'+arr.length+'</span></h3>'+arr.map(x=>copyItem('',x)).join('')+'</div>'; }
+  function metaItem(label, val){ return '<div class="res-group">'+copyItem(label, val)+'</div>'; }
+  function blockItem(label, val){ return '<div class="res-group"><div class="item"><div class="txt"><span class="lab">'+esc(label)+'</span><div class="block">'+esc(val)+'</div></div>'+copyBtn(val)+'</div></div>'; }
+  function hashItem(label, val){ return '<div class="res-group"><div class="item"><div class="txt"><span class="lab">'+esc(label)+'</span><div class="hashline">'+esc(val)+'</div></div>'+copyBtn(val)+'</div></div>'; }
+  function copyItem(label, val){ return '<div class="item"><div class="txt">'+(label?'<span class="lab">'+esc(label)+'</span>':'')+esc(val)+'</div>'+copyBtn(val)+'</div>'; }
+  function copyBtn(val){ return '<button class="copy" onclick="copyText(this,'+JSON.stringify(JSON.stringify(val))+')">Copy</button>'; }
+  function copyText(btn, json){ navigator.clipboard.writeText(JSON.parse(json)).then(()=>{ btn.textContent='✓ Copied'; btn.classList.add('done'); setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('done');},1400); }); }
+
+  function animateRing(el, score, col){ if(!el) return; let cur=0; const step=Math.max(1,Math.round(score/26));
+    const draw=v=>{ el.style.background='conic-gradient('+col+' '+(v*3.6)+'deg, var(--surface-2) 0deg)'; el.innerHTML='<div style="position:absolute;inset:6px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center"><span class="num" style="color:'+col+'">'+v+'</span></div>'; };
+    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){ draw(score); return; }
+    const iv=setInterval(()=>{ cur=Math.min(score,cur+step); draw(cur); if(cur>=score) clearInterval(iv); },26);
+  }
+
+  /* ---------- helpers ---------- */
+  function strip(s){ return s.replace(/^["“”'']+|["“”'']+$/g,'').trim(); }
+  function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function fmtViews(n){ n=+n||0; if(n>=1e6) return (n/1e6).toFixed(1).replace(/\.0$/,'')+'M views'; if(n>=1e3) return (n/1e3).toFixed(1).replace(/\.0$/,'')+'K views'; return n+' views'; }
+  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2600); }
+  function openSignin(){ document.getElementById('signinScrim').classList.add('open'); }
+  function closeSignin(){ document.getElementById('signinScrim').classList.remove('open'); }
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeProfile(); closeSignin(); closeDrawer(); } });
+
+  function updatePlanBadge(plan, remaining){
+    const el=document.getElementById('acctPlan'); if(!el) return;
+    if(plan==='pro'){ el.textContent='★ Pro'; el.classList.add('pro'); }
+    else if(plan==='trial'){ el.textContent = (remaining==null?'★ Pro trial':'★ Trial · '+remaining+' left today'); el.classList.add('pro'); }
+    else if(typeof remaining==='number'){ el.textContent = remaining+' free left today'; }
+  }
+
+  /* ---------- auth UI ---------- */
+  function applyAuth(user){
+    const inEl=document.getElementById('acctLoggedIn'), outEl=document.getElementById('acctLoggedOut');
+    if(user){ inEl.style.display='flex'; outEl.style.display='none';
+      const email=user.email||user.displayName||'Creator'; const p=getProfile();
+      document.getElementById('acctName').textContent = p.name || email.split('@')[0];
+      document.getElementById('acctAv').textContent = (p.name||email).trim()[0]||'?';
+    } else { inEl.style.display='none'; outEl.style.display='flex'; }
+  }
+
+  // init
+  renderContext();
+  if(!getProfile().niche){ /* first run: gently prompt after paint */ setTimeout(()=>{ if(!getProfile().niche) openProfile(); }, 600); }
+</script>
+
+<!-- Firebase auth-gate + cnxFetch (401 retry) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut as fbSignOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+  const app = initializeApp({
+    apiKey:"AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc", authDomain:"creatornexushq-eaf70.firebaseapp.com",
+    projectId:"creatornexushq-eaf70", storageBucket:"creatornexushq-eaf70.firebasestorage.app",
+    messagingSenderId:"867089002449", appId:"1:867089002449:web:cadae5b363375020cdbaf0"
+  });
+  const auth = getAuth(app);
+  onAuthStateChanged(auth, u=>{ window.__currentUser = u||null; applyAuth(u||null); });
+  window.signOut = async ()=>{ try{ await fbSignOut(auth); } finally { window.location.href='index.html'; } };
+  // Worker fetch with a single token-refresh retry on 401 (prevents false sign-outs)
+  window.cnxFetch = async (url, body)=>{
+    const u=window.__currentUser; const opt=t=>({method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify(body)});
+    let res=await fetch(url, opt(await u.getIdToken()));
+    if(res.status===401){ let fresh; try{ fresh=await u.getIdToken(true); }catch(e){ return res; } res=await fetch(url, opt(fresh)); }
+    return res;
+  };
+</script>
+</body>
+</html>
