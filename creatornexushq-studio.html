@@ -328,13 +328,34 @@
       </select>
     </div>
     <div class="field" id="p-game-field" style="display:none"><label>Which game(s)? <span class="opt">optional</span></label><input class="inp" id="p-game" placeholder="e.g. Warzone, Fortnite, Minecraft"></div>
-    <div class="row2">
-      <div class="field"><label>Main platform</label>
-        <select class="inp" id="p-platform"><option>YouTube</option><option>TikTok</option><option>Instagram</option><option>Twitch</option><option>Kick</option><option>YouTube Shorts</option></select>
+    <div class="field"><label>Which platforms do you create on?</label>
+      <div class="pills" id="p-platforms">
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">YouTube</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">TikTok</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Instagram</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Twitch</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Kick</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Facebook</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">X</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Snapchat</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Rumble</button>
       </div>
-      <div class="field"><label>Channel size</label>
-        <select class="inp" id="p-size"><option>Just starting</option><option>Under 1K</option><option>1K–10K</option><option>10K–100K</option><option>100K+</option></select>
+    </div>
+    <div class="field"><label>Want to start on any others? <span class="opt">optional — we'll help you grow there</span></label>
+      <div class="pills" id="p-grow">
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">YouTube</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">TikTok</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Instagram</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Twitch</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Kick</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Facebook</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">X</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Snapchat</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Rumble</button>
       </div>
+    </div>
+    <div class="field"><label>Channel size</label>
+      <select class="inp" id="p-size"><option>Just starting</option><option>Under 1K</option><option>1K–10K</option><option>10K–100K</option><option>100K+</option></select>
     </div>
     <label class="check"><input type="checkbox" id="p-optin"><span>Send me growth tips &amp; product news. No spam, unsubscribe anytime.</span></label>
     <label class="check"><input type="checkbox" id="p-age"><span>I'm 13 or older.</span></label>
@@ -369,17 +390,17 @@
     const p = getProfile();
     const chips = [];
     const primary = p.niche === 'Gaming' && p.game ? p.game : p.niche;
+    const plats = profilePlatforms(p);
+    const platLabel = plats.length ? (plats.slice(0,2).join(', ') + (plats.length>2 ? ' +'+(plats.length-2) : '')) : 'set platforms';
     chips.push(chipHtml('Makes', primary || 'set your niche', !primary));
-    chips.push(chipHtml('Posts on', p.platform || 'set platform', !p.platform));
+    chips.push(chipHtml('Posts on', platLabel, !plats.length));
     chips.push(chipHtml('Size', p.size || '—', !p.size));
     if (p.keyword) chips.push(chipHtml('Keyword', p.keyword, false));
     document.getElementById('ctxChips').innerHTML = chips.join('');
-    // seed tool defaults from profile
-    if (p.platform && document.getElementById('t-platform')){
-      const norm = p.platform.replace(/ shorts/i,'').trim();
-      document.querySelectorAll('#t-platform .pill-btn').forEach(b=>{
-        b.classList.toggle('on', b.textContent.trim().toLowerCase() === norm.toLowerCase());
-      });
+    // seed the Titles tool to the first of their platforms the tool supports
+    if (plats.length && document.getElementById('t-platform')){
+      const seed = plats.find(x=>TITLE_PLATFORMS.includes(x)) || 'YouTube';
+      document.querySelectorAll('#t-platform .pill-btn').forEach(b=> b.classList.toggle('on', b.textContent.trim()===seed));
       if(!document.querySelector('#t-platform .pill-btn.on')) document.querySelector('#t-platform .pill-btn').classList.add('on');
     }
     if (p.keyword && !document.getElementById('t-keyword').value) document.getElementById('t-keyword').value = p.keyword;
@@ -390,7 +411,8 @@
 
   function openProfile(){ const p=getProfile();
     document.getElementById('p-name').value=p.name||''; document.getElementById('p-niche').value=p.niche||'';
-    document.getElementById('p-game').value=p.game||''; document.getElementById('p-platform').value=p.platform||'YouTube';
+    document.getElementById('p-game').value=p.game||'';
+    setPills('p-platforms', profilePlatforms(p)); setPills('p-grow', p.grow||[]);
     document.getElementById('p-size').value=p.size||'Just starting'; document.getElementById('p-optin').checked=!!p.optin;
     document.getElementById('p-age').checked=!!p.age;
     document.getElementById('profileTitle').textContent = p.niche ? 'Your channel' : "Welcome — let's set up your channel";
@@ -401,7 +423,8 @@
   function saveProfile(){
     const p = getProfile();
     p.name=document.getElementById('p-name').value.trim(); p.niche=document.getElementById('p-niche').value;
-    p.game=document.getElementById('p-game').value.trim(); p.platform=document.getElementById('p-platform').value;
+    p.game=document.getElementById('p-game').value.trim();
+    p.platforms=pillsSel('p-platforms'); p.grow=pillsSel('p-grow'); p.platform=p.platforms[0]||'';
     p.size=document.getElementById('p-size').value; p.optin=document.getElementById('p-optin').checked; p.age=document.getElementById('p-age').checked;
     setProfile(p); closeProfile(); toast('Channel saved — tools are personalized to you.');
   }
@@ -420,6 +443,12 @@
 
   /* ---------- platform pills ---------- */
   function pick(btn){ btn.parentElement.querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('on')); btn.classList.add('on'); }
+  function ptoggle(btn){ btn.classList.toggle('on'); }
+  function pillsSel(id){ return Array.from(document.querySelectorAll('#'+id+' .pill-btn.on')).map(b=>b.textContent.trim()); }
+  function setPills(id, arr){ arr=arr||[]; document.querySelectorAll('#'+id+' .pill-btn').forEach(b=>b.classList.toggle('on', arr.includes(b.textContent.trim()))); }
+  // platforms the Titles tool can generate for (feed/search; live is its own tool)
+  const TITLE_PLATFORMS = ['YouTube','TikTok','Instagram','X','Facebook','Snapchat'];
+  function profilePlatforms(p){ return (p.platforms && p.platforms.length) ? p.platforms : (p.platform ? [p.platform] : []); }
   function selectedPlatform(){ return (document.querySelector('#t-platform .pill-btn.on')||{}).textContent?.trim() || 'YouTube'; }
 
   /* ---------- deterministic SEO scorer (transparent vs vidIQ) ---------- */
