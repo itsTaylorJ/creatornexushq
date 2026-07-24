@@ -395,17 +395,12 @@ footer {
           </div>
         </div>
 
-        <div class="field">
-          <label>Primary Platform</label>
-          <div class="platform-pills">
-            <div class="ppill" onclick="selectPill(this)">▶️ YouTube</div>
-            <div class="ppill" onclick="selectPill(this)">🟣 Twitch</div>
-            <div class="ppill" onclick="selectPill(this)">🎵 TikTok</div>
-            <div class="ppill" onclick="selectPill(this)">🟢 Kick</div>
-            <div class="ppill" onclick="selectPill(this)">📷 Instagram</div>
-            <div class="ppill" onclick="selectPill(this)">🔴 Rumble</div>
-          </div>
-        </div>
+        <label style="display:flex;align-items:flex-start;gap:9px;font-size:13px;color:#c9c9e6;cursor:pointer;margin:4px 0 10px;line-height:1.45">
+          <input type="checkbox" id="signup-age" style="margin-top:2px;accent-color:#7c3aed;flex-shrink:0"><span>I'm 13 years or older.</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:9px;font-size:13px;color:#c9c9e6;cursor:pointer;margin:0 0 16px;line-height:1.45">
+          <input type="checkbox" id="signup-optin" style="margin-top:2px;accent-color:#7c3aed;flex-shrink:0"><span>Send me growth tips &amp; product news. No spam, unsubscribe anytime.</span>
+        </label>
 
         <button class="submit-btn" id="signup-btn" onclick="signUp()">
           Create Free Account
@@ -506,14 +501,18 @@ footer {
   const db = getFirestore(app);
   const googleProvider = new GoogleAuthProvider();
 
-  // Check if already logged in
+  // Suppress the auto-redirect below while a signup/Google flow is mid-flight,
+  // so brand-new accounts can be sent to the welcome survey instead of the app.
+  let authInProgress = false;
+
+  // Already logged in → straight to the app
   onAuthStateChanged(auth, (user) => {
-    if (user) {
+    if (user && !authInProgress) {
       window.location.href = 'creatornexushq-app.html';
     }
   });
 
-  // Save user to Firestore
+  // Write the durable user profile. Returns true if this created a NEW doc.
   async function saveUserToFirestore(user, extraData = {}) {
     const userRef = doc(db, 'users', user.uid);
     const existing = await getDoc(userRef);
@@ -522,13 +521,15 @@ footer {
         uid: user.uid,
         email: user.email,
         name: user.displayName || extraData.name || '',
-        platform: extraData.platform || '',
+        age: !!extraData.age,
+        optin: !!extraData.optin,
         plan: 'free',
-        generationsToday: 0,
-        lastGenerationDate: null,
+        profileComplete: false,
         createdAt: serverTimestamp(),
       });
+      return true;
     }
+    return false;
   }
 
   // SIGN UP
@@ -536,24 +537,28 @@ footer {
     const name = document.getElementById('signup-name').value.trim();
     const email = document.getElementById('signup-email').value.trim();
     const password = document.getElementById('signup-password').value;
-    const platform = document.querySelector('.ppill.selected')?.textContent?.trim() || '';
+    const age = document.getElementById('signup-age').checked;
+    const optin = document.getElementById('signup-optin').checked;
     const btn = document.getElementById('signup-btn');
     const alert = document.getElementById('signup-alert');
 
     if (!name) return showAlert(alert, 'error', 'Please enter your name.');
     if (!email) return showAlert(alert, 'error', 'Please enter your email.');
     if (password.length < 8) return showAlert(alert, 'error', 'Password must be at least 8 characters.');
+    if (!age) return showAlert(alert, 'error', 'Please confirm you are 13 or older.');
 
+    authInProgress = true;
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner"></div> Creating account...';
 
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(result.user, { displayName: name });
-      await saveUserToFirestore(result.user, { name, platform });
-      showAlert(alert, 'success', 'Account created! Redirecting...');
-      setTimeout(() => window.location.href = 'creatornexushq-app.html', 1200);
+      await saveUserToFirestore(result.user, { name, age, optin });
+      showAlert(alert, 'success', 'Account created! Setting you up…');
+      setTimeout(() => window.location.href = 'creatornexushq-studio.html?welcome=1', 1000);
     } catch(err) {
+      authInProgress = false;
       btn.disabled = false;
       btn.innerHTML = 'Create Free Account';
       const msg = getErrorMessage(err.code);
@@ -587,10 +592,12 @@ footer {
   // GOOGLE SIGN IN
   window.signInWithGoogle = async function() {
     try {
+      authInProgress = true;
       const result = await signInWithPopup(auth, googleProvider);
-      await saveUserToFirestore(result.user);
-      window.location.href = 'creatornexushq-app.html';
+      const isNew = await saveUserToFirestore(result.user, {});
+      window.location.href = isNew ? 'creatornexushq-studio.html?welcome=1' : 'creatornexushq-app.html';
     } catch(err) {
+      authInProgress = false;
       const alertEl = document.getElementById('signup-alert') || document.getElementById('login-alert');
       showAlert(alertEl, 'error', 'Google sign-in failed. Please try again.');
     }

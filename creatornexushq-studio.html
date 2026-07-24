@@ -358,7 +358,6 @@
       <select class="inp" id="p-size"><option>Just starting</option><option>Under 1K</option><option>1K–10K</option><option>10K–100K</option><option>100K+</option></select>
     </div>
     <label class="check"><input type="checkbox" id="p-optin"><span>Send me growth tips &amp; product news. No spam, unsubscribe anytime.</span></label>
-    <label class="check"><input type="checkbox" id="p-age"><span>I'm 13 or older.</span></label>
     <div class="modal-actions">
       <button class="btn-primary" onclick="saveProfile()">Save &amp; start</button>
       <button class="btn-ghost" onclick="closeProfile()">Skip</button>
@@ -414,7 +413,6 @@
     document.getElementById('p-game').value=p.game||'';
     setPills('p-platforms', profilePlatforms(p)); setPills('p-grow', p.grow||[]);
     document.getElementById('p-size').value=p.size||'Just starting'; document.getElementById('p-optin').checked=!!p.optin;
-    document.getElementById('p-age').checked=!!p.age;
     document.getElementById('profileTitle').textContent = p.niche ? 'Your channel' : "Welcome — let's set up your channel";
     toggleGameField(); document.getElementById('profileScrim').classList.add('open');
   }
@@ -425,8 +423,10 @@
     p.name=document.getElementById('p-name').value.trim(); p.niche=document.getElementById('p-niche').value;
     p.game=document.getElementById('p-game').value.trim();
     p.platforms=pillsSel('p-platforms'); p.grow=pillsSel('p-grow'); p.platform=p.platforms[0]||'';
-    p.size=document.getElementById('p-size').value; p.optin=document.getElementById('p-optin').checked; p.age=document.getElementById('p-age').checked;
-    setProfile(p); closeProfile(); toast('Channel saved — tools are personalized to you.');
+    p.size=document.getElementById('p-size').value; p.optin=document.getElementById('p-optin').checked;
+    setProfile(p);
+    if(window.__saveProfileRemote) window.__saveProfileRemote(p);
+    closeProfile(); toast('Channel saved — tools are personalized to you.');
   }
 
   /* ---------- nav / drawer ---------- */
@@ -580,22 +580,54 @@
     } else { inEl.style.display='none'; outEl.style.display='flex'; }
   }
 
-  // init
+  // init — render context now; the welcome survey is opened by the auth-gate
+  // module once we know the user is signed in (or arrived via ?welcome=1).
   renderContext();
-  if(!getProfile().niche){ /* first run: gently prompt after paint */ setTimeout(()=>{ if(!getProfile().niche) openProfile(); }, 600); }
 </script>
 
 <!-- Firebase auth-gate + cnxFetch (401 retry) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut as fbSignOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
   const app = initializeApp({
     apiKey:"AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc", authDomain:"creatornexushq-eaf70.firebaseapp.com",
     projectId:"creatornexushq-eaf70", storageBucket:"creatornexushq-eaf70.firebasestorage.app",
     messagingSenderId:"867089002449", appId:"1:867089002449:web:cadae5b363375020cdbaf0"
   });
   const auth = getAuth(app);
-  onAuthStateChanged(auth, u=>{ window.__currentUser = u||null; applyAuth(u||null); });
+  const db = getFirestore(app);
+
+  // Persist the content profile to the durable Firestore user doc (merge).
+  window.__saveProfileRemote = async (p)=>{
+    const u=window.__currentUser; if(!u) return;
+    try{ await setDoc(doc(db,'users',u.uid), {
+      name:p.name||'', niche:p.niche||'', game:p.game||'', platforms:p.platforms||[], grow:p.grow||[],
+      size:p.size||'', keyword:p.keyword||'', optin:!!p.optin, profileComplete:true, updatedAt:new Date().toISOString()
+    }, {merge:true}); }catch(e){}
+  };
+
+  onAuthStateChanged(auth, async (u)=>{
+    window.__currentUser = u||null; applyAuth(u||null);
+    if(!u) return;
+    // Pull the durable profile and merge it into the local shared context.
+    try{
+      const snap = await getDoc(doc(db,'users',u.uid));
+      if(snap.exists()){
+        const r=snap.data(), local=getProfile();
+        localStorage.setItem('cnx_profile', JSON.stringify(Object.assign({}, local, {
+          name:r.name||local.name, niche:r.niche||local.niche, game:r.game||local.game,
+          platforms:(r.platforms&&r.platforms.length)?r.platforms:local.platforms,
+          grow:(r.grow&&r.grow.length)?r.grow:local.grow,
+          size:r.size||local.size, keyword:r.keyword||local.keyword, optin:r.optin
+        })));
+        renderContext();
+      }
+    }catch(e){}
+    // Welcome survey: right after signup, or if they've never filled it in.
+    const params=new URLSearchParams(location.search);
+    if(params.get('welcome')==='1' || !getProfile().niche) openProfile();
+  });
   window.signOut = async ()=>{ try{ await fbSignOut(auth); } finally { window.location.href='index.html'; } };
   // Worker fetch with a single token-refresh retry on 401 (prevents false sign-outs)
   window.cnxFetch = async (url, body)=>{

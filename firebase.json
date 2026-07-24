@@ -1,12 +1,18 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "public": ".",
     "ignore": [
       "firebase.json",
+      "firestore.rules",
       "**/.*",
       "**/node_modules/**",
-      "ROADMAP.md",
-      "README.md"
+      "worker/**",
+      "*.md",
+      "package.json",
+      "package-lock.json"
     ],
     "headers": [
       {
