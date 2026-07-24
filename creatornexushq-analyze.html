@@ -1062,7 +1062,7 @@ nav {
   <button class="main-tab" onclick="switchTab('pattern-analyzer', this)">📊 Content Patterns</button>
   <button class="main-tab" onclick="switchTab('schedule-analyzer', this)">📅 Posting Schedule</button>
   <button class="main-tab" onclick="switchTab('calendar-builder', this)">🗓️ Calendar Builder</button>
-  <button class="main-tab" onclick="switchTab('tag-analyzer', this)">🏷️ Tag Analyzer</button>
+  <button class="main-tab" onclick="switchTab('tag-analyzer', this)">🏷️ Tags &amp; Hashtags</button>
 </div>
 
 <div class="content">
@@ -1428,8 +1428,8 @@ nav {
     <div class="two-col">
       <div>
         <div class="card">
-          <div class="card-title">🏷️ Tag & Hashtag Analyzer</div>
-          <div class="card-desc">Paste your existing tags or hashtags and get a score, feedback on each one, and a better set to replace them with.</div>
+          <div class="card-title">🏷️ Tags &amp; Hashtags <span style="font-size:11px;background:rgba(6,182,212,0.1);color:var(--cyan);border:1px solid rgba(6,182,212,0.25);border-radius:4px;padding:2px 8px;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:0.5px">LIVE DATA</span></div>
+          <div class="card-desc">One tool for tags <em>and</em> hashtags. Paste your current tags to get them rated — or leave that blank and we'll build the set from scratch. Either way you get an optimized tag list plus ready-to-paste hashtags for your title/description, scored against what's actually ranking on YouTube right now.</div>
 
           <div class="field">
             <label>Platform</label>
@@ -1452,8 +1452,8 @@ nav {
           </div>
 
           <div class="field">
-            <label>Your Current Tags / Hashtags</label>
-            <textarea id="tag-current" rows="5" placeholder="Paste your tags here, comma or space separated or one per line&#10;e.g. warzone, gaming, cod, funny, clips, warzoneclips..."></textarea>
+            <label>Your Current Tags / Hashtags <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(optional — leave blank to generate from scratch)</span></label>
+            <textarea id="tag-current" rows="5" placeholder="Paste your tags to have them rated — or leave empty and we'll build a fresh set&#10;e.g. warzone, gaming, cod, funny, clips, warzoneclips..."></textarea>
           </div>
 
           <div class="field">
@@ -1486,74 +1486,18 @@ nav {
           </div>
 
           <button class="analyze-btn" id="btn-tag" onclick="analyze('tags')">
-            <span>✦</span> Analyze My Tags
-          </button>
-        </div>
-
-        <!-- TAG SUGGESTER -->
-        <div class="card" style="margin-top:0">
-          <div class="card-title">🔍 YouTube Tag Suggester <span style="font-size:11px;background:rgba(6,182,212,0.1);color:var(--cyan);border:1px solid rgba(6,182,212,0.25);border-radius:4px;padding:2px 8px;font-family:'DM Sans',sans-serif;font-weight:600;letter-spacing:0.5px">LIVE API</span></div>
-          <div class="card-desc">Enter your video topic and we'll reverse engineer the tags your top competitors are using on YouTube — then suggest the best ones for your channel size.</div>
-
-          <!-- API Key notice -->
-          <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--gold);display:flex;gap:10px;align-items:flex-start">
-            <span style="flex-shrink:0">🔑</span>
-            <span>This feature requires a YouTube Data API key. <span id="api-key-toggle" style="text-decoration:underline;cursor:pointer;color:var(--accent3)" onclick="toggleApiKeyInput()">Enter your API key →</span></span>
-          </div>
-
-          <div id="api-key-input" style="display:none;margin-bottom:14px">
-            <div class="field">
-              <label>YouTube Data API Key</label>
-              <input type="password" id="yt-api-key" placeholder="AIza...">
-            </div>
-            <div style="font-size:11px;color:var(--muted);margin-top:-8px;margin-bottom:10px">Your key is never stored or sent anywhere except directly to YouTube's API.</div>
-          </div>
-
-          <div class="field">
-            <label>Your Video Topic / Title</label>
-            <input type="text" id="suggest-topic" placeholder="e.g. Warzone 1v4 clutch quickscope funny clip">
-          </div>
-
-          <div class="form-row">
-            <div class="field">
-              <label>Channel Size</label>
-              <select id="suggest-size">
-                <option>Under 1K subscribers</option>
-                <option>1K–10K subscribers</option>
-                <option>10K–100K subscribers</option>
-                <option>100K+ subscribers</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>How many competitors to scan</label>
-              <select id="suggest-count">
-                <option value="5">Top 5 videos</option>
-                <option value="10">Top 10 videos</option>
-              </select>
-            </div>
-          </div>
-
-          <button class="analyze-btn" id="btn-suggest" onclick="suggestTags()" style="background:linear-gradient(135deg,var(--cyan),#0891b2)">
-            <span>🔍</span> Suggest Tags from Competitors
+            <span>✦</span> Get My Tags &amp; Hashtags
           </button>
         </div>
       </div>
 
       <div>
         <div class="results-card" id="results-tags" style="margin-top:0">
-          <div class="results-label">✦ Tag Analysis</div>
+          <div class="results-label">✦ Tags &amp; Hashtags</div>
           <div id="results-tags-content"></div>
         </div>
         <div id="tags-placeholder" style="background:var(--surface);border:1px dashed var(--border2);border-radius:16px;padding:40px;text-align:center;color:var(--muted);font-size:13px;margin-bottom:16px">
-          Your tag analysis will appear here
-        </div>
-
-        <div class="results-card" id="results-suggest" style="margin-top:0">
-          <div class="results-label">🔍 Competitor Tag Suggestions</div>
-          <div id="results-suggest-content"></div>
-        </div>
-        <div id="suggest-placeholder" style="background:var(--surface);border:1px dashed var(--border2);border-radius:16px;padding:40px;text-align:center;color:var(--muted);font-size:13px">
-          Competitor tag suggestions will appear here
+          Your tags &amp; hashtags will appear here
         </div>
       </div>
     </div>
@@ -1879,135 +1823,6 @@ nav {
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
-  }
-
-  function toggleApiKeyInput() {
-    const input = document.getElementById('api-key-input');
-    const toggle = document.getElementById('api-key-toggle');
-    if (input.style.display === 'none') {
-      input.style.display = 'block';
-      toggle.textContent = 'Hide API key field ↑';
-    } else {
-      input.style.display = 'none';
-      toggle.textContent = 'Enter your API key →';
-    }
-  }
-
-  async function suggestTags() {
-    if (!window.__currentUser) { showSignInPrompt(); return; }
-
-    const apiKey = document.getElementById('yt-api-key').value.trim();
-    const topic = document.getElementById('suggest-topic').value.trim();
-    const channelSize = document.getElementById('suggest-size').value;
-    const count = document.getElementById('suggest-count').value;
-
-    if (!topic) { showToast('Please enter a video topic first.'); return; }
-
-    const btn = document.getElementById('btn-suggest');
-    const resultsCard = document.getElementById('results-suggest');
-    const resultsContent = document.getElementById('results-suggest-content');
-    const placeholder = document.getElementById('suggest-placeholder');
-
-    if (!btn.dataset.orig) btn.dataset.orig = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Scanning competitors...';
-    placeholder.style.display = 'none';
-    resultsCard.className = 'results-card visible';
-    resultsContent.innerHTML = '<div class="loading"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div> Fetching competitor tags from YouTube...</div>';
-
-    let competitorTags = [];
-    let competitorTitles = [];
-
-    // If API key provided, fetch real YouTube data
-    if (apiKey) {
-      try {
-        const searchRes = await fetch(
-          `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(topic)}&type=video&maxResults=${count}&order=viewCount&key=${apiKey}`
-        );
-        const searchData = await searchRes.json();
-
-        if (searchData.error) {
-          throw new Error(searchData.error.message);
-        }
-
-        const videoIds = searchData.items.map(i => i.id.videoId).join(',');
-        competitorTitles = searchData.items.map(i => i.snippet.title);
-
-        // Fetch video details including tags
-        const detailsRes = await fetch(
-          `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoIds}&key=${apiKey}`
-        );
-        const detailsData = await detailsRes.json();
-
-        detailsData.items.forEach(video => {
-          if (video.snippet.tags) {
-            competitorTags.push(...video.snippet.tags);
-          }
-        });
-
-      } catch(err) {
-        resultsContent.innerHTML = `<p style="color:var(--red);font-size:13px">YouTube API error: ${err.message}. Check your API key and make sure the YouTube Data API v3 is enabled.</p>`;
-        btn.disabled = false;
-        btn.innerHTML = btn.dataset.orig;
-        return;
-      }
-    }
-
-    // AI analysis runs server-side (worker/src/index.js, tool "tag-suggester")
-    // — works with or without real YouTube data.
-    try {
-      const res = await cnxFetch(WORKER_URL, {
-          tool: 'tag-suggester',
-          channelSize: channelSize,
-          topic: topic,
-          competitorTitles: competitorTitles,
-          competitorTags: competitorTags,
-        });
-
-      if (res.status === 401) {
-        window.__currentUser = null;
-        showSignInPrompt();
-        resultsCard.className = 'results-card';
-        return;
-      }
-
-      if (res.status === 429) {
-        showLimitPrompt();
-        resultsCard.className = 'results-card';
-        return;
-      }
-
-      const data = await res.json();
-
-      if (!res.ok || !data.text) {
-        let msg = data.message || 'Something went wrong. Please try again.';
-        if (data.detail) msg += '<br><span style="color:var(--muted);font-size:12px">' + String(data.detail).slice(0, 400) + '</span>';
-        resultsContent.innerHTML = '<p style="color:var(--red);font-size:13px">' + msg + '</p>';
-        return;
-      }
-
-      if (typeof data.remaining === 'number') {
-        usageLeft = data.remaining;
-        updateUsage();
-      }
-      if (data.plan === 'pro' || data.plan === 'trial') {
-        const proBadge = document.getElementById('sidebarPlan');
-        if (proBadge) { proBadge.textContent = data.plan === 'trial' ? '★ PRO TRIAL' : '★ PRO PLAN'; proBadge.classList.add('pro'); }
-        const uc = document.getElementById('usageCount'); if (uc) uc.textContent = '∞';
-        const uf = document.getElementById('usageFill'); if (uf) uf.style.width = '100%';
-      }
-      renderResults(data.text, resultsContent, 'tags');
-
-      if (data.ytData && Array.isArray(data.ytData.tagPool)) {
-        resultsContent.insertAdjacentHTML('afterbegin', buildYtTagPanel(data.ytData));
-      }
-
-    } catch(err) {
-      resultsContent.innerHTML = '<p style="color:var(--gold);font-size:13px">🔧 Couldn\'t reach the AI backend. Check your connection and try again.</p>';
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = btn.dataset.orig;
-    }
   }
 
   function escYtHtml(s) {

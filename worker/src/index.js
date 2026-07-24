@@ -530,21 +530,36 @@ ${yt.tagPool.map((t) => `- "${t.tag}" (${t.count})`).join('\n')}
 
 Score the creator's tags AGAINST this real data: a tag is STRONG if ranking videos use it, MISSING if it's common in the data but absent from their set, and DEAD WEIGHT if nothing ranking uses it.\n`
         : '';
-      return `Analyze these ${f.platform || 'YouTube'} tags/hashtags for a ${f.contentType} creator in the ${f.niche} niche with ${f.channelSize}.
+      const pk = platformKey(f.platform);
+      const isYouTube = pk === 'youtube';
+      const hasTags = !!(f.currentTags && String(f.currentTags).trim());
 
-VIDEO TITLE: ${f.title}
-CURRENT TAGS: ${f.currentTags}
-${dataBlock}
-Analyze in these exact sections:
-OVERALL SCORE: [X/100] — [one sentence verdict on the tag strategy${yt ? ', grounded in the live ranking data' : ''}]
-STRONG TAGS: [which tags are working and why${yt ? ' — cite how many ranking videos use each' : ''}]
+      const auditSections = hasTags
+        ? `OVERALL SCORE: [X/100] — [one sentence verdict on the tag strategy${yt ? ', grounded in the live ranking data' : ''}]
+STRONG TAGS: [which of their tags are working and why${yt ? ' — cite how many ranking videos use each' : ''}]
 WEAK TAGS: [which tags to remove and why — too broad, too competitive, irrelevant${yt ? ', or absent from every ranking video' : ''}]
 MISSING TAGS: [specific tags they should be using but aren't${yt ? ' — prioritize tags multiple ranking videos share' : ''}]
-COMPETITION LEVEL: [are these tags too competitive for their channel size?]
-TAG STRATEGY: [short vs long tail balance, branded vs generic, niche vs broad]
-OPTIMIZED TAG SET: [a complete replacement set of 10-15 tags/hashtags ready to copy and paste]
-HASHTAG ORDER: [for platforms like TikTok/Instagram, the ideal order to place hashtags]
-ONE BIG INSIGHT: [the single most important thing wrong with their current tag strategy]`;
+`
+        : '';
+
+      const hashtagLine = isYouTube
+        ? `HASHTAGS FOR DESCRIPTION: [2-3 hashtags to put in the video DESCRIPTION — YouTube shows the first 3 above the title. Never suggest hashtags inside a YouTube title.]`
+        : (pk === 'twitch' || pk === 'kick')
+          ? `HASHTAG NOTE: [hashtags don't drive discovery on ${f.platform} — say so plainly and tell them what matters instead (category, title)]`
+          : `HASHTAGS FOR CAPTION: [3-5 hashtags to bake into the END of the caption, in the ideal order — these are ${f.platform}'s primary topic classification]`;
+
+      return `${hasTags ? 'Analyze and upgrade' : 'Create from scratch'} the ${f.platform || 'YouTube'} tag & hashtag set for a ${f.contentType} creator in the ${f.niche} niche with ${f.channelSize}.
+
+${PLATFORM_RULES[pk]}
+
+VIDEO TOPIC/TITLE: ${f.title}
+${hasTags ? `CURRENT TAGS: ${f.currentTags}` : 'CURRENT TAGS: none provided — build the full recommended set from scratch.'}
+${dataBlock}
+Respond in these exact sections (plain text, no markdown):
+${auditSections}TAG STRATEGY: [short vs long tail balance, branded vs generic, and what fits this channel size]
+OPTIMIZED TAG SET: [the complete ${hasTags ? 'replacement' : 'recommended'} set of 10-15 tags as ONE comma-separated line ready to copy and paste${yt ? ' — drawn from tags ranking videos actually use where relevant' : ''}]
+${hashtagLine}
+ONE BIG INSIGHT: [the single most important ${hasTags ? 'thing wrong with their current tag strategy' : 'principle for tagging this video well'}]`;
     },
   },
 
