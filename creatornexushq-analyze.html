@@ -1107,6 +1107,11 @@ nav {
             <textarea id="ta-desc" rows="4" placeholder="Paste your video description here..."></textarea>
           </div>
 
+          <div class="field">
+            <label>Target keyword <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted)">(optional — what people search)</span></label>
+            <input type="text" id="ta-keyword" placeholder="e.g. pokemon card unboxing">
+          </div>
+
           <div class="form-row">
             <div class="field">
               <label>Content Type</label>
@@ -1131,8 +1136,11 @@ nav {
             </div>
           </div>
 
+          <button class="analyze-btn" id="btn-ta-score" onclick="scoreSEO()" style="background:linear-gradient(135deg,var(--cyan),#0891b2);margin-bottom:10px">
+            <span>⚡</span> Instant SEO Score <span style="font-size:11px;opacity:.85;font-weight:600">— free, no AI</span>
+          </button>
           <button class="analyze-btn" id="btn-ta" onclick="analyze('title')">
-            <span>✦</span> Analyze Title & Description
+            <span>✦</span> Deep AI Analysis
           </button>
         </div>
       </div>
@@ -1641,6 +1649,7 @@ nav {
         platform: document.querySelector('#tab-title-analyzer .ppill.selected')?.textContent || 'YouTube',
         title: document.getElementById('ta-title').value,
         desc: document.getElementById('ta-desc').value,
+        keyword: document.getElementById('ta-keyword').value.trim(),
         contentType: document.getElementById('ta-type').value,
         audience: document.getElementById('ta-audience').value,
       };
@@ -1823,6 +1832,110 @@ nav {
     t.textContent = msg;
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ============================================================
+  // DETERMINISTIC SEO SCORE — our transparent head-to-head vs vidIQ.
+  // No AI call, no daily-limit burn; every point is explained so the
+  // creator can edit and watch the number climb. YouTube-oriented
+  // (that's where title/description SEO actually drives discovery).
+  // ============================================================
+  const SEO_STOPWORDS = new Set(('the a an and or but of to in on for with my your our this that is it i we you how why what when new best top vs ' +
+    'get make do does did will can are was were be been being at as by from up out').split(' '));
+
+  function inferKeyword(title) {
+    const counts = {};
+    (title.toLowerCase().match(/[a-z0-9']{3,}/g) || []).forEach(w => { if (!SEO_STOPWORDS.has(w)) counts[w] = (counts[w] || 0) + 1; });
+    let best = '', n = 0;
+    for (const w in counts) if (counts[w] > n) { n = counts[w]; best = w; }
+    return best;
+  }
+
+  function computeSeoScore({ title, description, keyword, platform }) {
+    title = (title || '').trim();
+    description = (description || '').trim();
+    const tl = title.toLowerCase(), dl = description.toLowerCase();
+    const inferred = !keyword;
+    let kw = (keyword || '').trim().toLowerCase();
+    if (!kw) kw = inferKeyword(title);
+
+    const words = description.split(/\s+/).filter(Boolean);
+    const wordCount = words.length;
+    const firstSentence = (description.split(/[.!?\n]/)[0] || '').toLowerCase();
+    const hashtags = description.match(/#[\p{L}\d_]+/gu) || [];
+    const kwCount = kw ? dl.split(kw).length - 1 : 0;
+    const hasLink = /(https?:\/\/|\[links?\]|link in|link below|👇)/i.test(description);
+    const hasChapters = /(\[chapters?\]|(?:^|\s)\d{1,2}:\d{2}\b|chapters?:)/im.test(description);
+    const titleHasHook = /(\d|[A-Z]{2,}|\?|!|🔥|💀|😳|😱|\bhow\b|\bwhy\b|\bbest\b|\bvs\b|\bnever\b|\bstop\b)/.test(title);
+    const titleLen = title.length;
+
+    const f = [];
+    const P = (label, state, got, max, tip) => f.push({ label, state, got, max, tip });
+    const full = (l, ok, max, tip, partial) => P(l, ok ? 'pass' : partial ? 'warn' : 'fail', ok ? max : partial ? Math.round(max / 2) : 0, max, tip);
+
+    full('Keyword in the title', kw && tl.includes(kw), 15,
+      kw ? (tl.includes(kw) ? `"${kw}" is in your title.` : `Add "${kw}" to your title.`) : 'Add a target keyword to score this.');
+    full('Keyword in the first sentence', kw && firstSentence.includes(kw), 15,
+      firstSentence.includes(kw) ? 'Front-loaded — good.' : `Open your description with "${kw}".`);
+    full('Title length (20–60 chars)', titleLen >= 20 && titleLen <= 60, 10,
+      titleLen < 20 ? `Only ${titleLen} chars — too short to rank for much.` : titleLen > 60 ? `${titleLen} chars — will truncate in search (~60 max).` : `${titleLen} chars — ideal.`,
+      titleLen >= 15 && titleLen <= 70);
+    full('Description length (170+ words)', wordCount >= 170, 20,
+      `${wordCount} words. ${wordCount >= 170 ? 'Great depth for SEO.' : 'Aim for 170+ — more context ranks better.'}`,
+      wordCount >= 80);
+    full('Keyword used 2–4× in body', kwCount >= 2 && kwCount <= 4, 10,
+      kwCount === 0 ? 'Keyword never repeated in the body.' : kwCount > 4 ? `Used ${kwCount}× — risks keyword stuffing.` : `Used ${kwCount}× — natural.`,
+      kwCount === 1 || (kwCount >= 5 && kwCount <= 6));
+    full('2–3 hashtags', hashtags.length >= 2 && hashtags.length <= 3, 10,
+      hashtags.length === 0 ? 'No hashtags — YouTube shows the first up to 3 above the title.' : hashtags.length > 3 ? `${hashtags.length} hashtags — 4+ can make YouTube ignore all of them.` : `${hashtags.length} — good.`,
+      hashtags.length === 1 || (hashtags.length >= 4 && hashtags.length <= 5));
+    full('Includes a link', hasLink, 8, hasLink ? 'Link present.' : 'Add links (socials, gear, playlist) — signals a complete description.');
+    full('Chapters / timestamps', hasChapters, 7, hasChapters ? 'Chapters present.' : 'Add timestamp chapters (e.g. 0:00 Intro) — boosts watch time & SEO.');
+    full('Title has a hook (number / power word)', titleHasHook, 5, titleHasHook ? 'Has a click-driver.' : 'Add a number, power word, or question.');
+
+    const score = f.reduce((s, x) => s + x.got, 0);
+    return { score, factors: f, keyword: kw, inferred };
+  }
+
+  function scoreSEO() {
+    const title = document.getElementById('ta-title').value;
+    const description = document.getElementById('ta-desc').value;
+    const keyword = document.getElementById('ta-keyword').value;
+    const platform = document.querySelector('#tab-title-analyzer .ppill.selected')?.textContent || 'YouTube';
+    if (!title.trim() && !description.trim()) { showToast('Paste a title and description to score.'); return; }
+
+    const { score, factors, keyword: kw, inferred } = computeSeoScore({ title, description, keyword, platform });
+    const color = score >= 80 ? '#22c55e' : score >= 55 ? '#f59e0b' : '#ef4444';
+    const verdict = score >= 80 ? 'Strong — ready to publish.' : score >= 55 ? 'Decent — a few fixes will lift it.' : 'Needs work — fix the reds below.';
+    const ico = s => s === 'pass' ? '<span style="color:#22c55e">✓</span>' : s === 'warn' ? '<span style="color:#f59e0b">△</span>' : '<span style="color:#ef4444">✗</span>';
+
+    const rows = factors.map(x =>
+      '<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid #1a1a2e">'
+      + '<span style="flex-shrink:0;width:16px;text-align:center">' + ico(x.state) + '</span>'
+      + '<span style="flex:1;min-width:0"><span style="color:#e6e6f5;font-size:13px;font-weight:600">' + escYtHtml(x.label) + '</span>'
+      + '<span style="display:block;color:#8a8ab5;font-size:12px;margin-top:1px">' + escYtHtml(x.tip) + '</span></span>'
+      + '<span style="flex-shrink:0;font-size:12px;font-weight:700;color:#8a8ab5;font-variant-numeric:tabular-nums">' + x.got + '/' + x.max + '</span>'
+      + '</div>'
+    ).join('');
+
+    const html = '<div style="background:#0d0d18;border:1px solid #26263a;border-radius:12px;padding:18px">'
+      + '<div style="display:flex;align-items:center;gap:16px;margin-bottom:6px">'
+      + '<div style="flex-shrink:0;width:66px;height:66px;border-radius:50%;background:conic-gradient(' + color + ' ' + (score * 3.6) + 'deg,#20203a 0deg);display:flex;align-items:center;justify-content:center">'
+      + '<div style="width:52px;height:52px;border-radius:50%;background:#0d0d18;display:flex;align-items:center;justify-content:center;font-family:\'DM Sans\',sans-serif;font-weight:800;font-size:19px;color:' + color + '">' + score + '</div></div>'
+      + '<div><div style="font-family:\'DM Sans\',sans-serif;font-weight:700;font-size:15px;color:#eeeeff">SEO Score ' + score + '/100</div>'
+      + '<div style="font-size:12.5px;color:#8a8ab5">' + verdict + '</div>'
+      + (inferred && kw ? '<div style="font-size:11.5px;color:#8a8ab5;margin-top:2px">Scored against inferred keyword <b style="color:#c9c9e6">"' + escYtHtml(kw) + '"</b> — set a target keyword for precision.</div>' : '') + '</div></div>'
+      + '<div style="margin-top:10px">' + rows + '</div>'
+      + '<div style="font-size:11.5px;color:#8a8ab5;margin-top:12px">Deterministic score — no AI, doesn\'t use a generation. Edit and re-score to watch it climb.</div>'
+      + '</div>';
+
+    const card = document.getElementById('results-title');
+    const content = document.getElementById('results-title-content');
+    const ph = document.getElementById('title-placeholder');
+    if (ph) ph.style.display = 'none';
+    card.className = 'results-card visible';
+    document.querySelector('#results-title .results-label').textContent = '⚡ Instant SEO Score';
+    content.innerHTML = html;
   }
 
   function escYtHtml(s) {
