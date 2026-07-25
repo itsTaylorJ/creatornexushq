@@ -166,6 +166,9 @@
   .mini figcaption{font-size:10.5px;color:var(--faint);margin-top:5px;font-family:var(--mono)}
   .mini img{display:block;border-radius:3px;background:#000}
   .aiflag{font-size:11.5px;color:var(--faint);margin:10px 0 0;line-height:1.5;border-left:2px solid var(--border);padding-left:9px}
+  .ideawhy{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.55}
+  .ideahook{margin-top:9px;padding:8px 10px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;color:var(--text-soft);line-height:1.5}
+  .ideahook .hk{display:block;font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
 
   .res-group{margin-bottom:18px}
   .res-group h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;display:flex;align-items:center;gap:8px}
@@ -247,7 +250,7 @@
       <button class="navitem active" data-tool="titles" onclick="switchTool('titles',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Titles &amp; Descriptions</button>
       <button class="navitem" data-tool="tags" onclick="switchTool('tags',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h8.6l8 8a1.4 1.4 0 0 1 0 2z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>Tags &amp; Hashtags</button>
       <button class="navitem" data-tool="thumbs" onclick="switchTool('thumbs',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>Thumbnails</button>
-      <button class="navitem" data-tool="ideas" onclick="switchTool('ideas',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>Ideas, Hooks &amp; CTAs<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="ideas" onclick="switchTool('ideas',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>Ideas, Hooks &amp; CTAs</button>
       <button class="navitem" data-tool="schedule" onclick="switchTool('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Posting Schedule<span class="soon">soon</span></button>
       <button class="navitem" data-tool="live" onclick="switchTool('live',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg>Live Titles<span class="soon">soon</span></button>
       <button class="navitem" data-tool="audit" onclick="switchTool('audit',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg>Channel Audit<span class="soon">soon</span></button>
@@ -483,8 +486,85 @@
           </div>
         </div>
       </section>
-      <section class="tool" id="tool-ideas"><div class="tool-head"><div class="kicker">Ideas, Hooks &amp; CTAs</div><h1>Ideas, Hooks &amp; CTAs</h1></div>
-        <div class="comingsoon"><div class="ic">💡</div><h2>Moving into the Studio next</h2><p>Content ideas, hooks and CTAs are being rebuilt here.</p><a href="creatornexushq-app.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-ideas">
+        <div class="tool-head">
+          <div class="kicker">Ideas, Hooks &amp; CTAs</div>
+          <h1>Never open a blank editor again.</h1>
+          <p>Video ideas you could film today &mdash; each with the opening line to say &mdash; and CTAs that don't sound like every other channel.</p>
+        </div>
+        <div class="modes" id="id-modes">
+          <button class="mode-btn on" onclick="ideaMode('ideas',this)">Video ideas</button>
+          <button class="mode-btn" onclick="ideaMode('ctas',this)">Calls to action</button>
+        </div>
+        <div class="split">
+          <div class="card">
+            <!-- ---------- IDEAS ---------- -->
+            <div id="id-pane-ideas">
+              <div class="field">
+                <label>Platform</label>
+                <div class="pills" id="id-platform">
+                  <button class="pill-btn on" onclick="pick(this)">YouTube</button>
+                  <button class="pill-btn" onclick="pick(this)">TikTok</button>
+                  <button class="pill-btn" onclick="pick(this)">Instagram</button>
+                  <button class="pill-btn" onclick="pick(this)">X</button>
+                  <button class="pill-btn" onclick="pick(this)">Facebook</button>
+                  <button class="pill-btn" onclick="pick(this)">Snapchat</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>What's working for you lately? <span class="opt">— your best recent video, or what you keep making</span></label>
+                <textarea class="inp" id="id-working" placeholder="e.g. my booster box openings do 3x my normal views, especially when I pull something rare"></textarea>
+              </div>
+              <div class="field">
+                <label>How many ideas?</label>
+                <select class="inp" id="id-count"><option>5</option><option selected>8</option><option>12</option></select>
+              </div>
+              <button class="gen" id="id-gen" onclick="generateIdeas()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg> Give me ideas</button>
+            </div>
+            <!-- ---------- CTAs ---------- -->
+            <div id="id-pane-ctas" style="display:none">
+              <div class="field">
+                <label>Platform</label>
+                <div class="pills" id="ct-platform">
+                  <button class="pill-btn on" onclick="pick(this)">YouTube</button>
+                  <button class="pill-btn" onclick="pick(this)">TikTok</button>
+                  <button class="pill-btn" onclick="pick(this)">Instagram</button>
+                  <button class="pill-btn" onclick="pick(this)">X</button>
+                  <button class="pill-btn" onclick="pick(this)">Facebook</button>
+                  <button class="pill-btn" onclick="pick(this)">Snapchat</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>What do you want them to do?</label>
+                <select class="inp" id="ct-goal">
+                  <option>Subscribe / follow</option><option>Comment</option><option>Like</option>
+                  <option>Watch another video</option><option>Join my Discord</option><option>Share it</option>
+                  <option>Click a link</option><option>Buy or support</option>
+                </select>
+              </div>
+              <div class="row2">
+                <div class="field">
+                  <label>Tone</label>
+                  <select class="inp" id="ct-tone">
+                    <option>Chill / natural</option><option>Hype / excited</option><option>Funny</option>
+                    <option>Direct / no-nonsense</option><option>Warm / grateful</option><option>Cocky / confident</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Video format</label>
+                  <select class="inp" id="ct-format">
+                    <option>Long-form video</option><option>Short / Reel</option><option>Livestream</option><option>Podcast episode</option>
+                  </select>
+                </div>
+              </div>
+              <button class="gen" id="ct-gen" onclick="generateCTAs()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg> Write my CTAs</button>
+            </div>
+          </div>
+          <div class="results" id="id-results">
+            <div class="placeholder"><div class="big">💡</div>Your ideas, hooks and CTAs will appear here.</div>
+          </div>
+        </div>
+      </section>
       <section class="tool" id="tool-schedule"><div class="tool-head"><div class="kicker">Posting Schedule</div><h1>Posting Schedule</h1></div>
         <div class="comingsoon"><div class="ic">📅</div><h2>Moving into the Studio next</h2><p>The schedule and calendar are being combined and rebuilt here.</p><a href="creatornexushq-analyze.html">Open the current version →</a></div></section>
       <section class="tool" id="tool-live"><div class="tool-head"><div class="kicker">Live Titles</div><h1>Live Titles</h1></div>
@@ -1111,13 +1191,102 @@
     res.innerHTML=html||'<div class="placeholder">The prompts came back in an unexpected shape — try again.</div>';
   }
 
+  // ================= Ideas, Hooks & CTAs =================
+  function ideaMode(which, btn){
+    document.querySelectorAll('#id-modes .mode-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('id-pane-ideas').style.display = which==='ideas' ? '' : 'none';
+    document.getElementById('id-pane-ctas').style.display  = which==='ctas'  ? '' : 'none';
+  }
+  function pillOf(id, fallback){ return ((document.querySelector('#'+id+' .pill-btn.on')||{}).textContent||fallback).trim(); }
+
+  async function runTool(body, btnId, busyLabel, loadingLine, render){
+    if(!window.__currentUser){ openSignin(); return; }
+    const btn=document.getElementById(btnId), res=document.getElementById('id-results');
+    if(!btn.dataset.orig) btn.dataset.orig=btn.innerHTML;
+    btn.disabled=true; btn.innerHTML='<span class="dots"><i></i><i></i><i></i></span> '+busyLabel;
+    res.innerHTML='<div class="loading"><span class="dots"><i></i><i></i><i></i></span> '+loadingLine+'</div>';
+    try{
+      const r=await cnxFetch(WORKER_URL, body);
+      if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
+      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      const d=await r.json();
+      if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
+      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      render(d.text);
+    }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
+    finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
+  }
+
+  function generateIdeas(){
+    const working=document.getElementById('id-working').value.trim();
+    if(!working){ toast('Tell us what’s working for you first — it’s what makes these specific.'); document.getElementById('id-working').focus(); return; }
+    const p=getProfile();
+    runTool({ tool:'ideas', platform:pillOf('id-platform','YouTube'), count:document.getElementById('id-count').value,
+      niche:p.game||p.niche||'content creation', working:working, subs:p.size||'a growing channel' },
+      'id-gen','Thinking…','Looking for angles you haven’t used yet…', renderIdeas);
+  }
+
+  function generateCTAs(){
+    const p=getProfile();
+    runTool({ tool:'ctas', platform:pillOf('ct-platform','YouTube'), goal:document.getElementById('ct-goal').value,
+      niche:p.game||p.niche||'content creation', tone:document.getElementById('ct-tone').value,
+      format:document.getElementById('ct-format').value },
+      'ct-gen','Writing…','Writing CTAs that don’t sound generic…', renderCTAs);
+  }
+
+  function renderIdeas(text){
+    const res=document.getElementById('id-results');
+    const sec=parseSections(text);
+    let html='', n=0;
+    for(let i=1;i<=20;i++){
+      let idea=sec['IDEA '+i]; if(!idea) continue;
+      n++;
+      // models like to wrap titles and spoken lines in quotes — same drift the
+      // Titles tool already strips.
+      idea=strip(idea);
+      const why=sec['WHY '+i], hook=sec['HOOK '+i] ? strip(sec['HOOK '+i]) : '';
+      html+='<div class="res-group"><div class="item"><div class="txt">'+
+        '<span class="lab">Idea '+i+'</span>'+esc(idea)+
+        (why?'<div class="ideawhy">'+esc(why)+'</div>':'')+
+        (hook?'<div class="ideahook"><span class="hk">Open with</span>'+esc(hook)+'</div>':'')+
+        '</div>'+copyBtn(hook?idea+'\n\nHook: '+hook:idea)+'</div></div>';
+    }
+    if(!n){ res.innerHTML='<div class="placeholder">The ideas came back in an unexpected shape — try again.</div>'; return; }
+    res.innerHTML='<div class="res-group"><h3>Ideas you could film today <span class="cnt">'+n+'</span></h3></div>'+html;
+  }
+
+  function renderCTAs(text){
+    const res=document.getElementById('id-results');
+    const sec=parseSections(text);
+    const grab=(prefix)=>{ const out=[]; for(let i=1;i<=12;i++){ const v=sec[prefix+' '+i]; if(v) out.push(v); } return out; };
+    const verbal=grab('VERBAL CTA'), onscreen=grab('ONSCREEN CTA');
+    let html='';
+    if(verbal.length) html+=group('Say these out loud', verbal);
+    if(onscreen.length) html+=group('On-screen text', onscreen);
+    if(sec['PLACEMENT TIP']) html+=blockItem('Where to put them', sec['PLACEMENT TIP']);
+    if(sec['AVOID']) html+=blockItem('Don’t say this', sec['AVOID']);
+    res.innerHTML=html||'<div class="placeholder">The CTAs came back in an unexpected shape — try again.</div>';
+  }
+
   function group(label, arr){ if(!arr.length) return ''; return '<div class="res-group"><h3>'+label+' <span class="cnt">'+arr.length+'</span></h3>'+arr.map(x=>copyItem('',x)).join('')+'</div>'; }
   function metaItem(label, val){ return '<div class="res-group">'+copyItem(label, val)+'</div>'; }
   function blockItem(label, val){ return '<div class="res-group"><div class="item"><div class="txt"><span class="lab">'+esc(label)+'</span><div class="block">'+esc(val)+'</div></div>'+copyBtn(val)+'</div></div>'; }
   function hashItem(label, val){ return '<div class="res-group"><div class="item"><div class="txt"><span class="lab">'+esc(label)+'</span><div class="hashline">'+esc(val)+'</div></div>'+copyBtn(val)+'</div></div>'; }
   function copyItem(label, val){ return '<div class="item"><div class="txt">'+(label?'<span class="lab">'+esc(label)+'</span>':'')+esc(val)+'</div>'+copyBtn(val)+'</div>'; }
-  function copyBtn(val){ return '<button class="copy" onclick="copyText(this,'+JSON.stringify(JSON.stringify(val))+')">Copy</button>'; }
-  function copyText(btn, json){ navigator.clipboard.writeText(JSON.parse(json)).then(()=>{ btn.textContent='✓ Copied'; btn.classList.add('done'); setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('done');},1400); }); }
+  // The payload rides in a data- attribute, NOT inline in the onclick.
+  // It used to be JSON.stringify(JSON.stringify(val)) pasted straight into the
+  // attribute — whose leading quote closed the attribute early, so EVERY copy
+  // button in the Studio threw "Unexpected end of input" and copied nothing.
+  // esc() makes the value attribute-safe; getAttribute hands back the original.
+  function copyBtn(val){ return '<button class="copy" data-copy="'+esc(val)+'" onclick="copyText(this)">Copy</button>'; }
+  function copyText(btn){
+    const v = btn.getAttribute('data-copy') || '';
+    navigator.clipboard.writeText(v).then(()=>{
+      btn.textContent='✓ Copied'; btn.classList.add('done');
+      setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('done'); },1400);
+    }).catch(()=>{ toast('Your browser blocked the clipboard — select the text and copy manually.'); });
+  }
 
   function animateRing(el, score, col){ if(!el) return; let cur=0; const step=Math.max(1,Math.round(score/26));
     const draw=v=>{ el.style.background='conic-gradient('+col+' '+(v*3.6)+'deg, var(--surface-2) 0deg)'; el.innerHTML='<div style="position:absolute;inset:6px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center"><span class="num" style="color:'+col+'">'+v+'</span></div>'; };

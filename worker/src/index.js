@@ -343,13 +343,20 @@ Details:
 - Tone: ${f.tone}
 - Format: ${f.format}
 
-Format exactly like this:
-CTA 1: [cta line]
-CTA 2: [cta line]
-...
+Respond in plain text using these exact ALL-CAPS labels, one per line, and
+nothing else. Do not write group headings of your own — the labels ARE the
+grouping, and anything else breaks parsing:
 
-GROUP them by type: "Verbal CTAs" (say out loud) and "On-Screen CTAs" (text overlay).
-Include a TIP at the end about WHERE and WHEN to place the CTA in the video.`,
+VERBAL CTA 1: [a line they say out loud]
+VERBAL CTA 2: [line]
+VERBAL CTA 3: [line]
+VERBAL CTA 4: [line]
+ONSCREEN CTA 1: [short text overlay — a few words, not a sentence]
+ONSCREEN CTA 2: [overlay]
+ONSCREEN CTA 3: [overlay]
+ONSCREEN CTA 4: [overlay]
+PLACEMENT TIP: [where and when in the video to place these, and why]
+AVOID: [one CTA cliche that is actively hurting creators in this niche right now]`,
   },
 
   ideas: {
@@ -361,11 +368,17 @@ Details:
 - What's working: ${f.working}
 - Subscriber count: ${f.subs}
 
-Format exactly like this:
-IDEA 1: [title idea] — [one sentence on why this will perform and what makes it unique]
+For EACH idea give three labelled lines, in this exact order, using these
+ALL-CAPS labels and no other headings:
+
+IDEA 1: [the video title idea]
+WHY 1: [one sentence on why this will perform and what makes it different]
+HOOK 1: [the actual first line they say or show in the first 3 seconds]
 IDEA 2: ...
 
-Make them specific, not generic. Each idea should feel like something they could film TODAY.`,
+Repeat for all ${f.count} ideas. Make them specific, not generic — each should
+feel like something they could film TODAY with what they already own. The hook
+must be a line they could read out verbatim, not a description of a hook.`,
   },
 
   analytics: {
@@ -859,7 +872,12 @@ function normalizeModelText(text) {
   return String(text || '')
     .replace(/^([ \t]*)\*{1,2}([A-Z][A-Z\s\d]*?):\*{1,2}[ \t]*/gm, '$2: ')
     .replace(/^([ \t]*)\*{1,2}([A-Z][A-Z\s\d]*?)\*{1,2}:[ \t]*/gm, '$2: ')
-    .replace(/^[-•][ \t]+(?=[A-Z][A-Z\s\d]*:)/gm, '');
+    .replace(/^[-•][ \t]+(?=[A-Z][A-Z\s\d]*:)/gm, '')
+    // Bold inside the VALUE, not the label — "IDEA 1: **Blind Pack Challenge**"
+    // rendered the asterisks literally in the UI. We only ever emit plain text,
+    // so any surviving markdown emphasis is drift and should go.
+    .replace(/\*\*([^*\n]+)\*\*/g, '$1')
+    .replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s.,!?)]|$)/g, '$1$2');
 }
 
 const CONTACT_DAILY_LIMIT = 60; // anti-spam ceiling on contact submissions/day

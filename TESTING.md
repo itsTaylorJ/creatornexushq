@@ -62,8 +62,8 @@ Read this first so you don't chase things we already know:
 
 ## C. Studio shell and navigation
 
-14. [ ] Every rail item opens its tool. **Titles, Tags and Thumbnails are live**;
-        Ideas, Posting Schedule, Live Titles and Channel Audit show "soon".
+14. [ ] Every rail item opens its tool. **Titles, Tags, Thumbnails and Ideas are live**;
+        Posting Schedule, Live Titles and Channel Audit show "soon".
 15. [ ] Clicking the account block at the bottom opens the **Account page**.
 16. [ ] Edit the channel context via the **Edit** button top-right — changes
         show immediately in the bar.
@@ -121,47 +121,70 @@ Read this first so you don't chase things we already know:
         pick, a tool tip and a Canva tip. Copy buttons work.
 41. [ ] Paste one prompt into your actual image tool and confirm it's usable.
 
-## G. Account page
+## G. Ideas, Hooks & CTAs
 
-42. [ ] Name, username and email are correct.
-43. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
-44. [ ] The channel summary matches your survey answers.
-45. [ ] Change your username, save, reload — **it stuck**.
-46. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
-47. [ ] **Sign out** works and returns you to a logged-out state.
+42. [ ] **Video ideas** mode. Describe what's genuinely working for you and
+        generate. You get the number of ideas you asked for.
+43. [ ] Each idea has **three parts**: the idea, *why* it should perform, and a
+        **hook you could read out verbatim** — not a description of a hook.
+44. [ ] The ideas reference **your** niche and what you said is working. If they
+        read like generic listicle filler, that's a real failure — say so.
+45. [ ] No stray `**asterisks**` or wrapping quote marks anywhere in the output.
+46. [ ] **Calls to action** mode. Pick a goal, tone and format, generate.
+47. [ ] CTAs are split into **say out loud** and **on-screen text**, with the
+        on-screen ones actually short enough to be overlays.
+48. [ ] You get a **placement tip** and a **"don't say this"** line naming a real
+        cliche.
 
-## H. Limits and honesty
+## H. Copy buttons (check this everywhere)
 
-48. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
+49. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
+        prompt and an idea. Paste each one somewhere.
+50. [ ] The pasted text is **exactly** what was on screen — including line
+        breaks in multi-line blocks like the full description.
+51. [ ] The button flips to **✓ Copied** and back.
+
+## I. Account page
+
+52. [ ] Name, username and email are correct.
+53. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
+54. [ ] The channel summary matches your survey answers.
+55. [ ] Change your username, save, reload — **it stuck**.
+56. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
+57. [ ] **Sign out** works and returns you to a logged-out state.
+
+## J. Limits and honesty
+
+58. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
         error and not a redirect that loses your work.
-49. [ ] The usage counter in the rail **decreases by exactly one** per successful
+59. [ ] The usage counter in the rail **decreases by exactly one** per successful
         generation.
-50. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
+60. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
         and **the counter does not drop**.
-51. [ ] Nowhere in the app does anything imply you can **pay** yet.
-52. [ ] No tool claims live TikTok/Instagram trend data.
+61. [ ] Nowhere in the app does anything imply you can **pay** yet.
+62. [ ] No tool claims live TikTok/Instagram trend data.
 
-## I. Legacy pages still work
+## K. Legacy pages still work
 
-53. [ ] From the landing Tools menu, open the older pages
+63. [ ] From the landing Tools menu, open the older pages
         (`app`, `analyze`, `thumbnail`, `streaming`, `platforms`).
-54. [ ] Each one has a **"Back to Studio"** link that works.
-55. [ ] Deep links land on the right tab, e.g.
+64. [ ] Each one has a **"Back to Studio"** link that works.
+65. [ ] Deep links land on the right tab, e.g.
         `creatornexushq-analyze.html?tab=analytics` opens **Analytics Advice**,
         not the default tab.
-56. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
+66. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
         **Coming Soon** — no fake output.
 
-## J. Mobile pass (do this on a real phone)
+## L. Mobile pass (do this on a real phone)
 
-57. [ ] Repeat steps 18, 24 and 36 on your phone.
-58. [ ] **No page scrolls sideways at any point.** This is the single most
+67. [ ] Repeat steps 18, 24 and 36 on your phone.
+68. [ ] **No page scrolls sideways at any point.** This is the single most
         common regression in this codebase — check every results screen.
-59. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
+69. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
 
-## K. Cleanup
+## M. Cleanup
 
-60. [ ] **Delete every throwaway account** in the Firebase console
+70. [ ] **Delete every throwaway account** in the Firebase console
         (Authentication → Users). Non-negotiable.
 
 ---

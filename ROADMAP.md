@@ -30,7 +30,7 @@ carries a "Back to Studio" link so nothing dead-ends.
 | Titles & Descriptions | **Studio** ✅ migrated | Real — platform-adaptive, live YouTube ranking data, dual descriptions, 0–100 SEO score |
 | Tags & Hashtags | **Studio** ✅ migrated | Real — rate-or-generate, deterministic tag score, per-tag ranking counts, cross-post pack |
 | Thumbnails | **Studio** ✅ migrated | Real — vision scoring + measured size checks + true-to-size previews + AI prompt generator |
-| Ideas, Hooks & CTAs | `app.html` | Real |
+| Ideas, Hooks & CTAs | **Studio** ✅ migrated | Real — ideas each carry a ready-to-say hook; CTAs split verbal vs on-screen with placement advice |
 | Posting Schedule | `analyze.html` (schedule + calendar) | Real — merge the two into one Studio tool |
 | Live Titles | `streaming.html` | Real — add TikTok Live + Rumble on migration |
 | Channel Audit | `analyze.html` (analytics advice, patterns) | Real advice; **manual metric entry not built yet** |
@@ -44,8 +44,8 @@ carries a "Back to Studio" link so nothing dead-ends.
 
 1. ~~Tags & Hashtags~~ ✅ done
 2. ~~Thumbnails~~ ✅ done
-3. **Ideas, Hooks & CTAs** ← next
-4. Posting Schedule — schedule + calendar builder merged
+3. ~~Ideas, Hooks & CTAs~~ ✅ done
+4. **Posting Schedule** ← next — schedule + calendar builder merged
 5. Live Titles — + TikTok Live, Rumble
 6. Channel Audit — + manual metric entry, benchmark → diagnose → route to the
    fixing tool

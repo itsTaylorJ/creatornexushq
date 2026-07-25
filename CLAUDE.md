@@ -158,6 +158,21 @@ during the migration.
   reads `f.aiTool` because `tool` is the routing key.
 - All 6 client generate calls go through `cnxFetch()` (401 → force-refresh
   token → retry once). Don't add raw fetches with bare `getIdToken()`.
+- **Never interpolate a JSON string into an inline `onclick`.** Every Studio
+  Copy button was silently broken for weeks by
+  `onclick="copyText(this,'+JSON.stringify(JSON.stringify(v))+')"` — the
+  payload's leading `"` closed the HTML attribute, so the click threw
+  "Unexpected end of input" and copied nothing, while the parser turned the
+  rest of the text into junk attributes. Values ride in `data-` attributes
+  through `esc()` instead. Test copy buttons by **clicking** them and reading
+  the clipboard; they look perfectly fine until you do.
+- **Model output drift is handled server-side in `normalizeModelText()`** —
+  bold labels, bold *values* (`IDEA 1: **Title**` rendered the asterisks), and
+  bullet prefixes. Quote-wrapped values are stripped client-side by `strip()`.
+  When a new tool renders oddly, check these two before touching the prompt.
+- Prompts must use **ALL-CAPS labels only** — a prompt that asked the model to
+  "GROUP them under Verbal CTAs / On-Screen CTAs" produced mixed-case headings
+  the section parser couldn't read. Make every group an explicit label.
 - Platform-adaptive titles: `PLATFORM_RULES` + `platformKey()` in the Worker.
   Feed platforms (TikTok/IG/X/Snap/FB) output `CAPTION n:` with baked hashtags;
   YouTube outputs clean `TITLE n:` + `SHORT DESCRIPTION` + multi-line
@@ -193,7 +208,7 @@ tripled/minified CSS and are being retired tool-by-tool, never big-bang):
 | **Titles & Descriptions** ✅ migrated | titles gen + title/desc analyzer + SEO score |
 | **Tags & Hashtags** ✅ migrated | merged tag analyzer/suggester + cross-post pack |
 | **Thumbnails** ✅ migrated | vision analyzer + AI prompt gen (two modes) |
-| Ideas, Hooks & CTAs | content ideas + CTAs |
+| **Ideas, Hooks & CTAs** ✅ migrated | content ideas (each with a hook) + CTAs |
 | Posting Schedule | schedule + calendar builder |
 | Live Titles | stream planner (+ TikTok Live, Rumble) |
 | Channel Audit | analytics advice + content patterns + **manual metric entry** |
@@ -233,11 +248,14 @@ Phase 2 shipped so far:
 - **Thumbnails** migrated: two modes (score an upload / generate AI prompts),
   measured size checks + true-to-size mobile previews, AI sub-scores labelled
   as judgement. Vision reliability fixed (see below).
-- **[TESTING.md](TESTING.md)** — 60-step manual QA checklist covering everything
-  built so far. Run it before inviting real users.
+- **Ideas, Hooks & CTAs** migrated: ideas mode returns IDEA/WHY/HOOK per idea
+  (so the tool's name is honest — hooks used to live only in Titles); CTA mode
+  returns verbal vs on-screen plus placement and an "avoid this cliche" line.
+- **[TESTING.md](TESTING.md)** — manual QA checklist covering everything built
+  so far. Run it before inviting real users. Add a section per shipped tool.
 
 **Next in line (agreed order, one at a time with a check-in each):**
-Ideas/Hooks/CTAs → Posting Schedule → Live Titles → Channel Audit.
+Posting Schedule → Live Titles → Channel Audit.
 Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
 setup from the owner; Twitch as a fast follow).
 
