@@ -5,6 +5,14 @@
 **Method:** live testing against `https://creatornexushq-eaf70.web.app` + local code review at commit `0ba5fa6`
 **Rule for this pass:** report only, no code changes.
 
+> ⚠️ **This is a dated snapshot, not current state.** Every Phase 1 blocker
+> below has since been fixed, `CLAUDE.md` now exists, and the Studio
+> consolidation (Phase 2) is underway. Read [CLAUDE.md](CLAUDE.md) for current
+> state and [ROADMAP.md](ROADMAP.md) for tool status; trust those over this
+> file wherever they disagree. Kept as-is because the *reasoning* — unit
+> economics, competitive positioning, the prioritized checklist — is still the
+> basis for Phase 3 decisions.
+
 ---
 
 ## 0. Housekeeping notes before the findings

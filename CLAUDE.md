@@ -143,8 +143,16 @@ during the migration.
   (`accounts:signUp` / `accounts:signInWithPassword` / `accounts:delete`)
   with emails like `x-<ts>@creatornexushq-audit.invalid`. ALWAYS delete after.
 - Local preview: tiny Node static server on :8765 (no Python on this box).
-- `AUDIT.md` (2026-07-20) holds the full audit + phased launch plan.
-- `ROADMAP.md` holds tool status + Pro-grant commands.
+
+## Doc hierarchy (read in this order)
+
+1. **CLAUDE.md** (this file) — authoritative current state. If another doc
+   disagrees with it, this one wins.
+2. **[ROADMAP.md](ROADMAP.md)** — tool-by-tool status board, the migration
+   queue, and the Pro-grant runbook. Kept in step with this file.
+3. **[AUDIT.md](AUDIT.md)** — a *dated snapshot* (2026-07-20) of the full
+   product/engineering audit. Its Phase 1 findings are fixed; keep it for the
+   unit economics, competitive positioning, and Phase 3 reasoning.
 
 ## Studio consolidation (current major effort)
 
