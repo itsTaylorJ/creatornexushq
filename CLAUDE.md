@@ -26,11 +26,16 @@ exists. Trials/limits shown to users must match what the server enforces.
 - **Backend:** single Cloudflare Worker `creatornexushq-api` at
   [worker/src/index.js](worker/src/index.js). Deploy: `cd worker && npx wrangler deploy`.
   Verifies Firebase ID tokens via `jose` + Google JWKS.
-- **Data:** Cloudflare KV namespace `RATE_LIMIT` (id `1df69e401a134d08829ef71f645d5f88`).
-  Keys: `usage:<uid>:<YYYY-MM-DD>`, `usage:global:<day>`, `trial:<uid>` (no TTL),
-  `pro:<email>` (value = last active day), `yt:q:<query>` (6h cache),
-  `contact:*`. Firestore exists but is effectively unused (a stale user doc is
-  written at signup — flagged for deletion; KV is the system of record).
+- **Data — two stores, clear split:**
+  - **Cloudflare KV** `RATE_LIMIT` (id `1df69e401a134d08829ef71f645d5f88`) =
+    *ephemeral counters/entitlements*. Keys: `usage:<uid>:<YYYY-MM-DD>`,
+    `usage:global:<day>`, `trial:<uid>` (no TTL), `pro:<email>` (value = last
+    active day), `yt:q:<query>` (6h cache), `contact:*`.
+  - **Firestore `users/<uid>`** = *durable user profile* (as of the Studio work).
+    Fields: `email, name, first, last, username, age, optin, plan,
+    profileComplete, createdAt` + content profile `niche, game, platforms[],
+    grow[], size, keyword, updatedAt`. Written at signup (auth page) and
+    merged from the Studio. This was previously dead data — it now has a job.
 - **AI:** hybrid free-tier. Text: Groq `openai/gpt-oss-120b` primary,
   Gemini `gemini-flash-latest` fallback. Vision: Gemini primary, Groq
   `meta-llama/llama-4-scout-17b-16e-instruct` fallback. `max_tokens: 3000`
@@ -58,6 +63,13 @@ exists as `ANTHROPIC_API_KEY` reserved for a future paid tier; unused.)
 
 ## Page map
 
+- **`creatornexushq-studio.html` — THE app home** (new, clean design system).
+  All landing entry points + every auth redirect route here. Contains:
+  the tool rail, the shared **"Your Channel" context bar** (localStorage,
+  synced to Firestore), the welcome/profile survey modal, the **Account page**
+  (`switchTool('account')` — name/username/email/plan/prefs/sign out), and the
+  migrated **Titles & Descriptions** tool. Tools not yet migrated show a card
+  linking to their legacy page.
 - `index.html` — landing (pricing, Tools dropdown, contact form, auth-aware nav)
 - `creatornexushq-app.html` — main tools (Titles & Hooks w/ keyword field +
   live ranking panel, CTAs, Content Ideas; upgrade modal)
@@ -100,14 +112,58 @@ exists as `ANTHROPIC_API_KEY` reserved for a future paid tier; unused.)
 - `AUDIT.md` (2026-07-20) holds the full audit + phased launch plan.
 - `ROADMAP.md` holds tool status + Pro-grant commands.
 
+## Studio consolidation (current major effort)
+
+~16 scattered/duplicated entry points are being consolidated into **7 tools**
+inside the Studio, on one clean design system (the legacy pages carry the
+tripled/minified CSS and are being retired tool-by-tool, never big-bang):
+
+| Studio tool | Absorbs |
+|---|---|
+| **Titles & Descriptions** ✅ migrated | titles gen + title/desc analyzer + SEO score |
+| Tags & Hashtags | merged tag analyzer/suggester + cross-platform pack |
+| Thumbnails | analyzer + AI prompt gen |
+| Ideas, Hooks & CTAs | content ideas + CTAs |
+| Posting Schedule | schedule + calendar builder |
+| Live Titles | stream planner (+ TikTok Live, Rumble) |
+| Channel Audit | analytics advice + content patterns + **manual metric entry** |
+
+Rules while migrating: old pages stay live until their replacement is verified;
+every legacy page has a **"Back to Studio"** link; sidebar sub-links use
+`?tab=<id>` deep links (both `app.html` and `analyze.html` have a param reader).
+
+**Analytics strategy:** YouTube + Twitch can auto-connect via OAuth later;
+every other platform gets **self-serve manual metric entry**. Both feed the
+same audit engine (benchmark → diagnose bottleneck → route to the fixing tool).
+Never imply we have live TikTok/IG trend data — we don't.
+
+**Verification:** use **Playwright MCP** (the in-app preview pane hangs on
+screenshots). Screenshot + `browser_evaluate` for DOM assertions.
+
 ## Current roadmap position (Phase 1 = beta blockers)
 
-Done: landing auth-gate, 401 retry, platform title rules, platform-aware
-hashtags + dual descriptions + keyword field, 14 tones, purple-on-purple fix,
-trial metering 50/day, global cap 800, honest modal copy.
-Remaining P1: tool onboarding (how-it-works + try-example on all 10 tools),
-merge Tag Analyzer+Suggester into one Tags & Hashtags tool, deterministic
-0-100 SEO scorer (title/description/tags), manual Google sign-in verification.
-Then Phase 2 polish (organizer, history, BYO key), Phase 3 monetization
-(paid inference FIRST, then Stripe), Phase 4 differentiation (YouTube
-read-only OAuth). Details in AUDIT.md §9-10.
+Phase 1 **complete**: landing auth-gate, 401 retry, platform title rules,
+platform-aware hashtags + dual descriptions + keyword field, 14 tones,
+purple-on-purple fix, trial metering 50/day, global cap 800, honest modal copy,
+merged Tags & Hashtags tool, deterministic 0-100 SEO scorer, CLAUDE.md,
+Google sign-in verified by the owner.
+
+Now in **Phase 2 — the Studio consolidation** (see the section above), plus the
+connected onboarding (signup collects first/last/username + 13+/marketing
+consent → welcome survey → Firestore profile → shared context).
+
+Later: Phase 3 monetization (**paid inference FIRST**, then Stripe — the Groq
+free tier caps at roughly 50 active users and cannot carry paid plans), Phase 4
+differentiation (YouTube read-only OAuth → real channel analytics).
+Full audit + phased plan in AUDIT.md §9-10.
+
+## Owner's product principles (stated repeatedly — honour these)
+
+- **Polish over speed.** "I'm not worried about the fastest path to beta, I'm
+  worried about a functioning polished product." Solo-funded; aiming for a
+  flagship worth real investment. Don't rush to ship half-built things.
+- **Great at 1–2 things**: YouTube titles + tags must beat vidIQ/TubeBuddy;
+  everything else must be good and coherent, not padding.
+- **Gaming-first but genuinely all-creator** (TCG/Pokémon, vlogs, fitness,
+  podcasts, IRL). Never let the copy or options drift back to gaming-only.
+- **Honesty is the differentiator** — see the standard at the top of this file.

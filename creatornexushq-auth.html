@@ -377,9 +377,20 @@ footer {
           <div class="divider-line"></div>
         </div>
 
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="field">
+            <label>First Name</label>
+            <input type="text" id="signup-first" placeholder="Taylor">
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <input type="text" id="signup-last" placeholder="Jordan">
+          </div>
+        </div>
+
         <div class="field">
-          <label>Full Name</label>
-          <input type="text" id="signup-name" placeholder="Your name">
+          <label>Username</label>
+          <input type="text" id="signup-username" placeholder="taylorplays" autocomplete="off">
         </div>
 
         <div class="field">
@@ -508,7 +519,7 @@ footer {
   // Already logged in → straight to the app
   onAuthStateChanged(auth, (user) => {
     if (user && !authInProgress) {
-      window.location.href = 'creatornexushq-app.html';
+      window.location.href = 'creatornexushq-studio.html';
     }
   });
 
@@ -521,6 +532,9 @@ footer {
         uid: user.uid,
         email: user.email,
         name: user.displayName || extraData.name || '',
+        first: extraData.first || '',
+        last: extraData.last || '',
+        username: extraData.username || '',
         age: !!extraData.age,
         optin: !!extraData.optin,
         plan: 'free',
@@ -534,7 +548,9 @@ footer {
 
   // SIGN UP
   window.signUp = async function() {
-    const name = document.getElementById('signup-name').value.trim();
+    const first = document.getElementById('signup-first').value.trim();
+    const last = document.getElementById('signup-last').value.trim();
+    const username = document.getElementById('signup-username').value.trim().replace(/^@/, '');
     const email = document.getElementById('signup-email').value.trim();
     const password = document.getElementById('signup-password').value;
     const age = document.getElementById('signup-age').checked;
@@ -542,7 +558,9 @@ footer {
     const btn = document.getElementById('signup-btn');
     const alert = document.getElementById('signup-alert');
 
-    if (!name) return showAlert(alert, 'error', 'Please enter your name.');
+    if (!first) return showAlert(alert, 'error', 'Please enter your first name.');
+    if (!username) return showAlert(alert, 'error', 'Please choose a username.');
+    if (!/^[a-zA-Z0-9_.]{2,24}$/.test(username)) return showAlert(alert, 'error', 'Username: 2–24 letters, numbers, _ or . only.');
     if (!email) return showAlert(alert, 'error', 'Please enter your email.');
     if (password.length < 8) return showAlert(alert, 'error', 'Password must be at least 8 characters.');
     if (!age) return showAlert(alert, 'error', 'Please confirm you are 13 or older.');
@@ -553,8 +571,9 @@ footer {
 
     try {
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      const name = (first + ' ' + last).trim();
       await updateProfile(result.user, { displayName: name });
-      await saveUserToFirestore(result.user, { name, age, optin });
+      await saveUserToFirestore(result.user, { name, first, last, username, age, optin });
       showAlert(alert, 'success', 'Account created! Setting you up…');
       setTimeout(() => window.location.href = 'creatornexushq-studio.html?welcome=1', 1000);
     } catch(err) {
@@ -581,7 +600,7 @@ footer {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      window.location.href = 'creatornexushq-app.html';
+      window.location.href = 'creatornexushq-studio.html';
     } catch(err) {
       btn.disabled = false;
       btn.innerHTML = 'Log In to CreatorNexusHQ';
@@ -595,7 +614,7 @@ footer {
       authInProgress = true;
       const result = await signInWithPopup(auth, googleProvider);
       const isNew = await saveUserToFirestore(result.user, {});
-      window.location.href = isNew ? 'creatornexushq-studio.html?welcome=1' : 'creatornexushq-app.html';
+      window.location.href = isNew ? 'creatornexushq-studio.html?welcome=1' : 'creatornexushq-studio.html';
     } catch(err) {
       authInProgress = false;
       const alertEl = document.getElementById('signup-alert') || document.getElementById('login-alert');
