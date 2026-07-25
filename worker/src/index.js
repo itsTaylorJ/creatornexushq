@@ -563,7 +563,9 @@ ${PLATFORM_RULES[pk]}
 VIDEO TOPIC/TITLE: ${f.title}
 ${hasTags ? `CURRENT TAGS: ${f.currentTags}` : 'CURRENT TAGS: none provided — build the full recommended set from scratch.'}
 ${dataBlock}
-Respond in these exact sections (plain text, no markdown):
+Respond in these exact sections (plain text, no markdown). Output EVERY section
+label below, in this order, even if a section is only one line — never merge two
+sections together and never skip one${hasTags ? '. MISSING TAGS is required: if the live data shows a phrase the ranking videos share and they do not use, that is the single most valuable thing you can tell them' : ''}:
 ${auditSections}TAG STRATEGY: [short vs long tail balance, branded vs generic, and what fits this channel size]
 OPTIMIZED TAG SET: [the complete ${hasTags ? 'replacement' : 'recommended'} set of 10-15 tags as ONE comma-separated line ready to copy and paste${yt ? ' — drawn from tags ranking videos actually use where relevant' : ''}]
 ${hashtagLine}
