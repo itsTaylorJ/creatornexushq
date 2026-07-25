@@ -62,8 +62,8 @@ Read this first so you don't chase things we already know:
 
 ## C. Studio shell and navigation
 
-14. [ ] Every rail item opens its tool. **Titles, Tags, Thumbnails and Ideas are live**;
-        Posting Schedule, Live Titles and Channel Audit show "soon".
+14. [ ] Every rail item opens its tool. **Titles, Tags, Thumbnails, Ideas and
+        Posting Schedule are live**; Live Titles and Channel Audit show "soon".
 15. [ ] Clicking the account block at the bottom opens the **Account page**.
 16. [ ] Edit the channel context via the **Edit** button top-right — changes
         show immediately in the bar.
@@ -136,55 +136,80 @@ Read this first so you don't chase things we already know:
 48. [ ] You get a **placement tip** and a **"don't say this"** line naming a real
         cliche.
 
-## H. Copy buttons (check this everywhere)
+## H. Posting Schedule
 
-49. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
+49. [ ] **Build my week** mode. Your **timezone is already filled in** and your
+        platforms are pre-selected from your profile — check both are right.
+50. [ ] Describe your real availability, pick posts-per-week, generate.
+51. [ ] You get a **day-by-day calendar** with a time, platform, content type,
+        a **specific post idea** and a reason for each slot.
+52. [ ] The number of slots **matches the posts-per-week you chose**.
+53. [ ] Ideas are real post titles, not placeholders like "gaming video".
+54. [ ] **Copy the whole week** gives you a pasteable plain-text version.
+55. [ ] The caveat is visible: timing advice is a niche pattern, not a reading
+        of your analytics.
+56. [ ] **Rate what I do now** mode. Describe your current schedule honestly.
+57. [ ] You get a score bar, what to keep, what to change, best days and times,
+        frequency advice, per-platform tips and a suggested replacement schedule.
+
+## I. "Try an example" (the first-run path)
+
+58. [ ] On **each** live tool, click **"Try an example →"** under the heading.
+59. [ ] The form fills with a realistic scenario and you can hit generate
+        immediately without inventing anything.
+60. [ ] On Thumbnails it fills the text fields and tells you to add your own
+        image — it does **not** pretend to have one.
+
+## J. Copy buttons (check this everywhere)
+
+61. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
         prompt and an idea. Paste each one somewhere.
-50. [ ] The pasted text is **exactly** what was on screen — including line
+62. [ ] The pasted text is **exactly** what was on screen — including line
         breaks in multi-line blocks like the full description.
-51. [ ] The button flips to **✓ Copied** and back.
+63. [ ] The button flips to **✓ Copied** and back.
 
-## I. Account page
+## K. Account page
 
-52. [ ] Name, username and email are correct.
-53. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
-54. [ ] The channel summary matches your survey answers.
-55. [ ] Change your username, save, reload — **it stuck**.
-56. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
-57. [ ] **Sign out** works and returns you to a logged-out state.
+64. [ ] Name, username and email are correct.
+65. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
+66. [ ] The channel summary matches your survey answers.
+67. [ ] Change your username, save, reload — **it stuck**.
+68. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
+69. [ ] **Sign out** works and returns you to a logged-out state.
 
-## J. Limits and honesty
+## L. Limits and honesty
 
-58. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
+70. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
         error and not a redirect that loses your work.
-59. [ ] The usage counter in the rail **decreases by exactly one** per successful
+71. [ ] The usage counter in the rail **decreases by exactly one** per successful
         generation.
-60. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
+72. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
         and **the counter does not drop**.
-61. [ ] Nowhere in the app does anything imply you can **pay** yet.
-62. [ ] No tool claims live TikTok/Instagram trend data.
+73. [ ] Nowhere in the app does anything imply you can **pay** yet.
+74. [ ] No tool claims live TikTok/Instagram trend data.
 
-## K. Legacy pages still work
+## M. Legacy pages still work
 
-63. [ ] From the landing Tools menu, open the older pages
+75. [ ] From the landing Tools menu, open the older pages
         (`app`, `analyze`, `thumbnail`, `streaming`, `platforms`).
-64. [ ] Each one has a **"Back to Studio"** link that works.
-65. [ ] Deep links land on the right tab, e.g.
+76. [ ] Each one has a **"Back to Studio"** link that works.
+77. [ ] Deep links land on the right tab, e.g.
         `creatornexushq-analyze.html?tab=analytics` opens **Analytics Advice**,
         not the default tab.
-66. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
+78. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
         **Coming Soon** — no fake output.
 
-## L. Mobile pass (do this on a real phone)
+## N. Mobile pass (do this on a real phone)
 
-67. [ ] Repeat steps 18, 24 and 36 on your phone.
-68. [ ] **No page scrolls sideways at any point.** This is the single most
-        common regression in this codebase — check every results screen.
-69. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
+79. [ ] Repeat steps 18, 24, 36 and 50 on your phone.
+80. [ ] **No page scrolls sideways at any point.** This is the single most
+        common regression in this codebase — check every results screen,
+        including the thumbnail size-preview strip (it should scroll on its own).
+81. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
 
-## M. Cleanup
+## O. Cleanup
 
-70. [ ] **Delete every throwaway account** in the Firebase console
+82. [ ] **Delete every throwaway account** in the Firebase console
         (Authentication → Users). Non-negotiable.
 
 ---

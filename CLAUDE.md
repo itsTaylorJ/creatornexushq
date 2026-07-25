@@ -172,7 +172,17 @@ during the migration.
   When a new tool renders oddly, check these two before touching the prompt.
 - Prompts must use **ALL-CAPS labels only** — a prompt that asked the model to
   "GROUP them under Verbal CTAs / On-Screen CTAs" produced mixed-case headings
-  the section parser couldn't read. Make every group an explicit label.
+  the section parser couldn't read. Make every group an explicit label. Also
+  tell it explicitly to emit **every** label and **not to qualify** them: the
+  schedule tool silently lost sections to `### BEST TIMES TO POST (CT)`.
+- **`parseSections()` is shared by every tool — treat it as load-bearing.** It
+  tolerates markdown decoration (`###`, `**`, `-`), a parenthetical qualifier,
+  a heading with no colon, and content on the lines beneath a bare label, while
+  still refusing to read mixed-case `TikTok:` lines as labels. 13 unit tests
+  pin both directions; run them after any change here.
+- **Test harnesses must `eval` the real function out of the HTML**, never keep
+  their own copy. A stale duplicated parser in a live-test script reported a
+  failure that no longer existed and sent me chasing a phantom.
 - Platform-adaptive titles: `PLATFORM_RULES` + `platformKey()` in the Worker.
   Feed platforms (TikTok/IG/X/Snap/FB) output `CAPTION n:` with baked hashtags;
   YouTube outputs clean `TITLE n:` + `SHORT DESCRIPTION` + multi-line
@@ -191,8 +201,11 @@ during the migration.
    disagrees with it, this one wins.
 2. **[ROADMAP.md](ROADMAP.md)** — tool-by-tool status board, the migration
    queue, and the Pro-grant runbook. Kept in step with this file.
-3. **[TESTING.md](TESTING.md)** — the 60-step manual QA checklist to run before
+3. **[TESTING.md](TESTING.md)** — the manual QA checklist to run before
    inviting real users. Add a section whenever a tool ships.
+   **[TESTER-GUIDE.md](TESTER-GUIDE.md)** is the tester-facing counterpart —
+   what's real, what's gated, the known quirks, and the six questions worth
+   asking them. Keep it honest and short; it's the first thing a stranger reads.
 4. **[AUDIT.md](AUDIT.md)** — a *dated snapshot* (2026-07-20) of the full
    product/engineering audit. Its Phase 1 findings are fixed; keep it for the
    unit economics, competitive positioning, and Phase 3 reasoning.
@@ -209,7 +222,7 @@ tripled/minified CSS and are being retired tool-by-tool, never big-bang):
 | **Tags & Hashtags** ✅ migrated | merged tag analyzer/suggester + cross-post pack |
 | **Thumbnails** ✅ migrated | vision analyzer + AI prompt gen (two modes) |
 | **Ideas, Hooks & CTAs** ✅ migrated | content ideas (each with a hook) + CTAs |
-| Posting Schedule | schedule + calendar builder |
+| **Posting Schedule** ✅ migrated | weekly calendar builder + schedule rating |
 | Live Titles | stream planner (+ TikTok Live, Rumble) |
 | Channel Audit | analytics advice + content patterns + **manual metric entry** |
 
@@ -251,11 +264,17 @@ Phase 2 shipped so far:
 - **Ideas, Hooks & CTAs** migrated: ideas mode returns IDEA/WHY/HOOK per idea
   (so the tool's name is honest — hooks used to live only in Titles); CTA mode
   returns verbal vs on-screen plus placement and an "avoid this cliche" line.
-- **[TESTING.md](TESTING.md)** — manual QA checklist covering everything built
-  so far. Run it before inviting real users. Add a section per shipped tool.
+- **Posting Schedule** migrated: build-a-week mode (calendar grid, timezone
+  auto-detected, platforms prefilled from the profile) + rate-my-schedule mode.
+- **"Try an example →"** on every live tool. A blank form was the biggest
+  barrier to a first run — one click fills a realistic scenario. `EXAMPLES` in
+  the Studio; add an entry whenever a tool ships.
+- **[TESTING.md](TESTING.md)** — internal QA checklist. **[TESTER-GUIDE.md](TESTER-GUIDE.md)**
+  — the short, friendly, honest page to hand an actual beta tester. Two
+  different audiences; don't merge them.
 
 **Next in line (agreed order, one at a time with a check-in each):**
-Posting Schedule → Live Titles → Channel Audit.
+Live Titles → Channel Audit.
 Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
 setup from the owner; Twitch as a fast follow).
 

@@ -136,6 +136,9 @@
   .tagchip .rk{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--faint);letter-spacing:-.02em}
   .tagchip.strong .rk{color:var(--good);opacity:.8}
   .tagnote{font-size:11.5px;color:var(--faint);margin:9px 0 0;line-height:1.5}
+  /* "try an example" affordance */
+  .exbtn{font:inherit;font-size:12.5px;font-weight:600;color:var(--cyan);background:none;border:0;border-bottom:1px dashed rgba(34,211,238,.45);padding:0 0 1px;margin-top:10px;cursor:pointer}
+  .exbtn:hover{color:#7ee9ff;border-bottom-color:#7ee9ff}
   /* mode switch */
   .modes{display:inline-flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:18px}
   .mode-btn{font:inherit;font-size:13px;font-weight:600;color:var(--muted);background:none;border:0;border-radius:7px;padding:8px 14px;cursor:pointer}
@@ -169,6 +172,15 @@
   .ideawhy{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.55}
   .ideahook{margin-top:9px;padding:8px 10px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;color:var(--text-soft);line-height:1.5}
   .ideahook .hk{display:block;font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+  /* weekly calendar */
+  .dayblock{margin-bottom:14px}
+  .dayname{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);margin-bottom:7px}
+  .slot{background:var(--surface);border:1px solid var(--border);border-left:2px solid var(--violet-deep);border-radius:10px;padding:11px 13px;margin-bottom:7px}
+  .slotmeta{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-bottom:6px}
+  .slotmeta .tm{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--cyan)}
+  .slotmeta .pf,.slotmeta .ty{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted)}
+  .slotidea{font-size:13.5px;color:var(--text-soft);line-height:1.5}
+  .slotwhy{font-size:12px;color:var(--faint);margin-top:5px;line-height:1.5}
 
   .res-group{margin-bottom:18px}
   .res-group h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;display:flex;align-items:center;gap:8px}
@@ -251,7 +263,7 @@
       <button class="navitem" data-tool="tags" onclick="switchTool('tags',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h8.6l8 8a1.4 1.4 0 0 1 0 2z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>Tags &amp; Hashtags</button>
       <button class="navitem" data-tool="thumbs" onclick="switchTool('thumbs',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>Thumbnails</button>
       <button class="navitem" data-tool="ideas" onclick="switchTool('ideas',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>Ideas, Hooks &amp; CTAs</button>
-      <button class="navitem" data-tool="schedule" onclick="switchTool('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Posting Schedule<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="schedule" onclick="switchTool('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Posting Schedule</button>
       <button class="navitem" data-tool="live" onclick="switchTool('live',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg>Live Titles<span class="soon">soon</span></button>
       <button class="navitem" data-tool="audit" onclick="switchTool('audit',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg>Channel Audit<span class="soon">soon</span></button>
     </nav>
@@ -286,6 +298,7 @@
           <div class="kicker">Titles &amp; Descriptions</div>
           <h1>Titles that get the click. Descriptions that get found.</h1>
           <p>Built to beat what's ranking for your topic right now, and scored 0&ndash;100 so you know it works before you post.</p>
+          <button class="exbtn" onclick="fillExample('titles')">Try an example →</button>
         </div>
         <div class="split">
           <div class="card" id="t-form">
@@ -348,6 +361,7 @@
           <div class="kicker">Tags &amp; Hashtags</div>
           <h1>Tags that match what's actually ranking.</h1>
           <p>Paste your current tags to have them rated, or leave the box empty and we'll build the set from scratch. Scored against the tags real ranking videos use &mdash; not a character count.</p>
+          <button class="exbtn" onclick="fillExample('tags')">Try an example →</button>
         </div>
         <div class="split">
           <div class="card" id="g-form">
@@ -392,6 +406,7 @@
           <div class="kicker">Thumbnails</div>
           <h1>See it the way your viewer will.</h1>
           <p>Score a thumbnail you've made, or generate AI prompts to build one. Every score is an AI judgement &mdash; the size checks and the mobile preview are measured.</p>
+          <button class="exbtn" onclick="fillExample('thumbs')">Try an example →</button>
         </div>
         <div class="modes" id="th-modes">
           <button class="mode-btn on" onclick="thumbMode('score',this)">Score my thumbnail</button>
@@ -491,6 +506,7 @@
           <div class="kicker">Ideas, Hooks &amp; CTAs</div>
           <h1>Never open a blank editor again.</h1>
           <p>Video ideas you could film today &mdash; each with the opening line to say &mdash; and CTAs that don't sound like every other channel.</p>
+          <button class="exbtn" onclick="fillExample('ideas')">Try an example →</button>
         </div>
         <div class="modes" id="id-modes">
           <button class="mode-btn on" onclick="ideaMode('ideas',this)">Video ideas</button>
@@ -565,8 +581,104 @@
           </div>
         </div>
       </section>
-      <section class="tool" id="tool-schedule"><div class="tool-head"><div class="kicker">Posting Schedule</div><h1>Posting Schedule</h1></div>
-        <div class="comingsoon"><div class="ic">📅</div><h2>Moving into the Studio next</h2><p>The schedule and calendar are being combined and rebuilt here.</p><a href="creatornexushq-analyze.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-schedule">
+        <div class="tool-head">
+          <div class="kicker">Posting Schedule</div>
+          <h1>A week you can actually keep up with.</h1>
+          <p>Build a calendar around the time you really have &mdash; or paste what you're doing now and find out what to change.</p>
+          <button class="exbtn" onclick="fillExample('schedule')">Try an example →</button>
+        </div>
+        <div class="modes" id="sc-modes">
+          <button class="mode-btn on" onclick="schedMode('build',this)">Build my week</button>
+          <button class="mode-btn" onclick="schedMode('rate',this)">Rate what I do now</button>
+        </div>
+        <div class="split">
+          <div class="card">
+            <!-- ---------- BUILD ---------- -->
+            <div id="sc-pane-build">
+              <div class="field">
+                <label>Platforms <span class="opt">— tap all you post on</span></label>
+                <div class="pills" id="sc-platforms">
+                  <button class="pill-btn" onclick="ptoggle(this)">YouTube</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">TikTok</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Instagram</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Twitch</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">X</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Facebook</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Kick</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Snapchat</button>
+                </div>
+              </div>
+              <div class="row2">
+                <div class="field">
+                  <label>Posts per week</label>
+                  <select class="inp" id="sc-frequency">
+                    <option>2</option><option selected>3</option><option>4</option><option>5</option><option>7</option><option>10</option><option>14</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Your timezone</label>
+                  <input class="inp" id="sc-timezone" placeholder="e.g. America/Chicago">
+                </div>
+              </div>
+              <div class="field">
+                <label>Content mix <span class="opt">— what kinds of posts, roughly</span></label>
+                <input class="inp" id="sc-mix" placeholder="e.g. 1 long-form opening, 3 Shorts, 1 stream VOD clip">
+              </div>
+              <div class="field">
+                <label>When are you actually free? <span class="opt">— be honest, this is the whole point</span></label>
+                <textarea class="inp" id="sc-availability" placeholder="e.g. I work 9–5 weekdays, can film Sunday afternoons and edit an hour most evenings"></textarea>
+              </div>
+              <button class="gen" id="sc-gen" onclick="buildCalendar()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Build my week</button>
+            </div>
+            <!-- ---------- RATE ---------- -->
+            <div id="sc-pane-rate" style="display:none">
+              <div class="field">
+                <label>Platforms</label>
+                <div class="pills" id="sr-platforms">
+                  <button class="pill-btn" onclick="ptoggle(this)">YouTube</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">TikTok</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Instagram</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Twitch</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">X</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Facebook</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Kick</button>
+                  <button class="pill-btn" onclick="ptoggle(this)">Snapchat</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>What's your schedule right now?</label>
+                <textarea class="inp" id="sr-current" placeholder="e.g. long video whenever it's ready, usually Saturday night, plus Shorts when I remember"></textarea>
+              </div>
+              <div class="row2">
+                <div class="field">
+                  <label>Your timezone</label>
+                  <input class="inp" id="sr-timezone" placeholder="e.g. America/Chicago">
+                </div>
+                <div class="field">
+                  <label>Where's your audience?</label>
+                  <select class="inp" id="sr-audience">
+                    <option>Mostly US</option><option>Mostly UK / Europe</option><option>US + Europe split</option>
+                    <option>Asia-Pacific</option><option>Global / not sure</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field">
+                <label>What are you optimising for?</label>
+                <select class="inp" id="sr-goal">
+                  <option>More views on each post</option><option>Growing subscribers</option>
+                  <option>Being consistent without burning out</option><option>Building a live audience</option>
+                  <option>Reaching a new timezone</option>
+                </select>
+              </div>
+              <button class="gen" id="sr-gen" onclick="rateSchedule()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg> Rate my schedule</button>
+            </div>
+          </div>
+          <div class="results" id="sc-results">
+            <div class="placeholder"><div class="big">📅</div>Your weekly calendar, or a verdict on the schedule you already run, will appear here.</div>
+          </div>
+        </div>
+      </section>
       <section class="tool" id="tool-live"><div class="tool-head"><div class="kicker">Live Titles</div><h1>Live Titles</h1></div>
         <div class="comingsoon"><div class="ic">🔴</div><h2>Moving into the Studio next</h2><p>Live stream titles — Twitch, Kick, YouTube Live, TikTok Live and more — are being rebuilt here.</p><a href="creatornexushq-streaming.html">Open the current version →</a></div></section>
       <!-- ============ ACCOUNT ============ -->
@@ -747,6 +859,7 @@
     const nav = btn || document.querySelector('[data-tool="'+id+'"]');
     if(nav) nav.classList.add('active');           // Account has no rail item — that's fine
     if(id==='account') fillAccount();
+    if(id==='schedule') prefillSchedule();
     closeDrawer();
     window.scrollTo({top:0});
   }
@@ -929,9 +1042,18 @@
     const out={}; let key=null;
     String(text||'').split('\n').forEach(raw=>{
       const t=raw.trim(); if(!t) return;
+      // Models decorate labels unpredictably: "## WHAT TO CHANGE", "**BEST DAYS**",
+      // "- MOBILE CHECK:". Test a stripped copy for the label, but keep the
+      // ORIGINAL line when it turns out to be content, so bullets stay bullets.
+      const bare = t.replace(/^[#>*_\-\s]+/,'').replace(/[*_]+\s*$/,'');
+      // models qualify headings — "BEST TIMES TO POST (CT)" must still key on
+      // BEST TIMES TO POST, or the whole section is read as body text.
+      const cand = bare.replace(/\s*\([^)]{1,24}\)\s*(?=:|$)/,'');
       // apostrophes matter — the vision prompt emits "WHAT'S WORKING:"
-      const m=t.match(/^([A-Z][A-Z\s\d&/'’-]+):\s*(.*)$/);
-      if(m){ key=m[1].trim(); out[key]=m[2]; }
+      const m = cand.match(/^([A-Z][A-Z\s\d&/'’-]+?)\s*:\s*(.*)$/)
+             || cand.match(/^([A-Z][A-Z\s\d&/'’-]{3,})$/);   // heading with no colon
+      // "**LABEL:** value" leaves the closing ** on the front of the value
+      if(m){ key=m[1].trim(); out[key]=(m[2]||'').replace(/^[*_\s]+/,'').replace(/[*_]+$/,'').trim(); }
       else if(key){ out[key]=(out[key]?out[key]+'\n':'')+t; }
     });
     return out;
@@ -1189,6 +1311,170 @@
     if(sec['CANVA TIP']) html+=blockItem('Finishing it in Canva', sec['CANVA TIP']);
     html+='<p class="aiflag">These are prompts for an image tool — paste them into '+esc(aiTool||'your AI tool')+'. We don’t generate the image itself, and text baked in by AI usually comes out wrong, so add your title text afterwards.</p>';
     res.innerHTML=html||'<div class="placeholder">The prompts came back in an unexpected shape — try again.</div>';
+  }
+
+  // ================= "Try an example" =================
+  // A blank form is the biggest barrier for a first-time user — they have to
+  // invent content before they can see whether the tool is any good. These fill
+  // in a realistic, non-gaming-only scenario so the first run is one click.
+  function setV(id, v){ const el=document.getElementById(id); if(el) el.value=v; }
+  function pickPill(wrap, label){
+    const btns=document.querySelectorAll('#'+wrap+' .pill-btn'); if(!btns.length) return;
+    btns.forEach(b=>b.classList.toggle('on', b.textContent.trim()===label));
+  }
+  const EXAMPLES = {
+    titles(){
+      pickPill('t-platform','YouTube');
+      setV('t-desc','opening a sealed Pokémon booster box hunting a Charizard');
+      setV('t-keyword','pokemon booster box opening');
+      setV('t-type','Unboxing / TCG opening'); setV('t-tone','Hype / excited'); setV('t-length','5–15 minutes');
+    },
+    tags(){
+      pickPill('g-platform','YouTube');
+      setV('g-title','opening a sealed Pokémon booster box hunting a Charizard');
+      setV('g-tags','pokemon, pokemon cards, cards, charizard');
+      setV('g-type','Unboxing / TCG opening');
+      tagMode();
+    },
+    thumbs(){
+      setV('th-title','I Opened a Sealed Booster Box'); setV('th-platform','YouTube');
+      setV('th-emotion','Excitement / hype'); setV('th-type','Unboxing / TCG opening');
+      setV('tp-title','I Opened a Sealed Booster Box');
+      setV('tp-subject','a sealed booster box under dramatic light');
+      setV('tp-colors','electric blue and gold'); setV('tp-style','Bold & high contrast');
+      setV('tp-elements','a Charizard card, sparks');
+      toast(currentThumb ? 'Example filled in.' : 'Filled in — add your own image to score it, or switch to prompt mode.');
+      return true; // toast already shown
+    },
+    ideas(){
+      pickPill('id-platform','YouTube');
+      setV('id-working','my booster box openings do about 3x my normal views, especially when I pull something rare');
+      setV('id-count','8');
+      pickPill('ct-platform','YouTube'); setV('ct-goal','Comment'); setV('ct-tone','Chill / natural'); setV('ct-format','Long-form video');
+    },
+    schedule(){
+      prefillSchedule();
+      setPills('sc-platforms',['YouTube','TikTok']); setPills('sr-platforms',['YouTube','TikTok']);
+      setV('sc-frequency','3');
+      setV('sc-mix','1 long-form opening, 2 Shorts cut from it');
+      setV('sc-availability','I work 9–5 on weekdays, can film Sunday afternoons and edit for about an hour most evenings');
+      setV('sr-current','a long video whenever it’s ready, usually Saturday night, plus Shorts when I remember');
+      setV('sr-audience','Mostly US'); setV('sr-goal','Being consistent without burning out');
+    }
+  };
+  function fillExample(tool){
+    const fn=EXAMPLES[tool]; if(!fn) return;
+    if(!fn()) toast('Example filled in — hit generate to see what it does.');
+  }
+
+  // ================= Posting Schedule =================
+  const DAYS = ['MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'];
+
+  function schedMode(which, btn){
+    document.querySelectorAll('#sc-modes .mode-btn').forEach(b=>b.classList.remove('on'));
+    btn.classList.add('on');
+    document.getElementById('sc-pane-build').style.display = which==='build' ? '' : 'none';
+    document.getElementById('sc-pane-rate').style.display  = which==='rate'  ? '' : 'none';
+    prefillSchedule();
+  }
+
+  // Prefill from the browser + the shared channel profile so nobody has to type
+  // their own timezone or re-list platforms they already told us about.
+  function prefillSchedule(){
+    let tz=''; try{ tz=Intl.DateTimeFormat().resolvedOptions().timeZone||''; }catch(e){}
+    ['sc-timezone','sr-timezone'].forEach(id=>{ const el=document.getElementById(id); if(el && !el.value) el.value=tz; });
+    const p=getProfile(), plats=profilePlatforms(p);
+    if(plats.length){
+      ['sc-platforms','sr-platforms'].forEach(id=>{
+        if(!pillsSel(id).length) setPills(id, plats);
+      });
+    }
+  }
+
+  function buildCalendar(){
+    const avail=document.getElementById('sc-availability').value.trim();
+    if(!avail){ toast('Tell us when you’re actually free — that’s what makes this realistic.'); document.getElementById('sc-availability').focus(); return; }
+    const p=getProfile();
+    const plats=pillsSel('sc-platforms');
+    runSched({ tool:'analyze-calendar', niche:p.game||p.niche||'content creation',
+      platforms:plats.join(', ')||'YouTube', frequency:document.getElementById('sc-frequency').value,
+      mix:document.getElementById('sc-mix').value.trim()||'a mix of long-form and short-form',
+      timezone:document.getElementById('sc-timezone').value.trim()||'local time',
+      availability:avail },
+      'sc-gen','Planning…','Building a week around the time you actually have…', renderCalendar);
+  }
+
+  function rateSchedule(){
+    const cur=document.getElementById('sr-current').value.trim();
+    if(!cur){ toast('Describe what you post now, even roughly.'); document.getElementById('sr-current').focus(); return; }
+    runSched({ tool:'analyze-schedule', platforms:pillsSel('sr-platforms').join(', ')||'YouTube',
+      current:cur, timezone:document.getElementById('sr-timezone').value.trim()||'local time',
+      audience:document.getElementById('sr-audience').value, goal:document.getElementById('sr-goal').value },
+      'sr-gen','Checking…','Looking at your week…', renderScheduleRating);
+  }
+
+  async function runSched(body, btnId, busy, loading, render){
+    if(!window.__currentUser){ openSignin(); return; }
+    const btn=document.getElementById(btnId), res=document.getElementById('sc-results');
+    if(!btn.dataset.orig) btn.dataset.orig=btn.innerHTML;
+    btn.disabled=true; btn.innerHTML='<span class="dots"><i></i><i></i><i></i></span> '+busy;
+    res.innerHTML='<div class="loading"><span class="dots"><i></i><i></i><i></i></span> '+loading+'</div>';
+    try{
+      const r=await cnxFetch(WORKER_URL, body);
+      if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
+      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      const d=await r.json();
+      if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
+      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      render(d.text);
+    }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
+    finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
+  }
+
+  function renderCalendar(text){
+    const res=document.getElementById('sc-results');
+    const sec=parseSections(text);
+    let html='', slots=0, plain=[];
+    DAYS.forEach(day=>{
+      const rows=[];
+      for(let i=1;i<=6;i++){ const v=sec[day+' '+i]; if(v) rows.push(v); }
+      if(!rows.length) return;
+      html+='<div class="dayblock"><div class="dayname">'+day.charAt(0)+day.slice(1).toLowerCase()+'</div>';
+      rows.forEach(row=>{
+        slots++;
+        const parts=row.split('|').map(s=>s.trim());
+        const [time,plat,type,idea,why]=[parts[0]||'',parts[1]||'',parts[2]||'',parts[3]||'',parts.slice(4).join(' — ')||''];
+        plain.push(day.charAt(0)+day.slice(1).toLowerCase()+' '+time+' — '+plat+' — '+idea);
+        html+='<div class="slot"><div class="slotmeta"><span class="tm">'+esc(time)+'</span>'+
+          (plat?'<span class="pf">'+esc(plat)+'</span>':'')+(type?'<span class="ty">'+esc(type)+'</span>':'')+'</div>'+
+          '<div class="slotidea">'+esc(idea)+'</div>'+(why?'<div class="slotwhy">'+esc(why)+'</div>':'')+'</div>';
+      });
+      html+='</div>';
+    });
+    if(!slots){ res.innerHTML='<div class="placeholder">The calendar came back in an unexpected shape — try again.</div>'; return; }
+    let out='<div class="res-group"><h3>Your week <span class="cnt">'+slots+' posts</span></h3></div>'+html;
+    out+='<div class="res-group">'+copyItem('Copy the whole week', plain.join('\n'))+'</div>';
+    if(sec['WEEKLY STRATEGY']) out+=blockItem('The thinking behind it', sec['WEEKLY STRATEGY']);
+    if(sec['KEY PRINCIPLE']) out+=blockItem('The one rule', sec['KEY PRINCIPLE']);
+    out+='<p class="aiflag">Best-time advice is a general pattern for your niche and timezone, not a reading of your own analytics — we can’t see those yet. Treat it as a starting point and keep what your own data says works.</p>';
+    res.innerHTML=out;
+  }
+
+  function renderScheduleRating(text){
+    const res=document.getElementById('sc-results');
+    const sec=parseSections(text);
+    let html='';
+    const bar=barRow('Schedule score', sec['SCHEDULE SCORE']);
+    if(bar) html+='<div class="res-group"><h3>Verdict</h3><div class="bars">'+bar+'</div>'+
+      '<p class="aiflag">An AI judgement of what you described, not a measurement of your analytics.</p></div>';
+    if(sec['WHAT’S GOOD']||sec["WHAT'S GOOD"]) html+=blockItem('Keep doing this', sec['WHAT’S GOOD']||sec["WHAT'S GOOD"]);
+    if(sec['WHAT TO CHANGE']) html+=blockItem('Change this', sec['WHAT TO CHANGE']);
+    if(sec['BEST DAYS TO POST']) html+=blockItem('Best days', sec['BEST DAYS TO POST']);
+    if(sec['BEST TIMES TO POST']) html+=blockItem('Best times', sec['BEST TIMES TO POST']);
+    if(sec['POSTING FREQUENCY']) html+=blockItem('How often', sec['POSTING FREQUENCY']);
+    if(sec['PLATFORM SPECIFIC TIPS']) html+=blockItem('Per platform', sec['PLATFORM SPECIFIC TIPS']);
+    if(sec['OPTIMIZED SCHEDULE']) html+=blockItem('Try this instead', sec['OPTIMIZED SCHEDULE']);
+    res.innerHTML=html||'<div class="placeholder">The analysis came back in an unexpected shape — try again.</div>';
   }
 
   // ================= Ideas, Hooks & CTAs =================

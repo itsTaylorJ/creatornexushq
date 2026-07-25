@@ -502,7 +502,12 @@ TIMEZONE: ${f.timezone}
 AUDIENCE LOCATION: ${f.audience}
 GOAL: ${f.goal}
 
-Analyze in these exact sections:
+Respond in plain text using these exact ALL-CAPS labels, each on its own line,
+in this order. Output EVERY label even if a section is short — never merge two
+sections together, never skip one, and never add qualifiers to a label (write
+"BEST TIMES TO POST:", not "BEST TIMES TO POST (CT)"). Put any timezone inside
+the section's text instead. Do not use markdown headings.
+
 SCHEDULE SCORE: [X/10] — [verdict]
 WHAT'S GOOD: [what they're doing right]
 WHAT TO CHANGE: [specific problems with current schedule]
@@ -523,20 +528,24 @@ CONTENT MIX: ${f.mix}
 TIMEZONE: ${f.timezone}
 AVAILABILITY: ${f.availability}
 
-Create a full 7-day weekly posting calendar. For each post slot include:
-- Day and time
-- Platform
-- Content type
-- Specific video/post idea title
-- One line on why this works for that day/time
+Create a weekly posting calendar with exactly ${f.frequency} post slots spread
+across the week — no more, no fewer.
 
-Format each day as:
-DAY [name]:
-POST 1: [time] | [platform] | [content type] | [specific idea] | [why]
-POST 2: (if applicable)
+Label every slot with the DAY IN CAPITALS and an index, and separate the five
+fields with a pipe. Use these exact labels and nothing else — do not write day
+headings of your own, and skip any day with no post rather than emitting an
+empty one:
 
-End with:
-WEEKLY STRATEGY: [2-3 sentences on the overall strategy behind this calendar]
+MONDAY 1: [time] | [platform] | [content type] | [the specific post idea] | [why this slot works]
+MONDAY 2: [only if that day genuinely has a second post]
+TUESDAY 1: [time] | [platform] | [content type] | [idea] | [why]
+
+...and so on for whichever days you use, in Monday-to-Sunday order.
+
+Every idea must be a real, specific post title the creator could film — never a
+placeholder like "gaming video". Then end with exactly these two lines:
+
+WEEKLY STRATEGY: [2-3 sentences on the strategy behind this calendar]
 KEY PRINCIPLE: [the one rule to follow with this schedule]`,
   },
 
