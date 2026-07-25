@@ -20,6 +20,26 @@ strategy updates THIS FILE in the SAME commit. A stale CLAUDE.md is worse than
 none — it already caused one wrong call (Firestore was documented as "dead,
 flagged for deletion" while it was being made the profile store).
 
+## How to work on this project (the owner's standing instructions)
+
+1. **`git pull` before touching anything.** The owner works across two
+   computers; skipping this creates merge conflicts.
+2. **Ask clarifying questions before building, and show the plan before writing
+   code.** This has been requested on essentially every task. Do not start
+   implementing off an ambiguous brief.
+3. **Never deploy or push without saying so first.** Deploys are
+   `firebase deploy --only hosting`, `--only firestore:rules`, and
+   `cd worker && npx wrangler deploy` — call out which ones a change needs.
+4. **One tool at a time, with a check-in after each.** No big-bang migrations.
+   The legacy page stays live and untouched until its Studio replacement is
+   verified working.
+5. **Definition of done:** `node --check` on every extracted `<script>` block →
+   verified in the browser with Playwright MCP → committed with CLAUDE.md
+   updated in the same commit. Throwaway test accounts are ALWAYS deleted.
+6. **Report honestly.** If something is half-working, say so plainly. Don't
+   claim verification that didn't happen. This is the same standard the product
+   is held to.
+
 ## Stack
 
 - **Frontend:** 16 static HTML pages (15 shipped + `design-preview.html`, an
