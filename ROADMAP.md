@@ -28,8 +28,8 @@ carries a "Back to Studio" link so nothing dead-ends.
 | Tool | Where it lives now | Status |
 |---|---|---|
 | Titles & Descriptions | **Studio** ✅ migrated | Real — platform-adaptive, live YouTube ranking data, dual descriptions, 0–100 SEO score |
-| Tags & Hashtags | `analyze.html` (merged tool) | Real — rate-or-generate in one flow. **Next to migrate** |
-| Thumbnails | `thumbnail.html` | Real — vision analysis + AI prompt generator |
+| Tags & Hashtags | **Studio** ✅ migrated | Real — rate-or-generate, deterministic tag score, per-tag ranking counts, cross-post pack |
+| Thumbnails | `thumbnail.html` | Real — vision analysis + AI prompt generator. **Next to migrate** |
 | Ideas, Hooks & CTAs | `app.html` | Real |
 | Posting Schedule | `analyze.html` (schedule + calendar) | Real — merge the two into one Studio tool |
 | Live Titles | `streaming.html` | Real — add TikTok Live + Rumble on migration |
@@ -42,16 +42,16 @@ carries a "Back to Studio" link so nothing dead-ends.
 
 ## Migration queue (one at a time, check in after each)
 
-1. **Tags & Hashtags** ← next. One tool, two modes: paste tags to get them
-   **rated**, or leave blank to **generate**. Plus the cross-platform pack and a
-   YouTube tag score grounded in our live ranking data. Be honest about the
-   500-character myth (see CLAUDE.md).
-2. Thumbnails — analyzer + prompt generator
+1. ~~Tags & Hashtags~~ ✅ done
+2. **Thumbnails** ← next. Analyzer + prompt generator.
 3. Ideas, Hooks & CTAs
 4. Posting Schedule — schedule + calendar builder merged
 5. Live Titles — + TikTok Live, Rumble
 6. Channel Audit — + manual metric entry, benchmark → diagnose → route to the
    fixing tool
+
+The legacy `analyze.html` tag tool stays live and untouched until the Studio
+version is confirmed working against the deployed Worker.
 
 Then **My Analytics**: YouTube read-only OAuth (needs ~30 min of Google Cloud
 setup from the owner), Twitch as a fast follow. Every other platform stays

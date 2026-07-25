@@ -138,6 +138,12 @@ during the migration.
   before `</head>` are the established pattern for cross-page CSS changes.
 - `* { position: relative; z-index: 1 }` exists on some pages — it has caused
   invisible-element bugs (file input unclickable, dropdown stacking).
+- **Grid tracks must be `minmax(0,1fr)`, never bare `1fr`.** A `1fr` track has an
+  automatic minimum of `min-content`, so long result text blows the column past
+  the viewport. This shipped as a real mobile-overflow bug in the Studio's
+  `.split` mobile override and will recur in every migrated tool. Same class of
+  fix: flex children that ellipsis (`.yt-panel .rowd .v`) need `min-width:0`.
+  Always measure `documentElement.scrollWidth` vs `clientWidth` at 375px.
 - HTML is now served `no-cache` (header in `firebase.json`), but browsers and
   the CDN still hold stale copies — hard-refresh (Ctrl+Shift+R) after deploy.
 - Wrangler KV CLI crashes on this Windows box (libuv assertion) — use the
@@ -183,7 +189,7 @@ tripled/minified CSS and are being retired tool-by-tool, never big-bang):
 | Studio tool | Absorbs |
 |---|---|
 | **Titles & Descriptions** ✅ migrated | titles gen + title/desc analyzer + SEO score |
-| Tags & Hashtags | merged tag analyzer/suggester + cross-platform pack |
+| **Tags & Hashtags** ✅ migrated | merged tag analyzer/suggester + cross-post pack |
 | Thumbnails | analyzer + AI prompt gen |
 | Ideas, Hooks & CTAs | content ideas + CTAs |
 | Posting Schedule | schedule + calendar builder |
@@ -220,18 +226,29 @@ Phase 2 shipped so far:
 - Studio is **home**: all landing links + auth redirects route there; it has a
   real **Account page**; 70 `?tab=` routing fixes; "Back to Studio" everywhere
 
-**Next in line (agreed order, one at a time with a check-in each):**
-Tags & Hashtags → Thumbnails → Ideas/Hooks/CTAs → Posting Schedule →
-Live Titles → Channel Audit. Then "My Analytics" (YouTube read-only OAuth,
-needs ~30 min of Google Cloud setup from the owner; Twitch as a fast follow).
+- **Tags & Hashtags** migrated: rate-or-generate in one flow, deterministic tag
+  score, per-tag ranking counts, compact cross-post pack
 
-Tags & Hashtags design (already confirmed): one tool, two modes — paste current
-tags to get them **rated**, or leave blank to **generate** a set; plus the
-cross-platform pack and a YouTube tag score grounded in our live ranking data.
-Be honest about the 500-character myth — TubeBuddy's own guidance is that tags
-are relevance confirmers, not ranking boosters (first tag weighs most, ~8–12
-tags / 200–300 chars is the useful range). Do NOT copy vidIQ's "fill 500 chars
-to score 100" vanity metric.
+**Next in line (agreed order, one at a time with a check-in each):**
+Thumbnails → Ideas/Hooks/CTAs → Posting Schedule → Live Titles → Channel Audit.
+Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
+setup from the owner; Twitch as a fast follow).
+
+**Scoring principle (applies to every tool that shows a number):** score
+deterministically in the client, never with the model's own number — the same
+input must produce the same score, or users stop trusting it on the second run.
+The model's written verdict still renders as prose alongside it.
+`tagScore()` weights: 8–12 tags, 200–300 chars, first tag matches the topic,
+long-tail mix, no duplicates, and **30 points for overlap with tags that
+ranking videos actually use** (dropped, with disclosure, when live data is
+unavailable). Character count is deliberately capped as a factor — do NOT copy
+vidIQ's "fill 500 chars to score 100" vanity metric. TubeBuddy's own guidance is
+that tags are relevance confirmers, not ranking boosters.
+
+**TubeBuddy's one genuinely better idea is per-tag *rank*** — where your video
+places for each tag. That needs a published video ID + the creator's channel,
+so it belongs to Phase 4 (My Analytics), NOT this tool. What we ship instead is
+honest and adjacent: how many of the ranking videos use each tag.
 
 Later: Phase 3 monetization (**paid inference FIRST**, then Stripe — the Groq
 free tier caps at roughly 50 active users and cannot carry paid plans), Phase 4

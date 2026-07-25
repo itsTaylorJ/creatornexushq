@@ -548,6 +548,14 @@ MISSING TAGS: [specific tags they should be using but aren't${yt ? ' — priorit
           ? `HASHTAG NOTE: [hashtags don't drive discovery on ${f.platform} — say so plainly and tell them what matters instead (category, title)]`
           : `HASHTAGS FOR CAPTION: [3-5 hashtags to bake into the END of the caption, in the ideal order — these are ${f.platform}'s primary topic classification]`;
 
+      // Compact cross-post block: the same video re-posted elsewhere. Kept to one
+      // short line per platform on purpose — this section is additive to an
+      // already-long response and must not push it into the max_tokens ceiling.
+      const crossTargets = ['TikTok', 'Instagram Reels', 'YouTube Shorts', 'X']
+        .filter((p) => platformKey(p) !== pk)
+        .slice(0, 3);
+      const crossPostLine = `CROSS-POST HASHTAGS: [the same video posted elsewhere. Exactly one line per platform, format "Platform: #tag #tag #tag", 3-5 hashtags each, tuned to how that platform classifies topics. Cover exactly these: ${crossTargets.join(', ')}. No commentary.]`;
+
       return `${hasTags ? 'Analyze and upgrade' : 'Create from scratch'} the ${f.platform || 'YouTube'} tag & hashtag set for a ${f.contentType} creator in the ${f.niche} niche with ${f.channelSize}.
 
 ${PLATFORM_RULES[pk]}
@@ -559,6 +567,7 @@ Respond in these exact sections (plain text, no markdown):
 ${auditSections}TAG STRATEGY: [short vs long tail balance, branded vs generic, and what fits this channel size]
 OPTIMIZED TAG SET: [the complete ${hasTags ? 'replacement' : 'recommended'} set of 10-15 tags as ONE comma-separated line ready to copy and paste${yt ? ' — drawn from tags ranking videos actually use where relevant' : ''}]
 ${hashtagLine}
+${crossPostLine}
 ONE BIG INSIGHT: [the single most important ${hasTags ? 'thing wrong with their current tag strategy' : 'principle for tagging this video well'}]`;
     },
   },

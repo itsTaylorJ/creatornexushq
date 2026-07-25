@@ -83,7 +83,9 @@
   .tool-head p{margin:0;color:var(--muted);font-size:14.5px;max-width:60ch}
 
   .split{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:20px;align-items:start}
-  @media(max-width:900px){.split{grid-template-columns:1fr}}
+  /* minmax(0,1fr) not 1fr — a bare 1fr track has an automatic minimum of
+     min-content, so long result text blows the column past the viewport. */
+  @media(max-width:900px){.split{grid-template-columns:minmax(0,1fr)}}
 
   .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px}
   .field{margin-bottom:15px}
@@ -125,6 +127,15 @@
   .score-hero .factors{margin-top:9px;display:flex;flex-wrap:wrap;gap:6px}
   .fchip{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:5px;background:var(--surface-2);border:1px solid var(--border)}
   .fchip.pass{color:var(--good)} .fchip.warn{color:var(--warn)} .fchip.fail{color:var(--bad)}
+  .modehint{font-size:12px;color:var(--muted);margin:7px 0 0}
+  .tagwrap{display:flex;flex-wrap:wrap;gap:7px}
+  .tagchip{font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;display:inline-flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-soft)}
+  .tagchip.strong{border-color:rgba(52,211,153,.4);color:var(--good)}
+  .tagchip.dead{border-color:rgba(248,113,113,.35);color:var(--bad)}
+  .tagchip.missing{border-color:rgba(251,191,36,.4);color:var(--warn);border-style:dashed}
+  .tagchip .rk{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--faint);letter-spacing:-.02em}
+  .tagchip.strong .rk{color:var(--good);opacity:.8}
+  .tagnote{font-size:11.5px;color:var(--faint);margin:9px 0 0;line-height:1.5}
 
   .res-group{margin-bottom:18px}
   .res-group h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;display:flex;align-items:center;gap:8px}
@@ -142,7 +153,9 @@
   .yt-panel .t{font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:9px}
   .yt-panel .rowd{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12.5px}
   .yt-panel .rowd:last-child{border-bottom:0}
-  .yt-panel .rowd .v{color:var(--text-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* min-width:0 is required — a flex item defaults to min-width:auto, which
+     refuses to shrink below the nowrap text and blows out the page width. */
+  .yt-panel .rowd .v{color:var(--text-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
   .yt-panel .rowd .m{color:var(--muted);flex-shrink:0;font-family:var(--mono)}
   .yt-note{font-size:11px;color:var(--muted);margin-top:9px}
 
@@ -202,7 +215,7 @@
     <div class="rail-label">Studio</div>
     <nav id="nav">
       <button class="navitem active" data-tool="titles" onclick="switchTool('titles',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Titles &amp; Descriptions</button>
-      <button class="navitem" data-tool="tags" onclick="switchTool('tags',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h8.6l8 8a1.4 1.4 0 0 1 0 2z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>Tags &amp; Hashtags<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="tags" onclick="switchTool('tags',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h8.6l8 8a1.4 1.4 0 0 1 0 2z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>Tags &amp; Hashtags</button>
       <button class="navitem" data-tool="thumbs" onclick="switchTool('thumbs',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>Thumbnails<span class="soon">soon</span></button>
       <button class="navitem" data-tool="ideas" onclick="switchTool('ideas',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>Ideas, Hooks &amp; CTAs<span class="soon">soon</span></button>
       <button class="navitem" data-tool="schedule" onclick="switchTool('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Posting Schedule<span class="soon">soon</span></button>
@@ -297,8 +310,50 @@
       </section>
 
       <!-- ============ PLACEHOLDER TOOLS (link to current versions until migrated) ============ -->
-      <section class="tool" id="tool-tags"><div class="tool-head"><div class="kicker">Tags &amp; Hashtags</div><h1>Tags &amp; Hashtags</h1></div>
-        <div class="comingsoon"><div class="ic">🏷️</div><h2>Moving into the Studio next</h2><p>The cross-platform tag &amp; hashtag pack is being rebuilt here. The current version is fully working in the meantime.</p><a href="creatornexushq-analyze.html">Open the current version →</a></div></section>
+      <section class="tool" id="tool-tags">
+        <div class="tool-head">
+          <div class="kicker">Tags &amp; Hashtags</div>
+          <h1>Tags that match what's actually ranking.</h1>
+          <p>Paste your current tags to have them rated, or leave the box empty and we'll build the set from scratch. Scored against the tags real ranking videos use &mdash; not a character count.</p>
+        </div>
+        <div class="split">
+          <div class="card" id="g-form">
+            <div class="field">
+              <label>Platform</label>
+              <div class="pills" id="g-platform">
+                <button class="pill-btn on" onclick="pick(this)">YouTube</button>
+                <button class="pill-btn" onclick="pick(this)">TikTok</button>
+                <button class="pill-btn" onclick="pick(this)">Instagram</button>
+                <button class="pill-btn" onclick="pick(this)">X</button>
+                <button class="pill-btn" onclick="pick(this)">Facebook</button>
+                <button class="pill-btn" onclick="pick(this)">Snapchat</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Video title or topic</label>
+              <input class="inp" id="g-title" placeholder="e.g. opening a sealed Pokémon booster box hunting a Charizard">
+            </div>
+            <div class="field">
+              <label>Your current tags <span class="opt">— optional, comma separated</span></label>
+              <textarea class="inp" id="g-tags" oninput="tagMode()" placeholder="pokemon, pokemon cards, booster box opening…"></textarea>
+              <p class="modehint" id="g-mode">Empty &rarr; we'll build a full tag set from scratch.</p>
+            </div>
+            <div class="field">
+              <label>Content type</label>
+              <select class="inp" id="g-type">
+                <option>Gaming clip</option><option>Unboxing / TCG opening</option><option>Tutorial / how-to</option>
+                <option>Vlog / story</option><option>Funny / reaction</option><option>Challenge</option>
+                <option>Podcast / clip</option><option>Product review</option><option>IRL / lifestyle</option>
+                <option>Commentary</option>
+              </select>
+            </div>
+            <button class="gen" id="g-gen" onclick="generateTags()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h8.6l8 8a1.4 1.4 0 0 1 0 2z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg> <span id="g-genlabel">Build my tag set</span></button>
+          </div>
+          <div class="results" id="g-results">
+            <div class="placeholder"><div class="big">🏷️</div>Your rated tags, the optimized set, hashtags and a cross-post pack will appear here.</div>
+          </div>
+        </div>
+      </section>
       <section class="tool" id="tool-thumbs"><div class="tool-head"><div class="kicker">Thumbnails</div><h1>Thumbnails</h1></div>
         <div class="comingsoon"><div class="ic">🖼️</div><h2>Moving into the Studio next</h2><p>Thumbnail analysis and AI prompt generation are being rebuilt here.</p><a href="creatornexushq-thumbnail.html">Open the current version →</a></div></section>
       <section class="tool" id="tool-ideas"><div class="tool-head"><div class="kicker">Ideas, Hooks &amp; CTAs</div><h1>Ideas, Hooks &amp; CTAs</h1></div>
@@ -624,6 +679,146 @@
     res.innerHTML=html;
     animateRing(document.getElementById('ring'), sc.score, col);
   }
+  // ================= Tags & Hashtags =================
+  function tagMode(){
+    const has=document.getElementById('g-tags').value.trim().length>0;
+    document.getElementById('g-mode').textContent = has
+      ? 'We’ll rate these against what’s ranking, then give you an upgraded set.'
+      : 'Empty — we’ll build a full tag set from scratch.';
+    document.getElementById('g-genlabel').textContent = has ? 'Rate & upgrade my tags' : 'Build my tag set';
+  }
+  function splitTags(s){ return String(s||'').split(/[,\n]/).map(t=>t.replace(/^#/,'').trim()).filter(Boolean); }
+  function normTag(s){ return String(s).toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim(); }
+  function poolCount(pool, tag){ if(!pool) return null; const n=normTag(tag); const h=pool.find(p=>normTag(p.tag)===n); return h?h.count:0; }
+
+  // Deterministic tag score — same tags in, same score out. Weighted toward
+  // overlap with tags that ranking videos actually use. The 500-character
+  // "fill the box" target is deliberately NOT a factor: it's a vanity metric.
+  function tagScore(tags, topic, pool){
+    const f=[]; let got=0, max=0;
+    const add=(l,ok,w,partial)=>{ max+=w; got+= ok?w:(partial?w*0.5:0); f.push({l:l,state:ok?'pass':(partial?'warn':'fail')}); };
+    const n=tags.length, chars=tags.join(', ').length, norm=tags.map(normTag);
+    const SW=new Set(['the','a','an','and','or','of','for','to','in','on','my','how','best','vs','with']);
+    const words=(String(topic||'').toLowerCase().match(/[a-z0-9']{3,}/g)||[]).filter(w=>!SW.has(w));
+    add('8–12 tags', n>=8&&n<=12, 15, n>=6&&n<=15);
+    add('200–300 characters', chars>=200&&chars<=300, 15, chars>=150&&chars<=400);
+    add('First tag matches the topic', !!(norm[0]&&words.some(w=>norm[0].indexOf(w)>=0)), 15, !!(norm[0]&&norm[0].split(' ').length>1));
+    const lt=norm.filter(t=>t.split(' ').length>=2).length;
+    add('Long-tail mix', n>0&&lt/n>=0.4, 15, n>0&&lt/n>=0.25);
+    const dupes=norm.length-new Set(norm).size;
+    add('No duplicate tags', dupes===0, 10, dupes<=1);
+    let coverage=null;
+    if(pool&&pool.length){
+      const key=pool.filter(p=>p.count>=2).slice(0,12);
+      const use=key.length?key:pool.slice(0,10);
+      const hit=use.filter(p=>norm.indexOf(normTag(p.tag))>=0).length;
+      coverage=use.length?hit/use.length:0;
+      add('Covers what’s ranking', coverage>=0.5, 30, coverage>=0.25);
+    }
+    return {score:max?Math.round(got/max*100):0, factors:f, coverage:coverage, hasData:!!(pool&&pool.length), count:n, chars:chars};
+  }
+
+  function parseSections(text){
+    const out={}; let key=null;
+    String(text||'').split('\n').forEach(raw=>{
+      const t=raw.trim(); if(!t) return;
+      const m=t.match(/^([A-Z][A-Z\s\d&/-]+):\s*(.*)$/);
+      if(m){ key=m[1].trim(); out[key]=m[2]; }
+      else if(key){ out[key]=(out[key]?out[key]+'\n':'')+t; }
+    });
+    return out;
+  }
+
+  async function generateTags(){
+    if(!window.__currentUser){ openSignin(); return; }
+    const title=document.getElementById('g-title').value.trim();
+    if(!title){ toast('Tell us the video title or topic first.'); document.getElementById('g-title').focus(); return; }
+    const p=getProfile();
+    const btn=document.getElementById('g-gen'), res=document.getElementById('g-results');
+    if(!btn.dataset.orig) btn.dataset.orig=btn.innerHTML;
+    btn.disabled=true; btn.innerHTML='<span class="dots"><i></i><i></i><i></i></span> Working…';
+    res.innerHTML='<div class="loading"><span class="dots"><i></i><i></i><i></i></span> Checking the tags on what’s ranking…</div>';
+    const current=document.getElementById('g-tags').value.trim();
+    const body={ tool:'analyze-tags',
+      platform:((document.querySelector('#g-platform .pill-btn.on')||{}).textContent||'YouTube').trim(),
+      title:title, currentTags:current,
+      contentType:document.getElementById('g-type').value,
+      niche:p.game||p.niche||'general', channelSize:p.size||'a growing channel' };
+    try{
+      const r=await cnxFetch(WORKER_URL, body);
+      if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
+      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      const d=await r.json();
+      if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
+      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      renderTags(d.text, d.ytData, current, title);
+    }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
+    finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; tagMode(); }
+  }
+
+  function tagChips(tags, pool, vids){
+    if(!tags.length) return '';
+    return '<div class="tagwrap">'+tags.map(t=>{
+      const c=poolCount(pool,t);
+      const cls = c===null ? '' : (c>=2 ? 'strong' : '');
+      // Only show the fraction when it's actually coherent — never render "7/3".
+      const rk = c===null ? '' : '<span class="rk">'+(vids&&c<=vids ? c+'/'+vids : c+'×')+'</span>';
+      return '<span class="tagchip '+cls+'">'+esc(t)+rk+'</span>';
+    }).join('')+'</div>';
+  }
+
+  function renderTags(text, yt, currentRaw, topic){
+    const res=document.getElementById('g-results');
+    const sec=parseSections(text);
+    const theirs=splitTags(currentRaw), optimized=splitTags(sec['OPTIMIZED TAG SET']||'');
+    const audit=theirs.length>0;
+    const pool=(yt&&yt.tagPool&&yt.tagPool.length)?yt.tagPool:null;
+    const vids=(yt&&yt.videos&&yt.videos.length)||0;
+    const scored=audit?theirs:optimized;
+    const sc=tagScore(scored, topic, pool);
+    const col=sc.score>=80?'var(--good)':sc.score>=55?'var(--warn)':'var(--bad)';
+    const verdict=sc.score>=80?'Strong — these are working.':sc.score>=55?'Decent — a few swaps lift it.':'Needs work — see the reds.';
+    const sub=(audit?'Scored on your current tags':'Scored on the set we built')
+      + (sc.hasData?' against '+vids+' ranking videos.':'. No live ranking data for this topic — scored on structure only.');
+    const fchips=sc.factors.slice().sort((a,b)=>({fail:0,warn:1,pass:2}[a.state]-{fail:0,warn:1,pass:2}[b.state])).slice(0,4)
+      .map(x=>'<span class="fchip '+x.state+'">'+(x.state==='pass'?'✓':x.state==='warn'?'△':'✗')+' '+esc(x.l)+'</span>').join('');
+    let html='<div class="score-hero"><div class="ring" id="tring"></div><div><p class="verdict">Tag Score <span class="mono" style="color:'+col+'">'+sc.score+'</span>/100</p><p class="sub">'+esc(sub)+'</p><div class="factors">'+fchips+'</div></div></div>';
+
+    if(pool&&yt.videos&&yt.videos.length){
+      html+='<div class="yt-panel"><div class="t">📊 Ranking on YouTube right now</div>'+
+        yt.videos.slice(0,5).map(v=>'<div class="rowd"><span class="v">'+esc(v.title)+'</span><span class="m">'+fmtViews(v.views)+'</span></div>').join('')+
+        '<div class="yt-note">Live data — your tags were scored against the tags these videos use.</div></div>';
+    }
+
+    if(audit){
+      html+='<div class="res-group"><h3>Your tags <span class="cnt">'+theirs.length+'</span></h3>'+tagChips(theirs,pool,vids)+
+        (pool?'<p class="tagnote">The number on each tag is how many of the '+vids+' ranking videos use it. Green means 2 or more do. A 0 isn’t automatically bad — long-tail tags you can actually win are often unique to you.</p>':'')+'</div>';
+      if(sec['STRONG TAGS']) html+=blockItem('What’s working', sec['STRONG TAGS']);
+      if(sec['WEAK TAGS']) html+=blockItem('Cut these', sec['WEAK TAGS']);
+      if(sec['MISSING TAGS']) html+=blockItem('You’re missing', sec['MISSING TAGS']);
+    }
+    if(optimized.length){
+      html+='<div class="res-group"><h3>'+(audit?'Upgraded tag set':'Your tag set')+' <span class="cnt">'+optimized.length+'</span></h3>'+tagChips(optimized,pool,vids)+'</div>';
+      html+=metaItem('Copy-paste line', optimized.join(', '));
+    }
+    const hash=sec['HASHTAGS FOR DESCRIPTION']||sec['HASHTAGS FOR CAPTION'];
+    if(hash) html+=hashItem(sec['HASHTAGS FOR DESCRIPTION']?'Hashtags for the description':'Hashtags for the caption', hash);
+    if(sec['HASHTAG NOTE']) html+=blockItem('On hashtags here', sec['HASHTAG NOTE']);
+
+    const cross=(sec['CROSS-POST HASHTAGS']||'').split('\n').map(s=>s.trim()).filter(Boolean);
+    if(cross.length){
+      html+='<div class="res-group"><h3>Posting this elsewhere</h3>'+cross.map(line=>{
+        const i=line.indexOf(':'); if(i<1) return '';
+        return '<div class="item"><div class="txt"><span class="lab">'+esc(line.slice(0,i).trim())+'</span><div class="hashline">'+esc(line.slice(i+1).trim())+'</div></div>'+copyBtn(line.slice(i+1).trim())+'</div>';
+      }).join('')+'</div>';
+    }
+    if(sec['TAG STRATEGY']) html+=blockItem('Strategy', sec['TAG STRATEGY']);
+    if(sec['ONE BIG INSIGHT']) html+=blockItem('The one thing that matters most', sec['ONE BIG INSIGHT']);
+
+    res.innerHTML=html;
+    animateRing(document.getElementById('tring'), sc.score, col);
+  }
+
   function group(label, arr){ if(!arr.length) return ''; return '<div class="res-group"><h3>'+label+' <span class="cnt">'+arr.length+'</span></h3>'+arr.map(x=>copyItem('',x)).join('')+'</div>'; }
   function metaItem(label, val){ return '<div class="res-group">'+copyItem(label, val)+'</div>'; }
   function blockItem(label, val){ return '<div class="res-group"><div class="item"><div class="txt"><span class="lab">'+esc(label)+'</span><div class="block">'+esc(val)+'</div></div>'+copyBtn(val)+'</div></div>'; }
