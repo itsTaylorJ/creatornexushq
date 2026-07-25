@@ -29,7 +29,7 @@ carries a "Back to Studio" link so nothing dead-ends.
 |---|---|---|
 | Titles & Descriptions | **Studio** ✅ migrated | Real — platform-adaptive, live YouTube ranking data, dual descriptions, 0–100 SEO score |
 | Tags & Hashtags | **Studio** ✅ migrated | Real — rate-or-generate, deterministic tag score, per-tag ranking counts, cross-post pack |
-| Thumbnails | `thumbnail.html` | Real — vision analysis + AI prompt generator. **Next to migrate** |
+| Thumbnails | **Studio** ✅ migrated | Real — vision scoring + measured size checks + true-to-size previews + AI prompt generator |
 | Ideas, Hooks & CTAs | `app.html` | Real |
 | Posting Schedule | `analyze.html` (schedule + calendar) | Real — merge the two into one Studio tool |
 | Live Titles | `streaming.html` | Real — add TikTok Live + Rumble on migration |
@@ -43,8 +43,8 @@ carries a "Back to Studio" link so nothing dead-ends.
 ## Migration queue (one at a time, check in after each)
 
 1. ~~Tags & Hashtags~~ ✅ done
-2. **Thumbnails** ← next. Analyzer + prompt generator.
-3. Ideas, Hooks & CTAs
+2. ~~Thumbnails~~ ✅ done
+3. **Ideas, Hooks & CTAs** ← next
 4. Posting Schedule — schedule + calendar builder merged
 5. Live Titles — + TikTok Live, Rumble
 6. Channel Audit — + manual metric entry, benchmark → diagnose → route to the

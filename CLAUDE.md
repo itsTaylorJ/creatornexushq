@@ -176,7 +176,9 @@ during the migration.
    disagrees with it, this one wins.
 2. **[ROADMAP.md](ROADMAP.md)** — tool-by-tool status board, the migration
    queue, and the Pro-grant runbook. Kept in step with this file.
-3. **[AUDIT.md](AUDIT.md)** — a *dated snapshot* (2026-07-20) of the full
+3. **[TESTING.md](TESTING.md)** — the 60-step manual QA checklist to run before
+   inviting real users. Add a section whenever a tool ships.
+4. **[AUDIT.md](AUDIT.md)** — a *dated snapshot* (2026-07-20) of the full
    product/engineering audit. Its Phase 1 findings are fixed; keep it for the
    unit economics, competitive positioning, and Phase 3 reasoning.
 
@@ -190,7 +192,7 @@ tripled/minified CSS and are being retired tool-by-tool, never big-bang):
 |---|---|
 | **Titles & Descriptions** ✅ migrated | titles gen + title/desc analyzer + SEO score |
 | **Tags & Hashtags** ✅ migrated | merged tag analyzer/suggester + cross-post pack |
-| Thumbnails | analyzer + AI prompt gen |
+| **Thumbnails** ✅ migrated | vision analyzer + AI prompt gen (two modes) |
 | Ideas, Hooks & CTAs | content ideas + CTAs |
 | Posting Schedule | schedule + calendar builder |
 | Live Titles | stream planner (+ TikTok Live, Rumble) |
@@ -228,9 +230,14 @@ Phase 2 shipped so far:
 
 - **Tags & Hashtags** migrated: rate-or-generate in one flow, deterministic tag
   score, per-tag ranking counts, compact cross-post pack
+- **Thumbnails** migrated: two modes (score an upload / generate AI prompts),
+  measured size checks + true-to-size mobile previews, AI sub-scores labelled
+  as judgement. Vision reliability fixed (see below).
+- **[TESTING.md](TESTING.md)** — 60-step manual QA checklist covering everything
+  built so far. Run it before inviting real users.
 
 **Next in line (agreed order, one at a time with a check-in each):**
-Thumbnails → Ideas/Hooks/CTAs → Posting Schedule → Live Titles → Channel Audit.
+Ideas/Hooks/CTAs → Posting Schedule → Live Titles → Channel Audit.
 Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
 setup from the owner; Twitch as a fast follow).
 
@@ -254,6 +261,29 @@ Later: Phase 3 monetization (**paid inference FIRST**, then Stripe — the Groq
 free tier caps at roughly 50 active users and cannot carry paid plans), Phase 4
 differentiation (YouTube read-only OAuth → real channel analytics).
 Full audit + phased plan in AUDIT.md §9-10.
+
+**Scoring is not one thing — be careful which kind a tool needs.** Tags can be
+scored *deterministically* because there is ground truth in the browser (the tag
+pool from ranking videos). Thumbnails cannot — there's no CTR to measure — so
+that tool splits the two honestly: **measured** facts (dimensions, 16:9,
+true-to-size previews at 168/246/360px) versus **AI judgement** (the five bars),
+each labelled as such. Never present a model's opinion as a measurement.
+
+## Vision path (thumbnail-analyze) — fragile, know how it behaves
+
+- **Gemini `gemini-flash-latest` carries vision.** It intermittently returns
+  **503 "experiencing high demand"** on the free tier. `callWithRetry()` retries
+  transient statuses (429/5xx) once; that took observed success from 3/4 to 4/4.
+- **The Groq fallback is effectively dead.** `meta-llama/llama-4-scout-17b-16e-instruct`
+  returns **404 model_not_found** (Groq retired it). `GROQ_VISION_MODELS` is now
+  an ordered candidate list so one retirement can't take the tool down — **paste
+  the current id from console.groq.com/docs/models at the front of that list**.
+- A single hard-coded fallback previously **masked the real error**: the client
+  saw a Groq 404 while the actual cause was a Gemini 503. When every provider
+  fails the Worker now returns a friendly `message` plus a technical `detail`
+  naming each provider and status.
+- Vision calls take **20–30s**. That's normal; don't "fix" it with a timeout.
+- Failures cost the user nothing — `incrementUsage()` runs only after success.
 
 ## Known debt / loose ends
 

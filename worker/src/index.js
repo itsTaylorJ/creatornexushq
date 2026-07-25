@@ -12,7 +12,14 @@ const GLOBAL_DAILY_LIMIT = 800;
 const GROQ_MODEL = 'openai/gpt-oss-120b';
 // Vision-capable model for the Thumbnail Analyzer (Groq free tier;
 // marked "Preview" by Groq as of 2026-07 — acceptable for beta).
-const GROQ_VISION_MODEL = 'meta-llama/llama-4-scout-17b-16e-instruct';
+// Vision fallback candidates, tried in order; dead ids are skipped at runtime.
+// As of 2026-07-25 the scout id returns 404 model_not_found from Groq — Gemini
+// is carrying vision. Paste the current id from console.groq.com/docs/models
+// at the FRONT of this list when you next check.
+const GROQ_VISION_MODELS = [
+  'meta-llama/llama-4-maverick-17b-128e-instruct',
+  'meta-llama/llama-4-scout-17b-16e-instruct',
+];
 // ~4MB image → ~5.3M base64 chars. Reject above this before hitting Groq.
 const MAX_IMAGE_BASE64_CHARS = 5_600_000;
 const ANTHROPIC_MODEL = 'claude-sonnet-4-20250514';
@@ -716,6 +723,23 @@ COMPETITOR EDGE: [how it compares to what typically performs well in this niche]
 
 // Calls one OpenAI-compatible chat endpoint. Returns { text } or
 // { error, status, detail } — never throws.
+// Free-tier providers fail transiently — Gemini in particular returns 503
+// "this model is currently experiencing high demand". Those are explicitly
+// temporary, so one quick retry turns most of them into a success instead of
+// dropping the user through to a fallback (or an error) they didn't need.
+const TRANSIENT_STATUSES = new Set([429, 500, 502, 503, 504]);
+
+async function callWithRetry(url, apiKey, model, system, userContent, label, attempts = 2) {
+  let last;
+  for (let i = 0; i < attempts; i++) {
+    last = await callChatAPI(url, apiKey, model, system, userContent, label + (i ? '-retry' + i : ''));
+    if (!last.error) return last;
+    if (!TRANSIENT_STATUSES.has(last.status)) return last; // 404/400 won't fix itself
+    if (i < attempts - 1) await new Promise((r) => setTimeout(r, 600 * (i + 1)));
+  }
+  return last;
+}
+
 async function callChatAPI(url, apiKey, model, system, userContent, label) {
   let res;
   try {
@@ -779,14 +803,37 @@ async function callModel(env, tool, fields) {
   if (def.isVision) {
     // Vision: prefer Gemini Flash (stronger than Groq's Preview model);
     // Groq vision remains the fallback so the tool works with either key.
+    // When BOTH fail, report both — returning only the last provider's error
+    // hid a dead Gemini call behind a Groq 404 and made this un-diagnosable.
+    const tried = [];
     if (geminiKey) {
-      const g = await callChatAPI(GEMINI_OPENAI_URL, geminiKey, GEMINI_MODEL, def.system, userContent, 'gemini-vision');
+      // 2 attempts, not 3 — a vision call costs ~10s, and a third try inside the
+      // same demand spike didn't recover in testing. It only made failure slower.
+      const g = await callWithRetry(GEMINI_OPENAI_URL, geminiKey, GEMINI_MODEL, def.system, userContent, 'gemini-vision', 2);
       if (!g.error) return g;
+      tried.push('gemini(' + GEMINI_MODEL + ') ' + (g.status || '') + ': ' + String(g.detail || g.error).slice(0, 160));
+    } else {
+      tried.push('gemini: no key configured');
     }
+    // Groq churns its vision model ids and retires them without notice — a
+    // single hard-coded id silently became a 404. Try each known candidate and
+    // skip the dead ones, so one retirement can't take the tool down.
     if (groqKey) {
-      return callChatAPI('https://api.groq.com/openai/v1/chat/completions', groqKey, GROQ_VISION_MODEL, def.system, userContent, 'groq-vision');
+      for (const model of GROQ_VISION_MODELS) {
+        const q = await callWithRetry('https://api.groq.com/openai/v1/chat/completions', groqKey, model, def.system, userContent, 'groq-vision');
+        if (!q.error) return q;
+        tried.push('groq(' + model + ') ' + (q.status || '') + ': ' + String(q.detail || q.error).slice(0, 120));
+      }
+    } else {
+      tried.push('groq: no key configured');
     }
-    return { error: 'backend_not_configured', detail: 'No vision-capable API key configured.' };
+    return {
+      error: 'vision_unavailable',
+      // `message` is what the client renders; `detail` stays technical for logs
+      // and support. Don't put provider stack traces in front of a creator.
+      message: 'The image analyser is busy right now — this happens on the free tier when demand spikes. Give it a minute and try again. Nothing was counted against your daily limit.',
+      detail: 'vision providers failed: ' + tried.join(' | '),
+    };
   }
 
   // Text: Groq primary (fast, no-training privacy), Gemini fallback.
