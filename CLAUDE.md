@@ -300,22 +300,24 @@ Cloudflare dashboard there, or run these from the other machine.
 ## The design sequence (standing method — each step gates the next)
 
 ```
-1. Company / product identity   → PRODUCT.md    ✅ drafted
-2. Creator journey (workflows)  → STRATEGY.md   ✅ drafted, NOT signed off
-3. Information architecture     → STRATEGY.md   ✅ drafted, NOT signed off
-4. Data model                   → STRATEGY.md   ⚠️ PROVISIONAL
-5. Technical roadmap            → CLAUDE.md     ⚠️ provisional
-6. Beta strategy                → STRATEGY.md   ⚠️ provisional
+1. Company / product identity   → PRODUCT.md    ✅ done
+2. Creator journey (workflows)  → STRATEGY.md   ✅ SIGNED OFF 2026-07-26
+3. Information architecture     → STRATEGY.md   ✅ SIGNED OFF 2026-07-26
+4. Data model                   → STRATEGY.md   ✅ RATIFIED (derives from 2+3)
+5. Technical roadmap            → CLAUDE.md     ✅ set — build the thin loop
+6. Beta strategy                → STRATEGY.md   ⚠️ 3 creators first, then 10
 ```
 
 **The order exists to stop us engineering beautifully around wrong assumptions.**
-Steps 4–6 are *derived* from 2–3. If the journey or IA changes on review, **throw
-the data model away and re-derive it** — never bend the journey to fit a schema
-that happened to get written first.
+Steps 4–6 *derive* from 2–3. If the journey or IA ever changes, **throw the data
+model away and re-derive it** — never bend the journey to fit a schema that
+happened to get written first.
 
-⚠️ **The data model was written in the same pass as the journey, before the
-journey was approved.** Treat it as a sketch demonstrating the memory concept,
-not a decision. It is ratified only after steps 2 and 3 are signed off.
+**Two owner corrections during sign-off, both adopted, both right:**
+1. The tools must **not** be hidden behind a flyout — extra layers get in the way.
+   They stay in the sidebar; the workflow lives inside each piece of content.
+2. The loop follows **the creator's own cadence**, not a fixed week. The earlier
+   "quiet Tuesday to Thursday" framing baked one rhythm into the product.
 
 ## Doc hierarchy (read in this order)
 
@@ -436,14 +438,46 @@ The seven tools are already the stages of making a video. They were built as
 seven destinations; they need to become one connected loop. Full design in
 [STRATEGY.md](STRATEGY.md).
 
-**Target navigation** (replaces the 7-item tool rail):
+**Target navigation — SIGNED OFF 2026-07-26.** Two destinations are *added
+above* the tools. **Nothing is hidden.** An earlier draft buried the seven behind
+a "quick tools" flyout; the owner rejected it because it adds a click and hides
+what people came for. That rejection was right — don't reintroduce it.
 
 ```
-THIS WEEK   ·  the loop — make / ship / review. Default landing.
-LIBRARY     ·  every Content object you've made. The memory, visible.
-PROGRESS    ·  proof you're improving.            (Post-Beta)
-Quick tools ›  the seven, still one click away — steps, not destinations.
+THIS WEEK       what you're working on, and its next unfinished step
+MY CONTENT      everything you've made — the memory, visible
+PROGRESS        proof you're improving                      (Post-Beta)
+──────────────
+[ the seven tools, exactly where they are today ]
+──────────────
+Account
 ```
+
+**The workflow lives inside a piece of content, not in the menu.** Opening a
+video shows a completion strip:
+
+```
+"Booster Box Opening"                                4 of 6 done
+Idea ✓  Hook ✓  Title ✓  Tags ✓  Thumbnail ○  Schedule ○
+```
+
+The count is the mechanic that pulls a creator start-to-finish instead of
+stopping after titles. Each stage opens the existing tool **prefilled** from the
+object — today Tags makes you retype the topic you just typed into Titles.
+**Never a forced wizard:** skip steps, work out of order, ship at 3 of 6. The
+count informs, it never blocks.
+
+**Cadence — SIGNED OFF.** The loop runs **per piece of content, not per calendar
+week**: daily Shorts → daily loop; weekly long-form → weekly loop. Only the
+*review* is fixed weekly, because reflection is weekly-sized at any cadence.
+
+We do **not** push daily posting as a default. Daily is healthy for short-form
+and unrealistic for long-form; nudging a creator with a job toward daily
+long-form manufactures the exact burnout the mission opposes. **Hold creators to
+their own stated goal, not to maximum volume.** Cadence is one question at
+signup, changeable anywhere, reconciled honestly around week 4 — and **lowering a
+goal must feel like winning**, because a creator who drops to twice a week and
+actually hits it is far likelier to still be here in a year.
 
 **The core object** — `users/{uid}/content/{id}`:
 
@@ -452,6 +486,10 @@ Quick tools ›  the seven, still one click away — steps, not destinations.
   stages: { idea, hook, title, tags, thumb },   // each: chosen + suggested + score
   outcome: { views, ctr, avgViewDuration, source: 'manual'|'youtube-api' } }
 ```
+
+Plus **one new profile field**, `cadence` — `{ goal, setAt, reconciledAt,
+history[] }`. Asked once at signup, changeable anywhere. `history` exists so a
+creator lowering their goal is recorded as a decision, never a failure.
 
 Plus `users/{uid}/weeks/{isoWeek}` — the Weekly Review, **immutable once closed**.
 `content`, `weeks` and `outcome` are never deleted; they are the moat.

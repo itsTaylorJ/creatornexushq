@@ -39,10 +39,37 @@ destinations.
 
 ---
 
-# Part II — The creator's week
+# Part II — The creator's loop
 
-The product is designed around one loop, not one screen. Here is Monday to Sunday
-for a real creator, and what the product owes them at each step.
+**SIGNED OFF 2026-07-26, with one correction.** An earlier draft assumed a weekly
+long-form cadence and prescribed "quiet Tuesday to Thursday". That baked one
+rhythm into the product. **The loop runs per piece of content, not per calendar
+week** — a creator posting daily Shorts runs it daily; a creator posting one video
+a week runs it weekly. Only the *review* is fixed weekly, because reflection is a
+weekly-sized activity at any cadence.
+
+### On cadence — a deliberate position
+
+**We do not push daily posting as a default.** For short-form it's normal and
+healthy; volume plus iteration is genuinely how Shorts and TikTok work. For
+long-form it's unrealistic for anyone with a job, and nudging them toward it
+manufactures exactly the burnout the mission names as the enemy.
+
+**We hold creators to their own stated goal, not to maximum volume.** Cadence is
+captured at signup as one question, changeable anywhere, and **reconciled
+honestly at ~week 4** against what they actually shipped:
+
+> *You aimed for every day and you've been shipping about twice a week. Twice a
+> week is a real cadence — want to make that the goal, or keep pushing for daily?*
+
+**Lowering a goal must feel like winning.** A creator who drops from daily to
+twice a week and then hits it for two months is far more likely to still be here
+in a year than one who keeps missing daily. Every competitor treats a reduced
+goal as failure; treating it as good judgement is both truer and completely
+differentiating.
+
+The walkthrough below uses a weekly long-form creator because that's our ideal
+first customer. Read the day names as *stages*, not calendar days.
 
 ### Monday — "I need an idea"
 
@@ -67,16 +94,17 @@ creator's own outcome history rather than by generic niche patterns.
 **Post-Beta:** rank by the creator's own history.
 **v2:** rejected-idea learning.
 
-### Tuesday–Thursday — "I'm making it"
+### While making it — "I'm filming and editing"
 
-*Thinking:* "I'm filming/editing. I don't want a browser tab. I want the hook
-I wrote down so I don't forget it."
+*Thinking:* "I don't want a browser tab open. I want the hook I wrote down so I
+don't forget it."
 
-*Needs:* almost nothing. **The product should be quiet here.** This is the phase
-every competitor over-serves and every creator resents.
+*Needs:* almost nothing **during the act of making**. Note the scope: quiet while
+their hands are busy, not quiet for three fixed days. A daily Shorts creator
+passes through this stage in an hour and is back in the loop the same afternoon.
 
-*AI's job:* stay out of the way. Have the hook and the working title one tap
-away on a phone.
+*AI's job:* stay out of the way. Have the hook and working title one tap away on
+a phone.
 
 **MLP:** the Content object is viewable on mobile with its idea, hook and notes.
 
@@ -144,39 +172,66 @@ you always underperform after a travel week."
 
 # Part III — Information architecture and navigation
 
-**Kill the seven-item tool rail.** It presents seven equal choices and no path.
+**SIGNED OFF 2026-07-26.** An earlier draft hid the seven tools behind a
+"quick tools" flyout. **Rejected by the owner, correctly** — it adds a click and
+hides the thing people came for. Nothing gets buried. Two destinations get added
+*above* the tools, and the connective tissue lives inside each piece of content.
 
-### The new navigation — 4 destinations
+### The navigation
 
 ```
 ┌─────────────────────────────────────────────────┐
-│  THIS WEEK    ·  the loop. default landing      │
-│  LIBRARY      ·  everything you've made         │
-│  PROGRESS     ·  proof you're improving         │
-│  ─────────────────────────────────────          │
-│  Quick tools  ›  the seven, still one click     │
+│  THIS WEEK              what you're working on  │
+│  MY CONTENT             everything you've made  │
+│  PROGRESS               proof you're improving  │   (Post-Beta)
+│  ───────────────────────────────────────────    │
+│  Titles & Descriptions                          │
+│  Tags & Hashtags                                │
+│  Thumbnails                     all seven stay  │
+│  Ideas, Hooks & CTAs            exactly where   │
+│  Posting Schedule               they are now    │
+│  Live Titles                                    │
+│  Channel Audit                                  │
+│  ───────────────────────────────────────────    │
 │  Account                                        │
 └─────────────────────────────────────────────────┘
 ```
 
-**THIS WEEK** — the home that doesn't exist today. Three zones:
-*Make* (what to work on, with the next stage for each in-flight item),
-*Ship* (what's ready), *Review* (Sunday's review, or a countdown to it).
+**THIS WEEK** — the home that doesn't exist today. What's in flight and what its
+next unfinished step is; what's ready to ship; the review when it's due.
 
-**LIBRARY** — every Content object, filterable, reusable. The memory made visible.
-This is the screen that makes leaving expensive.
+**MY CONTENT** — every Content object, filterable, reusable. The memory made
+visible, and the screen that makes leaving expensive.
 
-**PROGRESS** — scores over time, streak, weeks shipped, what improved. The
-emotional payoff.
+**PROGRESS** — scores over time, streak, weeks shipped. The emotional payoff.
 
-**Quick tools** — a flyout with the seven, for the creator who just wants a title
-right now and has no video in flight. **This directly answers the "don't delete
-useful tools" note:** they remain individually reachable, they simply stop being
-the primary organising idea. Using a quick tool offers "attach this to a video?"
-— the on-ramp into the loop.
+**The seven tools stay exactly where they are.** A creator who just wants a title
+right now clicks Titles, same as today. Nothing is hidden behind a menu. Using a
+tool standalone offers *"attach this to a video?"* — an invitation, never a gate.
 
-**MLP:** This Week + Library + the quick-tools flyout.
+**MLP:** This Week + My Content + the tools unchanged.
 **Post-Beta:** Progress.
+
+### Content object detail — where the workflow actually lives
+
+This is the piece that makes it a workflow rather than a menu. Opening a video:
+
+```
+"Booster Box Opening"                                   4 of 6 done
+Idea ✓   Hook ✓   Title ✓   Tags ✓   Thumbnail ○   Schedule ○
+```
+
+**The completion count is the mechanic.** It shows what's unfinished and pulls the
+creator through the whole process instead of stopping after titles — which is
+what "optimise the video from start to finish" actually requires. The workflow
+does the encouraging; the navigation doesn't have to.
+
+Each stage opens the existing tool, **prefilled** from everything already on the
+object. **The tools don't change — their context does.** Today the Tags tool makes
+you retype the topic you typed into Titles ten minutes ago. Here it already knows.
+
+Deliberately **not** a forced wizard. Skip steps, do them out of order, ship at
+3 of 6. The count informs; it never blocks.
 
 ### Content object detail — the real workspace
 
@@ -201,10 +256,21 @@ already knows.
 The core architectural recommendation. Shown as schema because that is the
 clearest way to communicate it.
 
+**RATIFIED 2026-07-26** — the journey and IA it derives from are signed off, so
+this is now a decision rather than a sketch.
+
 ```js
 users/{uid}
-  // profile — exists today, keep
-  { email, first, last, username, niche, platforms[], size, ... }
+  // profile — exists today; ONE field added
+  { email, first, last, username, niche, platforms[], size, ...,
+
+    cadence: {                     // NEW — asked once at signup
+      goal: 'weekly',              // monthly | weekly | few-weekly | most-days | daily
+      setAt,
+      reconciledAt,                // week-4 honest check against reality
+      history: [{ goal, from, to }]  // lowering a goal is a success, not a failure
+    }
+  }
 
   content/{contentId}              // THE core object — new
   {
