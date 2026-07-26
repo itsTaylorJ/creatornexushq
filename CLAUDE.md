@@ -246,23 +246,45 @@ during the migration.
   with emails like `x-<ts>@creatornexushq-audit.invalid`. ALWAYS delete after.
 - Local preview: tiny Node static server on :8765 (no Python on this box).
 
+## The design sequence (standing method — each step gates the next)
+
+```
+1. Company / product identity   → PRODUCT.md    ✅ drafted
+2. Creator journey (workflows)  → STRATEGY.md   ✅ drafted, NOT signed off
+3. Information architecture     → STRATEGY.md   ✅ drafted, NOT signed off
+4. Data model                   → STRATEGY.md   ⚠️ PROVISIONAL
+5. Technical roadmap            → CLAUDE.md     ⚠️ provisional
+6. Beta strategy                → STRATEGY.md   ⚠️ provisional
+```
+
+**The order exists to stop us engineering beautifully around wrong assumptions.**
+Steps 4–6 are *derived* from 2–3. If the journey or IA changes on review, **throw
+the data model away and re-derive it** — never bend the journey to fit a schema
+that happened to get written first.
+
+⚠️ **The data model was written in the same pass as the journey, before the
+journey was approved.** Treat it as a sketch demonstrating the memory concept,
+not a decision. It is ratified only after steps 2 and 3 are signed off.
+
 ## Doc hierarchy (read in this order)
 
-1. **CLAUDE.md** (this file) — authoritative current state. If another doc
-   disagrees with it, this one wins.
-2. **[ROADMAP.md](ROADMAP.md)** — tool-by-tool status board, the migration
-   queue, and the Pro-grant runbook. Kept in step with this file.
-3. **[STRATEGY.md](STRATEGY.md)** — dated (2026-07-26) adversarial product,
-   pricing, brand and positioning review. Sets *direction*; CLAUDE.md sets
-   *facts*. Read before planning new features.
-4. **[TESTING.md](TESTING.md)** — the manual QA checklist to run before
-   inviting real users. Add a section whenever a tool ships.
+1. **CLAUDE.md** (this file) — authoritative current state, how to work here,
+   product philosophy. If another doc disagrees on facts, this wins.
+2. **[PRODUCT.md](PRODUCT.md)** — what company this is: mission, brand promise,
+   manifesto, anti-principles, ideal first customer, creator memory strategy,
+   flywheel, five-year vision. **The most durable doc here** — roadmaps expire,
+   this shouldn't. Read before proposing any feature.
+3. **[STRATEGY.md](STRATEGY.md)** — the design: creator journey, information
+   architecture, memory model, AI ladder, beta plan. Everything labelled
+   MLP / Post-Beta / v2 / LTV.
+4. **[ROADMAP.md](ROADMAP.md)** — tool status board and the Pro-grant runbook.
+   Superseded from the migration plan onward.
+5. **[TESTING.md](TESTING.md)** — manual QA checklist; add a section per tool.
    **[TESTER-GUIDE.md](TESTER-GUIDE.md)** is the tester-facing counterpart —
    what's real, what's gated, the known quirks, and the six questions worth
    asking them. Keep it honest and short; it's the first thing a stranger reads.
-5. **[AUDIT.md](AUDIT.md)** — a *dated snapshot* (2026-07-20) of the full
-   product/engineering audit. Its Phase 1 findings are fixed; keep it for the
-   unit economics, competitive positioning, and Phase 3 reasoning.
+6. **[AUDIT.md](AUDIT.md)** — **largely superseded** (2026-07-20). Keep only for
+   its measured unit economics; ignore its roadmap and phase plan.
 
 ## Studio consolidation (current major effort)
 
