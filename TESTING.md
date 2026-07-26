@@ -31,6 +31,13 @@ Read this first so you don't chase things we already know:
 - **Live YouTube ranking data only appears for YouTube**, and only while the
   daily search budget lasts (90/day). Without it, tools say so rather than
   pretending.
+- **Only the Titles tool saves to My Content so far.** Tags, Thumbnails and the
+  rest all still work — they just don't attach to a video yet. That's deliberate:
+  we're proving the loop with one tool before wiring six more.
+- **A week's review can only be written once.** On purpose — a history you can
+  rewrite isn't a record.
+- **The outcome ask waits 3 days** after publishing, because numbers before then
+  don't mean anything.
 
 ---
 
@@ -190,64 +197,126 @@ Read this first so you don't chase things we already know:
         change.** If everything routes to the same tool, that's a real failure.
 73. [ ] Nothing anywhere claims to have read your analytics.
 
-## K. "Try an example" (the first-run path)
+## K. Memory — the part that makes it a product
 
-74. [ ] On **each** live tool, click **"Try an example →"** under the heading.
-75. [ ] The form fills with a realistic scenario and you can hit generate
+**This is the most important section. If any of it fails, nothing else matters.**
+
+74. [ ] Generate titles for a video. A **"Saved to My Content"** note appears
+        under the button.
+75. [ ] Open **My Content**. The video is there, with the title you got, its
+        score, and a stage strip reading **1 of 6 done**.
+76. [ ] Generate again for the **same topic**. My Content still shows **one**
+        card, updated — not a duplicate.
+77. [ ] Generate for a **different topic**. Now there are two.
+78. [ ] **Close the browser entirely, reopen, sign in.** Everything is still
+        there. *(This is the whole thesis — if it isn't, stop and tell me.)*
+79. [ ] Hit **Open** on a card. You land back in Titles with the topic, keyword,
+        content type and platform already filled in.
+80. [ ] **Delete** asks before it deletes, and says what it removes.
+
+## L. Publishing and outcomes
+
+81. [ ] On a draft, click **Mark published**. It optionally takes a link, and the
+        card now reads "published just now".
+82. [ ] A video published **today** does **not** ask for numbers — they haven't
+        settled yet.
+83. [ ] A video published **3+ days ago** shows the ask: *"How did this one do?"*
+84. [ ] Click **Not now**. It disappears — and **stays gone after a reload**.
+85. [ ] On another, click **Add the numbers**. Only **views** is required.
+86. [ ] Save. With a second video's numbers already in, you get a real
+        comparison — e.g. *"38% above your average across 3 videos."*
+87. [ ] The card now shows the recorded numbers.
+88. [ ] **Nowhere is there a badge, counter, or "3 videos missing data".** If you
+        find one, that's a bug.
+
+## M. This Week and the Weekly Review
+
+89. [ ] Open **This Week**. Three numbers: published this week (against your
+        goal), weeks in a row, average title score with its trend.
+90. [ ] **Check the arithmetic yourself** against My Content. These are computed,
+        not generated — they must be exactly right.
+91. [ ] Anything unfinished appears under **Still open** with its next step.
+92. [ ] Click **Write my review**. You get a headline, what worked, one thing to
+        change, and a next-week action.
+93. [ ] It references **your actual videos and numbers** — not generic advice.
+94. [ ] If the week genuinely went well, it's allowed to say **"Nothing — this
+        week worked. Keep going."** That's correct behaviour, not a failure.
+95. [ ] The review is marked **saved for good**.
+96. [ ] Reload. It's still there, and you **cannot** rewrite it.
+97. [ ] Set your cadence in the survey. This Week shows shipped **against that
+        goal**.
+
+## N. The "why" layer (teaching)
+
+98. [ ] Generate tags for a deliberately bad set. Under the score, **one or two
+        "Why … matters"** explanations appear.
+99. [ ] They explain the **mechanism** — *why* it matters — rather than repeating
+        "add more tags".
+100. [ ] Generate a genuinely good set. **Far fewer or no explanations.** A good
+         score shouldn't lecture you.
+101. [ ] Score a thumbnail. The weakest one or two bars get explained; the strong
+         ones don't.
+102. [ ] Read them as a creator: did you **learn something you didn't know**? If
+         they read as filler, say so — that's the whole point of this feature.
+
+## O. "Try an example" (the first-run path)
+
+103. [ ] On **each** live tool, click **"Try an example →"** under the heading.
+104. [ ] The form fills with a realistic scenario and you can hit generate
         immediately without inventing anything.
-76. [ ] On Thumbnails it fills the text fields and tells you to add your own
+105. [ ] On Thumbnails it fills the text fields and tells you to add your own
         image — it does **not** pretend to have one.
 
-## L. Copy buttons (check this everywhere)
+## P. Copy buttons (check this everywhere)
 
-77. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
+106. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
         prompt and an idea. Paste each one somewhere.
-78. [ ] The pasted text is **exactly** what was on screen — including line
+107. [ ] The pasted text is **exactly** what was on screen — including line
         breaks in multi-line blocks like the full description.
-79. [ ] The button flips to **✓ Copied** and back.
+108. [ ] The button flips to **✓ Copied** and back.
 
-## M. Account page
+## Q. Account page
 
-80. [ ] Name, username and email are correct.
-81. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
-82. [ ] The channel summary matches your survey answers.
-83. [ ] Change your username, save, reload — **it stuck**.
-84. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
-85. [ ] **Sign out** works and returns you to a logged-out state.
+109. [ ] Name, username and email are correct.
+110. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
+111. [ ] The channel summary matches your survey answers.
+112. [ ] Change your username, save, reload — **it stuck**.
+113. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
+114. [ ] **Sign out** works and returns you to a logged-out state.
 
-## N. Limits and honesty
+## R. Limits and honesty
 
-86. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
+115. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
         error and not a redirect that loses your work.
-87. [ ] The usage counter in the rail **decreases by exactly one** per successful
+116. [ ] The usage counter in the rail **decreases by exactly one** per successful
         generation.
-88. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
+117. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
         and **the counter does not drop**.
-89. [ ] Nowhere in the app does anything imply you can **pay** yet.
-90. [ ] No tool claims live TikTok/Instagram trend data.
+118. [ ] Nowhere in the app does anything imply you can **pay** yet.
+119. [ ] No tool claims live TikTok/Instagram trend data.
 
-## O. Legacy pages still work
+## S. Legacy pages still work
 
-91. [ ] From the landing Tools menu, open the older pages
+120. [ ] From the landing Tools menu, open the older pages
         (`app`, `analyze`, `thumbnail`, `streaming`, `platforms`).
-92. [ ] Each one has a **"Back to Studio"** link that works.
-93. [ ] Deep links land on the right tab, e.g.
+121. [ ] Each one has a **"Back to Studio"** link that works.
+122. [ ] Deep links land on the right tab, e.g.
         `creatornexushq-analyze.html?tab=analytics` opens **Analytics Advice**,
         not the default tab.
-94. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
+123. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
         **Coming Soon** — no fake output.
 
-## P. Mobile pass (do this on a real phone)
+## T. Mobile pass (do this on a real phone)
 
-95. [ ] Repeat steps 18, 24, 36 and 50 on your phone.
-96. [ ] **No page scrolls sideways at any point.** This is the single most
+124. [ ] Repeat steps 18, 24, 36 and 50 on your phone.
+125. [ ] **No page scrolls sideways at any point.** This is the single most
         common regression in this codebase — check every results screen,
         including the thumbnail size-preview strip (it should scroll on its own).
-97. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
+126. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
 
-## Q. Cleanup
+## U. Cleanup
 
-98. [ ] **Delete every throwaway account** in the Firebase console
+127. [ ] **Delete every throwaway account** in the Firebase console
         (Authentication → Users). Non-negotiable.
 
 ---

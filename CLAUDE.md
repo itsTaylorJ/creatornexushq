@@ -562,6 +562,33 @@ competes with YouTube itself. Skip it unless creators ask.
 read-the-review. Thumbnail analysis and tag optimisation do **not** belong on a
 phone.
 
+## The "why" layer — the education that ships
+
+**Shipped 2026-07-26.** Every score already on screen carries one sentence
+explaining the *mechanism*, keyed by the exact factor labels the scorers emit
+(`WHY` map + `whyBlock()` / `whyFromBars()` in the Studio).
+
+Rules that keep it teaching rather than nagging:
+- **Only the two weakest factors**, ranked fail → warn. Teaching everything
+  teaches nothing.
+- **Silent when everything passes.** A perfect score gets no lecture.
+- **Explains why, never restates the instruction.** "Thin text disappears at
+  168px" — not "add a stroke". A unit test asserts no line begins with
+  *add/use/include/make sure/try to*.
+- **One or two sentences, ≤210 chars.** Also unit-tested; these lines are the
+  differentiator, so they get held to a bar.
+- Unknown labels render nothing rather than an empty box.
+
+**Why this and not a blog:** it teaches at the moment of decision, it needs the
+creator's own context so competitors can't copy it well, and it expires in the
+best way — after ten videos they don't need it. That is the manifesto's *"better,
+not more dependent"* working. **Do not build a guide/article library** unless
+creators actually ask: it dates fast, doesn't compound, and competes with
+YouTube itself.
+
+**Adding a new scored factor?** Add its `WHY` line in the same commit, or the
+score arrives with no explanation and the layer quietly rots.
+
 ## The Weekly Review — how it's built, and why that way
 
 **Every number in it is computed from the creator's own record. The model only

@@ -525,7 +525,7 @@ makes them less necessary. They're optimising for necessity. We shouldn't.
 
 Two very different things get called "education". Only one is defensible.
 
-**1. The "why" line — MLP, and the differentiated one.**
+**1. The "why" line — ✅ SHIPPED 2026-07-26. The differentiated one.**
 Every score we already show gets one sentence of contextual explanation, tied to
 *their* input. Not a help article — a sentence.
 
@@ -554,15 +554,20 @@ costs money". Honest, cheap, and exactly on brand.
 # Part XI — Implementation order
 
 **CRITICAL — the MLP, in this order**
-1. Content data model + Firestore rules
-2. Tools write to Content objects (one tool at a time, Titles first)
-3. Library
-4. This Week
-5. Manual outcome entry
-6. Weekly Review + streak
-7. Paid inference; corrected pricing
-8. Delete removed pages; retire legacy
-9. Run [TESTING.md](TESTING.md); invite 10 creators
+1. ~~Content data model + Firestore rules~~ ✅ 2026-07-26
+2. ~~Titles writes to Content objects~~ ✅ (other six wait for validation)
+3. ~~My Content (Library)~~ ✅
+4. ~~This Week~~ ✅
+5. ~~Manual outcome entry + the once-per-video ask~~ ✅
+6. ~~Weekly Review + shipped streak + cadence~~ ✅
+7. ~~The "why" layer~~ ✅
+8. Paid inference; corrected pricing *(neither blocks a 3-creator test)*
+9. Unlink the three Coming Soon pages from nav
+10. Run [TESTING.md](TESTING.md); **3 creators first**, then 10
+
+**The build is done. What remains is commercial and hygiene.** The next real
+step is not code — it's putting the loop in front of three creators and finding
+out whether they'll type in their numbers.
 
 **HIGH — Post-Beta:** Progress · shareable review · outcome-informed prompts ·
 accessibility pass · split the Studio file

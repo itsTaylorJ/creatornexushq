@@ -127,6 +127,11 @@
   .score-hero .factors{margin-top:9px;display:flex;flex-wrap:wrap;gap:6px}
   .fchip{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:5px;background:var(--surface-2);border:1px solid var(--border)}
   .fchip.pass{color:var(--good)} .fchip.warn{color:var(--warn)} .fchip.fail{color:var(--bad)}
+  /* the "why" layer — teaching, visually distinct from advice about THIS video */
+  .whybox{margin:-6px 0 16px;padding:13px 15px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border);border-left:2px solid var(--cyan)}
+  .whybox .why{font-size:12.5px;color:var(--text-soft);line-height:1.6;margin:0}
+  .whybox .why + .why{margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+  .whybox .wq{display:block;font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
   .modehint{font-size:12px;color:var(--muted);margin:7px 0 0}
   .tagwrap{display:flex;flex-wrap:wrap;gap:7px}
   .tagchip{font-size:12px;font-weight:600;padding:5px 9px;border-radius:7px;display:inline-flex;align-items:center;gap:7px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-soft)}
@@ -1245,6 +1250,7 @@
     const fchips = sc.factors.slice().sort((a,b)=>(a.state==='fail'?0:a.state==='warn'?1:2)-(b.state==='fail'?0:b.state==='warn'?1:2)).slice(0,4)
       .map(x=>'<span class="fchip '+x.state+'">'+(x.state==='pass'?'✓':x.state==='warn'?'△':'✗')+' '+esc(x.l)+'</span>').join('');
     html+='<div class="score-hero"><div class="ring" id="ring"></div><div><p class="verdict">SEO Score <span class="mono" style="color:'+col+'">'+sc.score+'</span>/100</p><p class="sub">'+verdict+(sc.inferred&&sc.keyword?' · scored on inferred keyword "'+esc(sc.keyword)+'"':'')+'</p><div class="factors">'+fchips+'</div></div></div>';
+    html+=whyBlock(sc.factors, 2);   // teach the two weakest, not everything
     if(yt&&yt.videos&&yt.videos.length){
       html+='<div class="yt-panel"><div class="t">📊 Ranking on YouTube right now</div>'+
         yt.videos.slice(0,5).map(v=>'<div class="rowd"><span class="v">'+esc(v.title)+'</span><span class="m">'+fmtViews(v.views)+'</span></div>').join('')+
@@ -1376,6 +1382,7 @@
     const fchips=sc.factors.slice().sort((a,b)=>({fail:0,warn:1,pass:2}[a.state]-{fail:0,warn:1,pass:2}[b.state])).slice(0,4)
       .map(x=>'<span class="fchip '+x.state+'">'+(x.state==='pass'?'✓':x.state==='warn'?'△':'✗')+' '+esc(x.l)+'</span>').join('');
     let html='<div class="score-hero"><div class="ring" id="tring"></div><div><p class="verdict">Tag Score <span class="mono" style="color:'+col+'">'+sc.score+'</span>/100</p><p class="sub">'+esc(sub)+'</p><div class="factors">'+fchips+'</div></div></div>';
+    html+=whyBlock(sc.factors, 2);   // teach the two weakest, not everything
 
     if(pool&&yt.videos&&yt.videos.length){
       html+='<div class="yt-panel"><div class="t">📊 Ranking on YouTube right now</div>'+
@@ -1515,10 +1522,12 @@
           .map(([w,h,cap])=>'<figure class="mini"><img src="'+currentThumb.dataUrl+'" width="'+w+'" height="'+h+'" alt=""><figcaption>'+w+'×'+h+' — '+cap+'</figcaption></figure>').join('')+
         '</div><p class="tagnote">Actual display sizes. If you can’t read it here, neither can your viewer.</p></div>';
     }
-    const bars=[['Click-through potential',sec['CLICK THROUGH POTENTIAL']],['Text readability',sec['TEXT READABILITY']],
-      ['Visual clarity',sec['VISUAL CLARITY']],['Emotional impact',sec['EMOTIONAL IMPACT']],['Colour & contrast',sec['COLOR & CONTRAST']||sec['COLOUR & CONTRAST']]]
-      .map(([l,v])=>barRow(l,v)).filter(Boolean).join('');
-    if(bars) html+='<div class="res-group"><h3>AI breakdown</h3><div class="bars">'+bars+'</div><p class="aiflag">These five are an AI judgement of one image, not a measurement. Treat them as a second opinion — your own click-through data always wins.</p></div>';
+    const barPairs=[['Click-through potential',sec['CLICK THROUGH POTENTIAL']],['Text readability',sec['TEXT READABILITY']],
+      ['Visual clarity',sec['VISUAL CLARITY']],['Emotional impact',sec['EMOTIONAL IMPACT']],['Colour & contrast',sec['COLOR & CONTRAST']||sec['COLOUR & CONTRAST']]];
+    const bars=barPairs.map(([l,v])=>barRow(l,v)).filter(Boolean).join('');
+    if(bars) html+='<div class="res-group"><h3>AI breakdown</h3><div class="bars">'+bars+'</div>'+
+      whyFromBars(barPairs.map(([label,v])=>({label:label, n:scoreOf(v,10)})), 2)+
+      '<p class="aiflag">These five are an AI judgement of one image, not a measurement. Treat them as a second opinion — your own click-through data always wins.</p></div>';
     if(sec['WHAT’S WORKING']||sec["WHAT'S WORKING"]) html+=blockItem('What’s working', sec['WHAT’S WORKING']||sec["WHAT'S WORKING"]);
     if(sec['WHAT TO FIX']) html+=blockItem('What to fix', sec['WHAT TO FIX']);
     const imp=[sec['IMPROVEMENT 1'],sec['IMPROVEMENT 2'],sec['IMPROVEMENT 3']].filter(Boolean);
@@ -1574,6 +1583,61 @@
     if(sec['CANVA TIP']) html+=blockItem('Finishing it in Canva', sec['CANVA TIP']);
     html+='<p class="aiflag">These are prompts for an image tool — paste them into '+esc(aiTool||'your AI tool')+'. We don’t generate the image itself, and text baked in by AI usually comes out wrong, so add your title text afterwards.</p>';
     res.innerHTML=html||'<div class="placeholder">The prompts came back in an unexpected shape — try again.</div>';
+  }
+
+  // ================= The "why" layer =================
+  // One sentence per weak factor, explaining the MECHANISM rather than repeating
+  // the instruction. The goal is that after ten videos a creator no longer needs
+  // it — a tool that teaches makes better creators; one that only scores makes
+  // dependent ones. Keyed by the exact factor labels the scorers emit.
+  const WHY = {
+    // --- titles / descriptions ---
+    'Keyword in title': 'Search matches your title against what people actually type. If the phrase isn’t in there, it can’t match — synonyms aren’t inferred as reliably as most creators assume.',
+    'Keyword in first line': 'The first line of the description is what gets indexed hardest and what shows above the fold. Everything below it is mostly for people who already clicked.',
+    'Title 20–60 chars': 'Past roughly 60 characters the title truncates in search and suggested. The cut-off text still counts for search, but no human reads it.',
+    'Description 170+ words': 'A two-line description gives the algorithm almost nothing to classify. Length here isn’t padding — it’s context about what the video actually is.',
+    'Keyword 2–4× in body': 'Twice reads naturally, five times reads like stuffing. The benefit flattens quickly; the risk of sounding robotic doesn’t.',
+    '2–3 hashtags': 'The first three hashtags show above your title. Add more than three and they’re all ignored.',
+    'Has a link': 'A link gives the viewer somewhere to go and gives you something to measure. Without one, a good video ends and nothing happens next.',
+    'Chapters / timestamps': 'Timestamps become searchable key moments, and they stop people leaving because they can’t find the part they came for.',
+    'Title has a hook': 'A title that only describes gets skipped next to one that opens a question. In a feed, curiosity beats accuracy.',
+    // --- tags ---
+    '8–12 tags': 'Past about a dozen, each extra tag dilutes rather than adds. Tags confirm what a video is; they don’t multiply your chances.',
+    '200–300 characters': 'Filling all 500 characters is the myth worth unlearning. TubeBuddy’s own guidance is that tags confirm relevance rather than boost ranking — a tight set beats a padded one.',
+    'First tag matches the topic': 'The first tag carries the most weight. If it’s generic, you’ve spent your strongest signal on something you can’t win.',
+    'Long-tail mix': 'Single-word tags put you against channels a hundred times your size. Multi-word phrases are where a smaller channel actually ranks.',
+    'No duplicate tags': 'Near-duplicates don’t stack. They just consume space a genuinely different phrase could have used.',
+    'Covers what’s ranking': 'These are the tags the videos currently ranking for your topic actually use. Sharing them tells the algorithm you belong in the same set.',
+    // --- thumbnails (AI sub-scores) ---
+    'Text readability': 'Your thumbnail is about 168px wide in the mobile feed. Thin fonts and long words vanish at that size — three or four words with a heavy stroke survive.',
+    'Click-through potential': 'Click-through is decided in roughly a second, against five other thumbnails. Being clear beats being detailed every time.',
+    'Visual clarity': 'One clear subject reads at a glance. Two competing subjects read as neither.',
+    'Emotional impact': 'A face or a reaction gives the viewer someone to feel something with. Product-only shots inform but rarely pull.',
+    'Colour & contrast': 'Contrast is what separates you from the thumbnail above and below yours. Mid-tones on mid-tones disappear in a scroll.',
+    // --- schedule ---
+    'Schedule score': 'Consistency matters more than frequency. A predictable weekly slot outperforms a burst followed by three quiet weeks.'
+  };
+
+  // Show only the weakest factors — teaching everything at once teaches nothing.
+  function whyBlock(factors, max){
+    if(!factors || !factors.length) return '';
+    const rank = { fail:0, warn:1, pass:2 };
+    const weak = factors.slice().sort((a,b)=>rank[a.state]-rank[b.state])
+                        .filter(f=>f.state!=='pass').slice(0, max||2);
+    const lines = weak.map(f=>({ l:f.l, why:WHY[f.l] })).filter(x=>x.why);
+    if(!lines.length) return '';
+    return '<div class="whybox">'+lines.map(x=>
+      '<p class="why"><span class="wq">Why '+esc(x.l.toLowerCase())+' matters</span>'+esc(x.why)+'</p>'
+    ).join('')+'</div>';
+  }
+  // For the thumbnail bars, which carry a score rather than a pass/warn state.
+  function whyFromBars(pairs, max){
+    const weak = pairs.filter(p=>typeof p.n==='number' && p.n<8).sort((a,b)=>a.n-b.n).slice(0,max||2);
+    const lines = weak.map(p=>({ l:p.label, why:WHY[p.label] })).filter(x=>x.why);
+    if(!lines.length) return '';
+    return '<div class="whybox">'+lines.map(x=>
+      '<p class="why"><span class="wq">Why '+esc(x.l.toLowerCase())+' matters</span>'+esc(x.why)+'</p>'
+    ).join('')+'</div>';
   }
 
   // ================= "Try an example" =================
@@ -2260,6 +2324,7 @@
     let html='';
     const bar=barRow('Schedule score', sec['SCHEDULE SCORE']);
     if(bar) html+='<div class="res-group"><h3>Verdict</h3><div class="bars">'+bar+'</div>'+
+      whyFromBars([{ label:'Schedule score', n:scoreOf(sec['SCHEDULE SCORE'],10) }], 1)+
       '<p class="aiflag">An AI judgement of what you described, not a measurement of your analytics.</p></div>';
     if(sec['WHAT’S GOOD']||sec["WHAT'S GOOD"]) html+=blockItem('Keep doing this', sec['WHAT’S GOOD']||sec["WHAT'S GOOD"]);
     if(sec['WHAT TO CHANGE']) html+=blockItem('Change this', sec['WHAT TO CHANGE']);
