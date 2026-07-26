@@ -137,6 +137,24 @@
   .tagchip.strong .rk{color:var(--good);opacity:.8}
   .tagnote{font-size:11.5px;color:var(--faint);margin:9px 0 0;line-height:1.5}
   /* "try an example" affordance */
+  /* my content */
+  .navsep{height:1px;background:var(--border);margin:8px 12px}
+  .mccard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;margin-bottom:11px}
+  .mchead{display:flex;align-items:flex-start;gap:12px;justify-content:space-between}
+  .mctitle{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.4;letter-spacing:-.01em;min-width:0}
+  .mcscore{font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);flex-shrink:0}
+  .mcscore.good{color:var(--good)} .mcscore.warn{color:var(--warn)} .mcscore.bad{color:var(--bad)}
+  .mcmeta{font-size:11.5px;color:var(--faint);margin-top:5px}
+  .strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .strip .st{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--faint)}
+  .strip .st.on{color:var(--good);border-color:rgba(52,211,153,.35)}
+  .mcacts{display:flex;gap:8px;margin-top:12px}
+  .mcbtn{font:inherit;font-size:12.5px;font-weight:600;color:#f0f0ff;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:7px 13px;cursor:pointer}
+  .mcbtn:hover{border-color:var(--violet)}
+  .mcbtn.ghost{color:var(--muted)}
+  .mcbtn.ghost:hover{color:var(--bad);border-color:rgba(248,113,113,.4)}
+  .savedtag{font-size:12px;color:var(--good);margin-top:9px;opacity:0;transition:opacity .25s}
+  .savedtag.show{opacity:1}
   .exbtn{font:inherit;font-size:12.5px;font-weight:600;color:var(--cyan);background:none;border:0;border-bottom:1px dashed rgba(34,211,238,.45);padding:0 0 1px;margin-top:10px;cursor:pointer}
   .exbtn:hover{color:#7ee9ff;border-bottom-color:#7ee9ff}
   /* mode switch */
@@ -274,6 +292,8 @@
     <a class="brand" href="index.html"><span class="logo">Creator<span>NexusHQ</span></span></a>
     <div class="rail-label">Studio</div>
     <nav id="nav">
+      <button class="navitem" data-tool="content" onclick="switchTool('content',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 2h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg>My Content</button>
+      <div class="navsep"></div>
       <button class="navitem active" data-tool="titles" onclick="switchTool('titles',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Titles &amp; Descriptions</button>
       <button class="navitem" data-tool="tags" onclick="switchTool('tags',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h8.6l8 8a1.4 1.4 0 0 1 0 2z"/><circle cx="7.5" cy="7.5" r="1.2"/></svg>Tags &amp; Hashtags</button>
       <button class="navitem" data-tool="thumbs" onclick="switchTool('thumbs',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>Thumbnails</button>
@@ -308,6 +328,15 @@
 
     <div class="work">
       <!-- ============ TITLES & DESCRIPTIONS ============ -->
+      <section class="tool" id="tool-content">
+        <div class="tool-head">
+          <div class="kicker">My Content</div>
+          <h1>Everything you've made.</h1>
+          <p>Every video you've worked on here, with what's done and what's still open. Nothing you make gets thrown away.</p>
+        </div>
+        <div id="mc-list"><div class="placeholder"><div class="big">📁</div>Loading…</div></div>
+      </section>
+
       <section class="tool active" id="tool-titles">
         <div class="tool-head">
           <div class="kicker">Titles &amp; Descriptions</div>
@@ -363,6 +392,7 @@
               </select>
             </div>
             <button class="gen" id="t-gen" onclick="generateTitles()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5z"/></svg> Generate titles &amp; description</button>
+            <p class="savedtag" id="t-saved"></p>
           </div>
           <div class="results" id="t-results">
             <div class="placeholder"><div class="big">✦</div>Your titles, hooks, tags and a full SEO description will appear here — with a live score.</div>
@@ -1000,6 +1030,7 @@
     if(id==='account') fillAccount();
     if(id==='schedule') prefillSchedule();
     if(id==='live') liveHint();
+    if(id==='content') loadMyContent();
     closeDrawer();
     window.scrollTo({top:0});
   }
@@ -1097,9 +1128,49 @@
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
       if(d.plan) updatePlanBadge(d.plan, d.remaining);
-      renderTitles(d.text, d.ytData, body.keyword);
+      const parsed = renderTitles(d.text, d.ytData, body.keyword);
+      saveTitleStage(body, parsed);   // fire-and-forget; never blocks the result
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
+  }
+
+  // ---------- content: the piece of work this generation belongs to ----------
+  // Regenerating for the same topic updates the same object instead of
+  // littering the library with near-duplicates. Change the topic, get a new one.
+  let activeContentId = null, activeContentTopic = '';
+
+  async function saveTitleStage(body, parsed){
+    if(!parsed || !window.__contentCreate) return;
+    const topic = (body.description||'').trim();
+    if(!topic) return;
+    const stage = {
+      chosen: parsed.best || '',
+      suggested: (parsed.titles||[]).slice(0, 8),
+      score: parsed.score,
+      keyword: body.keyword || '',
+      shortDescription: (parsed.meta||{})['SHORT DESCRIPTION'] || '',
+      fullDescription: parsed.full || '',
+      at: new Date().toISOString()
+    };
+    try{
+      if(activeContentId && activeContentTopic === topic){
+        await window.__contentUpdate(activeContentId, { 'stages.title': stage, platform: body.platform });
+      }else{
+        const id = await window.__contentCreate({
+          type: 'video', status: 'draft', platform: body.platform, topic: topic,
+          contentType: body.contentType || '', stages: { title: stage }
+        });
+        if(id){ activeContentId = id; activeContentTopic = topic; }
+      }
+      markSaved();
+    }catch(e){ /* saving is best-effort — never surface over a good result */ }
+  }
+
+  function markSaved(){
+    const el = document.getElementById('t-saved'); if(!el) return;
+    el.textContent = 'Saved to My Content';
+    el.classList.add('show');
+    clearTimeout(el._t); el._t = setTimeout(()=>el.classList.remove('show'), 3200);
   }
 
   function renderTitles(text, yt, keyword){
@@ -1138,6 +1209,8 @@
     if(full) html+=blockItem('Full description', full);
     res.innerHTML=html;
     animateRing(document.getElementById('ring'), sc.score, col);
+    // handed back so the caller can persist without re-parsing
+    return { titles: titles, best: bestTitle, score: sc.score, meta: meta, full: full };
   }
   // ================= Tags & Hashtags =================
   function tagMode(){
@@ -1519,6 +1592,89 @@
   function fillExample(tool){
     const fn=EXAMPLES[tool]; if(!fn) return;
     if(!fn()) toast('Example filled in — hit generate to see what it does.');
+  }
+
+  // ================= My Content =================
+  // The stages a piece of content moves through. The count is the mechanic that
+  // pulls a creator start-to-finish; it never blocks shipping at 3 of 6.
+  const STAGES = [
+    { k:'idea',  label:'Idea'      },
+    { k:'hook',  label:'Hook'      },
+    { k:'title', label:'Title'     },
+    { k:'tags',  label:'Tags'      },
+    { k:'thumb', label:'Thumbnail' },
+    { k:'sched', label:'Schedule'  }
+  ];
+
+  function stageStrip(item){
+    const st = item.stages || {};
+    const done = STAGES.filter(s=>st[s.k]).length;
+    return { done, html:'<div class="strip">'+STAGES.map(s=>
+      '<span class="st'+(st[s.k]?' on':'')+'">'+(st[s.k]?'✓':'○')+' '+esc(s.label)+'</span>'
+    ).join('')+'</div>' };
+  }
+
+  function whenText(iso){
+    if(!iso) return '';
+    const d=new Date(iso), now=new Date(), mins=Math.round((now-d)/60000);
+    if(mins<1) return 'just now';
+    if(mins<60) return mins+'m ago';
+    const hrs=Math.round(mins/60); if(hrs<24) return hrs+'h ago';
+    const days=Math.round(hrs/24); if(days<30) return days+'d ago';
+    return d.toLocaleDateString();
+  }
+
+  async function loadMyContent(){
+    const wrap=document.getElementById('mc-list'); if(!wrap) return;
+    if(!window.__currentUser){
+      wrap.innerHTML='<div class="placeholder"><div class="big">📁</div>Sign in to see everything you\'ve made.</div>';
+      return;
+    }
+    wrap.innerHTML='<div class="loading"><span class="dots"><i></i><i></i><i></i></span> Loading your work…</div>';
+    const items = await window.__contentList(50);
+    if(!items.length){
+      wrap.innerHTML='<div class="placeholder"><div class="big">📁</div>Nothing here yet. Generate titles for a video and it\'ll be saved here automatically.</div>';
+      return;
+    }
+    wrap.innerHTML = items.map(it=>{
+      const s = stageStrip(it);
+      const title = (it.stages&&it.stages.title&&it.stages.title.chosen) || it.topic || 'Untitled';
+      const score = (it.stages&&it.stages.title&&typeof it.stages.title.score==='number') ? it.stages.title.score : null;
+      return '<div class="mccard">'+
+        '<div class="mchead">'+
+          '<div class="mctitle">'+esc(title)+'</div>'+
+          (score!==null?'<span class="mcscore '+(score>=80?'good':score>=55?'warn':'bad')+'">'+score+'</span>':'')+
+        '</div>'+
+        '<div class="mcmeta">'+esc(it.platform||'YouTube')+' · '+s.done+' of '+STAGES.length+' done · '+esc(whenText(it.updatedAt))+'</div>'+
+        s.html+
+        '<div class="mcacts">'+
+          '<button class="mcbtn" onclick="openContent(\''+it.id+'\')">Open</button>'+
+          '<button class="mcbtn ghost" onclick="removeContent(\''+it.id+'\')">Delete</button>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+  // Opening a piece of content puts you back in the tool with its context
+  // restored — the point of storing it in the first place.
+  async function openContent(id){
+    const it = await window.__contentGet(id); if(!it) return;
+    activeContentId = it.id; activeContentTopic = it.topic || '';
+    setV('t-desc', it.topic || '');
+    if(it.stages && it.stages.title){
+      setV('t-keyword', it.stages.title.keyword || '');
+    }
+    if(it.contentType) setV('t-type', it.contentType);
+    pickPill('t-platform', it.platform || 'YouTube');
+    switchTool('titles');
+    toast('Picked up where you left off.');
+  }
+
+  async function removeContent(id){
+    if(!confirm('Delete this? It removes the whole record for this video, including its scores.')) return;
+    const ok = await window.__contentDelete(id);
+    if(ok){ if(activeContentId===id){ activeContentId=null; activeContentTopic=''; } toast('Deleted.'); loadMyContent(); }
+    else toast('Couldn\'t delete that — try again.');
   }
 
   // ================= Channel Audit =================
@@ -1930,7 +2086,8 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signOut as fbSignOut } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+  import { getFirestore, doc, getDoc, setDoc, collection, addDoc, updateDoc, deleteDoc,
+           getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
   const app = initializeApp({
     apiKey:"AIzaSyCwMtb3Oqzilk2Axxoh15ENht6ykvFyvyc", authDomain:"creatornexushq-eaf70.firebaseapp.com",
     projectId:"creatornexushq-eaf70", storageBucket:"creatornexushq-eaf70.firebasestorage.app",
@@ -1947,6 +2104,56 @@
       niche:p.niche||'', game:p.game||'', platforms:p.platforms||[], grow:p.grow||[],
       size:p.size||'', keyword:p.keyword||'', optin:!!p.optin, profileComplete:true, updatedAt:new Date().toISOString()
     }, {merge:true}); }catch(e){}
+  };
+
+  // ===================== CONTENT STORE =====================
+  // The creator's record. Every stage decision for one piece of content lives
+  // on one document, so a video accumulates rather than evaporating.
+  // Failures are non-fatal by design: losing a save must never cost someone the
+  // generation they just paid a credit for.
+  const contentRef = (uid) => collection(db, 'users', uid, 'content');
+
+  window.__contentCreate = async (fields) => {
+    const u = window.__currentUser; if (!u) return null;
+    try {
+      const now = new Date().toISOString();
+      const ref = await addDoc(contentRef(u.uid), Object.assign({
+        type: 'video', status: 'draft', platform: 'YouTube', topic: '',
+        stages: {}, outcome: null, createdAt: now, updatedAt: now
+      }, fields || {}));
+      return ref.id;
+    } catch (e) { console.warn('content create failed', e); return null; }
+  };
+
+  window.__contentUpdate = async (id, patch) => {
+    const u = window.__currentUser; if (!u || !id) return false;
+    try {
+      await updateDoc(doc(db, 'users', u.uid, 'content', id),
+        Object.assign({}, patch, { updatedAt: new Date().toISOString() }));
+      return true;
+    } catch (e) { console.warn('content update failed', e); return false; }
+  };
+
+  window.__contentList = async (max) => {
+    const u = window.__currentUser; if (!u) return [];
+    try {
+      const snap = await getDocs(query(contentRef(u.uid), orderBy('updatedAt', 'desc'), limit(max || 50)));
+      return snap.docs.map(d => Object.assign({ id: d.id }, d.data()));
+    } catch (e) { console.warn('content list failed', e); return []; }
+  };
+
+  window.__contentGet = async (id) => {
+    const u = window.__currentUser; if (!u || !id) return null;
+    try {
+      const snap = await getDoc(doc(db, 'users', u.uid, 'content', id));
+      return snap.exists() ? Object.assign({ id: snap.id }, snap.data()) : null;
+    } catch (e) { return null; }
+  };
+
+  window.__contentDelete = async (id) => {
+    const u = window.__currentUser; if (!u || !id) return false;
+    try { await deleteDoc(doc(db, 'users', u.uid, 'content', id)); return true; }
+    catch (e) { console.warn('content delete failed', e); return false; }
   };
 
   onAuthStateChanged(auth, async (u)=>{

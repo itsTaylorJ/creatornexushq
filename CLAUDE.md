@@ -120,10 +120,23 @@ flagged for deletion" while it was being made the profile store).
     grow[], size, keyword, updatedAt`. Written at signup (auth page) and
     merged from the Studio. This was previously dead data — it now has a job.
     `localStorage.cnx_profile` is the instant/offline cache in front of it.
+  - **Firestore `users/<uid>/content/<id>`** = **the creator's record** (shipped
+    2026-07-26). One document per piece of content, carrying every stage
+    decision: `{type, status, platform, topic, contentType, stages:{title:{chosen,
+    suggested[], score, keyword, shortDescription, fullDescription, at}, ...},
+    outcome, createdAt, updatedAt}`. Written by `window.__contentCreate/Update/
+    List/Get/Delete` in the Studio's module script. **This is the moat** — see
+    [PRODUCT.md](PRODUCT.md).
+  - **Firestore `users/<uid>/weeks/<isoWeek>`** = the weekly review, **immutable
+    once written** (enforced in rules, not trusted to the client — a rewritable
+    history is worth less than none).
   - **Security:** [firestore.rules](firestore.rules) — a signed-in user may
-    read/write ONLY their own `users/{uid}`; everything else denied. This closed
-    the open test-mode database. Deploy with
-    `firebase deploy --only firestore:rules` (hosting deploys do NOT ship rules).
+    read/write ONLY their own `users/{uid}` **and its `content`/`weeks`
+    subcollections**; `weeks` allows create but refuses update/delete;
+    everything else denied. Deploy with `firebase deploy --only firestore:rules`
+    (hosting deploys do NOT ship rules). **Verified by test:** creator B gets 403
+    reading, listing or writing creator A's content, anonymous gets 403, and
+    patching a closed week gets 403.
 - **AI:** hybrid free-tier. Text: Groq `openai/gpt-oss-120b` primary,
   Gemini `gemini-flash-latest` fallback. Vision: Gemini primary, Groq
   `meta-llama/llama-4-scout-17b-16e-instruct` fallback. `max_tokens: 3000`
@@ -495,9 +508,10 @@ Plus `users/{uid}/weeks/{isoWeek}` — the Weekly Review, **immutable once close
 `content`, `weeks` and `outcome` are never deleted; they are the moat.
 
 **MLP order (nothing ships to a creator before all of it):**
-1. Content data model + Firestore rules
-2. Tools write to Content objects — one tool at a time, **Titles first**
-3. Library
+1. ~~Content data model + Firestore rules~~ ✅ **done 2026-07-26**
+2. ~~Titles writes to Content objects~~ ✅ **done** — the other six wait until
+   the thin loop is validated with real creators
+3. ~~My Content (Library)~~ ✅ **done**
 4. This Week
 5. Manual outcome entry (typed-in views/CTR — no API needed)
 6. Weekly Review + shipped streak
