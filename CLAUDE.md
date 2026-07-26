@@ -150,8 +150,8 @@ exists as `ANTHROPIC_API_KEY` reserved for a future paid tier; unused.)
   deliberately LAST, after beta validates value.
 - **Cost reality (measured, not estimated):** a titles generation billed ~2,400
   total tokens for ~390 visible output tokens — roughly a **5x hidden reasoning
-  multiplier**. "Unlimited" at $12 loses money once inference is paid; AUDIT.md
-  recommends Creator 40/day and Pro 150/day instead.
+  multiplier**. "Unlimited" at $12 loses money once inference is paid — kill it,
+  and see STRATEGY.md for the corrected tiers.
 
 ## Page map
 
@@ -246,6 +246,57 @@ during the migration.
   with emails like `x-<ts>@creatornexushq-audit.invalid`. ALWAYS delete after.
 - Local preview: tiny Node static server on :8765 (no Python on this box).
 
+## Decisions already made — do not relitigate without new evidence
+
+Each of these was investigated with real numbers and settled. Reopening them
+costs days. If you have genuinely new information, say what changed.
+
+- **No full-stack rewrite** (Next.js / TypeScript / Postgres / Redis / vector DB).
+  The current stack is deployed, working and costs ~nothing. A rewrite delivers
+  zero user-facing value, adds three paid services and three failure modes, and
+  is a 2–3 month stall for a solo founder. Rewrite when scale forces it.
+- **No multi-agent "creative swarms".** N sequential calls where we make 1 — 5×
+  cost and 5× latency on top of an already-measured 5× reasoning multiplier, for
+  marginal quality. A better single prompt beats a swarm of mediocre ones.
+  Measured: ~$0.025/generation vs ~$0.005 today.
+- **No predictive eye-tracking / thumbnail heatmaps.** Not deliverable at this
+  scale; it would be a fabricated metric, which the honesty standard forbids.
+- **No direct posting / upload publishing.** Different product entirely (upload
+  queues, retry logic, token refresh) and gated behind YouTube + TikTok +
+  Instagram app review — a multi-month bureaucratic path with real rejection
+  risk. **Build the organizer, not the publisher.** The creator's problem isn't
+  "clicking upload is hard", it's "what should I post, where, when".
+- **No long-form → Shorts video pipeline.** ffmpeg, transcoding, object storage
+  and per-GB costs are architecturally incompatible with a Workers/static stack.
+  It's the one deferred idea with real market pull — revisit only after paying
+  users exist.
+- **YouTube read-only OAuth is the right OAuth** (read, never write). Light
+  approval burden, and it's what turns "AI writes titles from your description"
+  into "from what actually works on *your* channel". Sequenced *after* content
+  memory exists, so it has decisions to attach outcomes to.
+- **BYO API key is a good idea, still unbuilt.** Power users bring their own
+  Gemini/Groq key → unlimited for them at $0 marginal cost to us. Roughly two
+  days of work and it directly relieves the ~50-user ceiling.
+
+## Pro grants & entitlements (operational runbook)
+
+**Automatic trial:** every account gets a 7-day Pro trial starting at its *first
+generation*, not signup. KV `trial:<uid>`, no TTL, so a lapsed trial can't
+restart. Metered 50/day.
+
+**Manual comps:** Worker checks KV `pro:<email>` (lowercased sign-in email);
+value = last active day `YYYY-MM-DD` UTC. Manual grants beat trial state and
+expire on their own — no cleanup needed.
+
+```bash
+wrangler kv key put --namespace-id=1df69e401a134d08829ef71f645d5f88 "pro:friend@example.com" "2026-07-31" --remote
+wrangler kv key delete --namespace-id=1df69e401a134d08829ef71f645d5f88 "pro:friend@example.com" --remote
+wrangler kv key list --namespace-id=1df69e401a134d08829ef71f645d5f88 --remote
+```
+
+⚠️ The Wrangler **KV CLI crashes on the Windows box** (libuv assertion). Use the
+Cloudflare dashboard there, or run these from the other machine.
+
 ## The design sequence (standing method — each step gates the next)
 
 ```
@@ -277,14 +328,17 @@ not a decision. It is ratified only after steps 2 and 3 are signed off.
 3. **[STRATEGY.md](STRATEGY.md)** — the design: creator journey, information
    architecture, memory model, AI ladder, beta plan. Everything labelled
    MLP / Post-Beta / v2 / LTV.
-4. **[ROADMAP.md](ROADMAP.md)** — tool status board and the Pro-grant runbook.
-   Superseded from the migration plan onward.
-5. **[TESTING.md](TESTING.md)** — manual QA checklist; add a section per tool.
-   **[TESTER-GUIDE.md](TESTER-GUIDE.md)** is the tester-facing counterpart —
-   what's real, what's gated, the known quirks, and the six questions worth
-   asking them. Keep it honest and short; it's the first thing a stranger reads.
-6. **[AUDIT.md](AUDIT.md)** — **largely superseded** (2026-07-20). Keep only for
-   its measured unit economics; ignore its roadmap and phase plan.
+4. **[TESTING.md](TESTING.md)** — manual QA checklist; add a section per tool.
+
+Plus one **external** document, deliberately kept separate because it has a
+different audience: **[TESTER-GUIDE.md](TESTER-GUIDE.md)** — the page handed to a
+beta tester. What's real, what's gated, the known quirks, and the six questions
+worth asking them. Short and honest; it's the first thing a stranger reads.
+
+*Folded in and deleted 2026-07-26: `ROADMAP.md` (tool status → the consolidation
+table above; Pro-grant runbook → its own section) and `AUDIT.md` (measured unit
+economics → Limits & plans; durable verdicts → Decisions already made). Four
+internal docs is the ceiling — if a fifth appears, something needs folding.*
 
 ## Studio consolidation (current major effort)
 
@@ -459,7 +513,7 @@ honest and adjacent: how many of the ranking videos use each tag.
 Later: Phase 3 monetization (**paid inference FIRST**, then Stripe — the Groq
 free tier caps at roughly 50 active users and cannot carry paid plans), Phase 4
 differentiation (YouTube read-only OAuth → real channel analytics).
-Full audit + phased plan in AUDIT.md §9-10.
+Full design and sequencing in [STRATEGY.md](STRATEGY.md).
 
 **Scoring is not one thing — be careful which kind a tool needs.** Tags can be
 scored *deterministically* because there is ground truth in the browser (the tag
