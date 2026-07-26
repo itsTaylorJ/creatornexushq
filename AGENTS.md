@@ -67,17 +67,9 @@ No fake features, no fake data, no false promises. Unbuilt tools are gated
 exists. Trials/limits shown to users must match what the server enforces.
 
 **Docs discipline:** any change to architecture, the data model, limits, or
-strategy updates THIS FILE in the SAME commit. A stale CLAUDE.md is worse than
+strategy updates THIS FILE in the SAME commit. A stale AGENTS.md is worse than
 none — it already caused one wrong call (Firestore was documented as "dead,
 flagged for deletion" while it was being made the profile store).
-
-**Never describe a file you have not just read.** This has now caused two wrong
-calls in the same week: the Firestore one above, and a strategy doc that told a
-future session to delete `monetization` and `resources` as "static filler" when
-one is a working tool with 42 interactive elements and the other is a curated
-list of 27 free creator tools. Both were written from memory. **Summarising code
-you remember is how confident, wrong documentation gets written** — and wrong
-documentation outlives the conversation that produced it. Open the file first.
 
 ## How to work on this project (the owner's standing instructions)
 
@@ -93,7 +85,7 @@ documentation outlives the conversation that produced it. Open the file first.
    The legacy page stays live and untouched until its Studio replacement is
    verified working.
 5. **Definition of done:** `node --check` on every extracted `<script>` block →
-   verified in the browser with Playwright MCP → committed with CLAUDE.md
+   verified in the browser with Playwright MCP → committed with AGENTS.md
    updated in the same commit. Throwaway test accounts are ALWAYS deleted.
 6. **Report honestly.** If something is half-working, say so plainly. Don't
    claim verification that didn't happen. This is the same standard the product
@@ -325,7 +317,7 @@ Cloudflare dashboard there, or run these from the other machine.
 2. Creator journey (workflows)  → STRATEGY.md   ✅ SIGNED OFF 2026-07-26
 3. Information architecture     → STRATEGY.md   ✅ SIGNED OFF 2026-07-26
 4. Data model                   → STRATEGY.md   ✅ RATIFIED (derives from 2+3)
-5. Technical roadmap            → CLAUDE.md     ✅ set — build the thin loop
+5. Technical roadmap            → AGENTS.md     ✅ set — build the thin loop
 6. Beta strategy                → STRATEGY.md   ⚠️ 3 creators first, then 10
 ```
 
@@ -342,7 +334,7 @@ happened to get written first.
 
 ## Doc hierarchy (read in this order)
 
-1. **CLAUDE.md** (this file) — authoritative current state, how to work here,
+1. **AGENTS.md** (this file) — authoritative current state, how to work here,
    product philosophy. If another doc disagrees on facts, this wins.
 2. **[PRODUCT.md](PRODUCT.md)** — what company this is: mission, brand promise,
    manifesto, anti-principles, ideal first customer, creator memory strategy,
@@ -396,7 +388,7 @@ screenshots). Screenshot + `browser_evaluate` for DOM assertions.
 Phase 1 **complete**: landing auth-gate, 401 retry, platform title rules,
 platform-aware hashtags + dual descriptions + keyword field, 14 tones,
 purple-on-purple fix, trial metering 50/day, global cap 800, honest modal copy,
-merged Tags & Hashtags tool, deterministic 0-100 SEO scorer, CLAUDE.md,
+merged Tags & Hashtags tool, deterministic 0-100 SEO scorer, AGENTS.md,
 Google sign-in verified by the owner.
 
 Now in **Phase 2 — the Studio consolidation** (see the section above).
@@ -533,29 +525,9 @@ Plus `users/{uid}/weeks/{isoWeek}` — the Weekly Review, **immutable once close
 only then can it say "the titles you wrote here outperformed your others by X%"),
 community, mobile app, shareable review image, referrals, most polish.
 
-**Unlink, don't delete.** Only `competitor`, `collab` and `trends` come out of
-the nav — three menu items leading to "Coming Soon" make a small product look
-padded. **Leave the files.** Unlinking is reversible in a minute; deleting throws
-away working code.
-
-**Do NOT delete `monetization` or `resources`.** An earlier draft of STRATEGY.md
-called them "static filler"; that was written from memory without opening them
-and it was wrong. `monetization` is a real tool (42 interactive elements, YouTube
-Partner Program thresholds, accurate maths) aimed exactly at our ideal user, and
-it's *progress toward a goal* — the emotional shape the whole product is built
-on. `resources` is a curated list of 27 genuinely useful free creator tools;
-"here's what you need and none of it costs money" is a trust signal that fits the
-brand. `platforms` is merely redundant with Channel Audit — fold it later, once
-the Audit has been used in anger.
-
-**Education is on-mission, and there are two kinds.** The manifesto commits to
-creators getting *better, not more dependent*. The defensible kind is the **"why"
-line**: one contextual sentence attached to every score we already show, tied to
-their own input ("thin text disappears at 168px; a 4px stroke survives"). It's
-cheap, it's impossible to copy without our context, and it expires in the best
-way — after ten videos they don't need it. A blog/guide library is the other
-kind: every competitor has one, it dates fast, it doesn't compound, and it
-competes with YouTube itself. Skip it unless creators ask.
+**Deleting (not deferring):** `monetization`, `resources`, `platforms` pages;
+the three "Coming Soon" pages (advertising things that don't exist costs trust);
+the 10 legacy tool pages once the loop ships.
 
 **Mobile is a different product, not a smaller one.** Desktop is the workbench
 (packaging, planning, review, library). Mobile is capture / glance / ship /

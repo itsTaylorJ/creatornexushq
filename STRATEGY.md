@@ -462,12 +462,40 @@ depends on it) · week-4 retention under 40%.
 
 # Part X — Features: remove, merge, add
 
-**Remove (MLP)**
-- `monetization`, `resources`, `platforms` pages — static filler, no recurring value
-- `competitor`, `collab`, `trends` "Coming Soon" pages — three pages advertising
-  things that don't exist reads as vaporware and costs trust
-- The 10 legacy tool pages, once the loop ships
-- "AI-powered" from all marketing copy
+> ⚠️ **Corrected 2026-07-26.** An earlier draft of this section told a future
+> session to delete `monetization`, `resources` and `platforms` as "static
+> filler, no recurring value". **That was wrong, and it was written from memory
+> without opening the files.** Two of the three are working, useful tools. The
+> corrected version is below. Lesson recorded in CLAUDE.md: never describe a
+> file you haven't just read.
+
+**Unlink from nav — but keep the files (MLP)**
+
+Unlinking is a nav edit you can undo in a minute; deleting throws away working
+code. The problem was never that these pages exist — it's that advertising them
+in the navigation makes a small product look padded.
+
+- `competitor`, `collab`, `trends` — three menu items leading to "Coming Soon"
+  is the only real offender. Take them out of the nav; leave the files.
+
+**Keep — these were mislabelled**
+- **`monetization`** — a real tool. 42 interactive elements tracking YouTube
+  Partner Program thresholds with accurate maths, aimed exactly at our ideal
+  user, who cares intensely about those numbers. It's also *progress toward a
+  goal*, which is the emotional shape the whole product is built around.
+  **Candidate to become a Studio tool**, not a deletion.
+- **`resources`** — a curated list of 27 genuinely useful free/cheap creator
+  tools (OBS, DaVinci Resolve, Kdenlive, CapCut, Canva, Photopea, remove.bg).
+  Costs nothing to maintain, and "here's what you actually need and none of it
+  costs money" is a trust signal that fits the brand precisely. **Keep it linked.**
+
+**Fold when their replacements are proven, not before**
+- `platforms` — its manual per-platform stat entry is now duplicated by Channel
+  Audit. Redundant rather than useless; fold once the Audit has been used in anger.
+- The 10 legacy tool pages, once the loop ships.
+
+**Remove (copy, not pages)**
+- "AI-powered" from all marketing copy.
 
 **Merge (MLP)**
 - All seven tools → stages of a Content object (still individually reachable)
@@ -476,7 +504,7 @@ depends on it) · week-4 retention under 40%.
 
 **Add**
 - **MLP:** Content object · This Week · Library · manual outcomes · Weekly Review ·
-  shipped streak · idea capture
+  shipped streak · idea capture · **the "why" line on every score** (below)
 - **Post-Beta:** Progress page · shareable review image · outcome-informed prompts ·
   packaging go/no-go
 - **v2:** YouTube OAuth · signals engine · cohorts · mobile app · multi-platform
@@ -485,6 +513,43 @@ depends on it) · week-4 retention under 40%.
   benchmarks (opt-in, aggregate, never leaderboards)
 
 ---
+
+# Part X.b — The education layer
+
+The manifesto already commits to this: *"the creator should get better, not more
+dependent. If they can eventually do it without us, we succeeded."* A product
+that only generates creates dependence. A product that teaches creates a better
+creator — which is the stated mission, and it's also a genuine competitive gap:
+vidIQ and TubeBuddy sell you a score and rarely explain it, because explaining
+makes them less necessary. They're optimising for necessity. We shouldn't.
+
+Two very different things get called "education". Only one is defensible.
+
+**1. The "why" line — MLP, and the differentiated one.**
+Every score we already show gets one sentence of contextual explanation, tied to
+*their* input. Not a help article — a sentence.
+
+- Tag score 42 → *"Your tags describe the hobby, not this video. Ranking videos
+  name the product AND the moment."*
+- Text readability 5/10 → *"Thin text disappears at 168px. A 4px dark stroke
+  survives; a thinner one won't."*
+- Views per follower low → *"Reach is fine, conversion isn't. That's a CTA
+  problem, not a titles problem."*
+
+Impossible to copy well, because it needs the creator's context. And it expires
+in the best way: after ten videos they don't need the explanation any more.
+**Cheap to build** — the models already produce this reasoning; we just have to
+show it as teaching rather than bury it in prose.
+
+**2. A content library — blog posts and how-to guides. Post-Beta at the earliest,
+and only if creators ask.**
+Every competitor has one. It's substantial work to write, it dates quickly, it
+doesn't compound, and it competes with the entire internet including YouTube
+itself — where creators already learn for free. Skip it until asked.
+
+**Keep the curated free-tools list** (`resources`). That's a third category:
+not a guide, not a score, just "here's what you actually need and none of it
+costs money". Honest, cheap, and exactly on brand.
 
 # Part XI — Implementation order
 
