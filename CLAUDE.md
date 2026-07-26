@@ -5,6 +5,27 @@ gaming-first but explicitly also TCG/card openings, unboxings, vlogs, podcasts,
 beauty, IRL, etc.). Currently in pre-launch beta hardening. The #1 goal is a
 FREE testable beta with real users before any monetization.
 
+## Product vision (what we're actually building)
+
+Not another TubeBuddy, vidIQ, or AI dashboard. The real competitor is not a
+company — it's **inconsistency, burnout, overwhelm, and creators quitting before
+they succeed.** Every feature should make someone a more confident, more
+consistent creator, or it doesn't belong.
+
+**The thing that makes this work is memory, not generation.** Text generation is
+a commodity that gets cheaper every year; a creator's accumulated history,
+progress and proof of improvement gets more valuable every week. Charge for the
+asset that compounds, never for the disposable output.
+
+Before building anything, ask: *will this help someone become a more successful,
+more confident, more consistent creator?* If no, cut it.
+
+**Read [STRATEGY.md](STRATEGY.md) before planning new work** — a dated (2026-07-26)
+adversarial review of product, pricing, brand and positioning. Its central
+finding: seven working tools exist, but **nothing a creator produces is ever
+saved**, so there is no mechanical reason to return. Content persistence is the
+highest-priority work in the project.
+
 **Live site:** https://creatornexushq-eaf70.web.app
 **API:** https://creatornexushq-api.tjlangston15.workers.dev
 **Repo:** https://github.com/itsTaylorJ/creatornexushq (branch `main`; owner works across two computers — always `git pull` first)
@@ -201,12 +222,15 @@ during the migration.
    disagrees with it, this one wins.
 2. **[ROADMAP.md](ROADMAP.md)** — tool-by-tool status board, the migration
    queue, and the Pro-grant runbook. Kept in step with this file.
-3. **[TESTING.md](TESTING.md)** — the manual QA checklist to run before
+3. **[STRATEGY.md](STRATEGY.md)** — dated (2026-07-26) adversarial product,
+   pricing, brand and positioning review. Sets *direction*; CLAUDE.md sets
+   *facts*. Read before planning new features.
+4. **[TESTING.md](TESTING.md)** — the manual QA checklist to run before
    inviting real users. Add a section whenever a tool ships.
    **[TESTER-GUIDE.md](TESTER-GUIDE.md)** is the tester-facing counterpart —
    what's real, what's gated, the known quirks, and the six questions worth
    asking them. Keep it honest and short; it's the first thing a stranger reads.
-4. **[AUDIT.md](AUDIT.md)** — a *dated snapshot* (2026-07-20) of the full
+5. **[AUDIT.md](AUDIT.md)** — a *dated snapshot* (2026-07-20) of the full
    product/engineering audit. Its Phase 1 findings are fixed; keep it for the
    unit economics, competitive positioning, and Phase 3 reasoning.
 
@@ -297,8 +321,49 @@ Phase 2 shipped so far:
   analytics account is connected and the numbers are the user's own. Never
   soften that — it's the difference between honest and fraudulent here.
 
-**Phase 2 is done. Next: run [TESTING.md](TESTING.md) end-to-end, then Phase 4
-(My Analytics / YouTube OAuth) or Phase 3 (paid inference → Stripe).**
+**Phase 2 is done — but the 2026-07-26 strategy review reordered what comes
+next. Do NOT start YouTube OAuth yet.**
+
+## Phase 3 — make the product remember (the current priority)
+
+Per [STRATEGY.md](STRATEGY.md). In order:
+
+1. **Content data model** — `users/{uid}/content/{id}` holding
+   `{type, platform, topic, inputs, outputs, score, createdAt, status}`. Every
+   tool writes to it. This is the single highest-value change in the project;
+   every retention, motivation and analytics idea depends on it.
+2. **Content history** — see, reuse and revisit everything you've made.
+3. **Weekly Review** — what you shipped, what worked, the one thing to fix.
+   Designed to be **screenshotted and shared**; this is the intended
+   word-of-mouth engine and the brand's signature feature.
+4. **Shipped streak** — weeks published in a row, with honest handling of a
+   planned break. Never a daily-login streak; that's engagement bait and it
+   would cost us the trust that is our main asset.
+5. **Studio home** — a place that shows where you are, not a tool in the middle
+   of a task.
+
+**Then** paid inference (the Groq free tier caps around 50 active users, so the
+product cannot serve a paying customer today), corrected pricing, and only after
+that YouTube OAuth — which is far more valuable once history exists, because it
+can say "the titles you wrote here outperformed your others by X%".
+
+**Pricing correction required before any beta invite:** kill "unlimited"
+(measured ~5x reasoning multiplier makes it unprofitable), Creator to ~$19, and
+gate on *memory* rather than volume — free users should feel the loss of history,
+not hit a wall.
+
+## Anti-goals (things we deliberately will NOT build)
+
+- Daily-login streaks, notification badges, artificial urgency, leaderboards
+  against other creators — engagement mechanics that corrode trust.
+- "AI-powered" as a headline. AI is how, never what. Lead with the outcome.
+- Referral programs or viral loops before retention is proven; amplifying a
+  leaky product burns the audience.
+- Any metric goal that rewards making the product worse (daily actives, session
+  length, generations per user).
+
+**North Star metric: weekly active creators who published something.** Not
+logins, not generations — the number that is only true if we did our job.
 Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
 setup from the owner; Twitch as a fast follow).
 
