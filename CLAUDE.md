@@ -223,7 +223,7 @@ tripled/minified CSS and are being retired tool-by-tool, never big-bang):
 | **Thumbnails** ✅ migrated | vision analyzer + AI prompt gen (two modes) |
 | **Ideas, Hooks & CTAs** ✅ migrated | content ideas (each with a hook) + CTAs |
 | **Posting Schedule** ✅ migrated | weekly calendar builder + schedule rating |
-| Live Titles | stream planner (+ TikTok Live, Rumble) |
+| **Live Titles** ✅ migrated | stream planner + TikTok Live + Rumble |
 | Channel Audit | analytics advice + content patterns + **manual metric entry** |
 
 Rules while migrating: old pages stay live until their replacement is verified;
@@ -273,8 +273,16 @@ Phase 2 shipped so far:
   — the short, friendly, honest page to hand an actual beta tester. Two
   different audiences; don't merge them.
 
-**Next in line (agreed order, one at a time with a check-in each):**
-Live Titles → Channel Audit.
+- **Live Titles** migrated: 6 platforms with a live per-platform hint explaining
+  how discovery differs, plus a character budget per title (Twitch 100,
+  TikTok Live 40, others 70) that flags anything that will truncate.
+  **`platformKey()` had two real bugs**: `'TikTok Live'` fell through to the
+  feed rules, and **`'Rumble'` silently resolved to `youtube`**. Both now have
+  their own `PLATFORM_RULES` entry, and the specific cases are checked first.
+  Measured proof the rules bite: same input returns avg 65 chars on Twitch,
+  **38 on TikTok Live**, 52 on Rumble, each shaped for that platform.
+
+**Next in line:** Channel Audit — the last Studio tool.
 Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
 setup from the owner; Twitch as a fast follow).
 

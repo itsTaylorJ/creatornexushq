@@ -32,7 +32,7 @@ carries a "Back to Studio" link so nothing dead-ends.
 | Thumbnails | **Studio** ✅ migrated | Real — vision scoring + measured size checks + true-to-size previews + AI prompt generator |
 | Ideas, Hooks & CTAs | **Studio** ✅ migrated | Real — ideas each carry a ready-to-say hook; CTAs split verbal vs on-screen with placement advice |
 | Posting Schedule | **Studio** ✅ migrated | Real — build a week around your real availability, or have your current schedule rated |
-| Live Titles | `streaming.html` | Real — add TikTok Live + Rumble on migration |
+| Live Titles | **Studio** ✅ migrated | Real — 6 platforms incl. TikTok Live and Rumble, per-platform discovery hints and character budgets |
 | Channel Audit | `analyze.html` (analytics advice, patterns) | Real advice; **manual metric entry not built yet** |
 | Monetization tracker | `monetization.html` | Real — client-side math, accurate thresholds |
 | Resources / Platforms | `resources.html`, `platforms.html` | Real — manual stat entry is honest; OAuth connect shows an honest "coming soon" |
@@ -46,9 +46,9 @@ carries a "Back to Studio" link so nothing dead-ends.
 2. ~~Thumbnails~~ ✅ done
 3. ~~Ideas, Hooks & CTAs~~ ✅ done
 4. ~~Posting Schedule~~ ✅ done
-5. **Live Titles** ← next — + TikTok Live, Rumble
-6. Channel Audit — + manual metric entry, benchmark → diagnose → route to the
-   fixing tool
+5. ~~Live Titles~~ ✅ done
+6. **Channel Audit** ← last one — + manual metric entry, benchmark → diagnose →
+   route to the fixing tool
 
 The legacy `analyze.html` tag tool stays live and untouched until the Studio
 version is confirmed working against the deployed Worker.

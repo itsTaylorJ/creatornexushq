@@ -62,8 +62,8 @@ Read this first so you don't chase things we already know:
 
 ## C. Studio shell and navigation
 
-14. [ ] Every rail item opens its tool. **Titles, Tags, Thumbnails, Ideas and
-        Posting Schedule are live**; Live Titles and Channel Audit show "soon".
+14. [ ] Every rail item opens its tool. **Titles, Tags, Thumbnails, Ideas,
+        Posting Schedule and Live Titles are live**; only Channel Audit shows "soon".
 15. [ ] Clicking the account block at the bottom opens the **Account page**.
 16. [ ] Edit the channel context via the **Edit** button top-right — changes
         show immediately in the bar.
@@ -152,64 +152,80 @@ Read this first so you don't chase things we already know:
 57. [ ] You get a score bar, what to keep, what to change, best days and times,
         frequency advice, per-platform tips and a suggested replacement schedule.
 
-## I. "Try an example" (the first-run path)
+## I. Live Titles
 
-58. [ ] On **each** live tool, click **"Try an example →"** under the heading.
-59. [ ] The form fills with a realistic scenario and you can hit generate
+58. [ ] Pick each platform in turn. The **hint under the pills changes** and
+        explains how discovery works there — Twitch is a directory, TikTok LIVE
+        is a feed with no directory at all.
+59. [ ] Generate for **Twitch**. Eight titles, each tagged with an angle
+        (Hype/Grind/Challenge…), plus a best pick and a platform note.
+60. [ ] Titles lead with the **moment or stakes**, not the game name — the
+        category already says the game.
+61. [ ] Switch to **TikTok Live** and regenerate. Titles get **noticeably
+        shorter** and read as "happening right now".
+62. [ ] Each title shows a **character count against that platform's budget**
+        (Twitch 100, TikTok Live 40). Anything over is flagged in amber.
+63. [ ] Try **Rumble** — output should look YouTube-ish, front-loaded and plain.
+64. [ ] No title comes back wrapped in quote marks.
+
+## J. "Try an example" (the first-run path)
+
+65. [ ] On **each** live tool, click **"Try an example →"** under the heading.
+66. [ ] The form fills with a realistic scenario and you can hit generate
         immediately without inventing anything.
-60. [ ] On Thumbnails it fills the text fields and tells you to add your own
+67. [ ] On Thumbnails it fills the text fields and tells you to add your own
         image — it does **not** pretend to have one.
 
-## J. Copy buttons (check this everywhere)
+## K. Copy buttons (check this everywhere)
 
-61. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
+68. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
         prompt and an idea. Paste each one somewhere.
-62. [ ] The pasted text is **exactly** what was on screen — including line
+69. [ ] The pasted text is **exactly** what was on screen — including line
         breaks in multi-line blocks like the full description.
-63. [ ] The button flips to **✓ Copied** and back.
+70. [ ] The button flips to **✓ Copied** and back.
 
-## K. Account page
+## L. Account page
 
-64. [ ] Name, username and email are correct.
-65. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
-66. [ ] The channel summary matches your survey answers.
-67. [ ] Change your username, save, reload — **it stuck**.
-68. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
-69. [ ] **Sign out** works and returns you to a logged-out state.
+71. [ ] Name, username and email are correct.
+72. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
+73. [ ] The channel summary matches your survey answers.
+74. [ ] Change your username, save, reload — **it stuck**.
+75. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
+76. [ ] **Sign out** works and returns you to a logged-out state.
 
-## L. Limits and honesty
+## M. Limits and honesty
 
-70. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
+77. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
         error and not a redirect that loses your work.
-71. [ ] The usage counter in the rail **decreases by exactly one** per successful
+78. [ ] The usage counter in the rail **decreases by exactly one** per successful
         generation.
-72. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
+79. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
         and **the counter does not drop**.
-73. [ ] Nowhere in the app does anything imply you can **pay** yet.
-74. [ ] No tool claims live TikTok/Instagram trend data.
+80. [ ] Nowhere in the app does anything imply you can **pay** yet.
+81. [ ] No tool claims live TikTok/Instagram trend data.
 
-## M. Legacy pages still work
+## N. Legacy pages still work
 
-75. [ ] From the landing Tools menu, open the older pages
+82. [ ] From the landing Tools menu, open the older pages
         (`app`, `analyze`, `thumbnail`, `streaming`, `platforms`).
-76. [ ] Each one has a **"Back to Studio"** link that works.
-77. [ ] Deep links land on the right tab, e.g.
+83. [ ] Each one has a **"Back to Studio"** link that works.
+84. [ ] Deep links land on the right tab, e.g.
         `creatornexushq-analyze.html?tab=analytics` opens **Analytics Advice**,
         not the default tab.
-78. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
+85. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
         **Coming Soon** — no fake output.
 
-## N. Mobile pass (do this on a real phone)
+## O. Mobile pass (do this on a real phone)
 
-79. [ ] Repeat steps 18, 24, 36 and 50 on your phone.
-80. [ ] **No page scrolls sideways at any point.** This is the single most
+86. [ ] Repeat steps 18, 24, 36 and 50 on your phone.
+87. [ ] **No page scrolls sideways at any point.** This is the single most
         common regression in this codebase — check every results screen,
         including the thumbnail size-preview strip (it should scroll on its own).
-81. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
+88. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
 
-## O. Cleanup
+## P. Cleanup
 
-82. [ ] **Delete every throwaway account** in the Firebase console
+89. [ ] **Delete every throwaway account** in the Firebase console
         (Authentication → Users). Non-negotiable.
 
 ---

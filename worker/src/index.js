@@ -257,6 +257,21 @@ const PLATFORM_RULES = {
 - Like Twitch: category does discovery, the title sells the moment.
 - Authenticity over polish — Kick culture rewards real over produced.
 - No hashtags. Never wrap titles in quotation marks.`,
+  'tiktok-live': `PLATFORM RULES — TikTok LIVE (feed-driven, not a directory):
+- Nothing like Twitch: there is no category to browse. Viewers are dropped in
+  mid-stream from the feed, so the title must make sense to someone who arrived
+  three seconds ago with no context.
+- Very short — roughly 30-40 characters is the safe read on mobile.
+- State what is happening RIGHT NOW, in progress. Present tense.
+- 1-2 hashtags are acceptable here (unlike Twitch/Kick) since LIVE surfaces
+  through the same topic system as the feed.
+- Never wrap titles in quotation marks.`,
+  rumble: `PLATFORM RULES — Rumble (search + category, YouTube-like):
+- Discovery leans on search and category browsing more than an algorithmic feed.
+- Front-load the subject the way you would on YouTube; keep under ~70 characters.
+- The audience skews toward commentary, IRL and independent media — plain,
+  direct phrasing outperforms bait.
+- No hashtags in the title. Never wrap titles in quotation marks.`,
 };
 
 // Feed platforms: output is captions with hashtags baked in.
@@ -265,6 +280,10 @@ const FEED_PLATFORMS = ['tiktok', 'instagram', 'x', 'snapchat', 'facebook'];
 
 function platformKey(p) {
   const s = String(p || 'youtube').toLowerCase();
+  // Order matters: "TikTok Live" must NOT fall through to the feed rules, and
+  // Rumble used to silently resolve to youtube. Check the specific cases first.
+  if (s.includes('tiktok') && s.includes('live')) return 'tiktok-live';
+  if (s.includes('rumble')) return 'rumble';
   if (s.includes('tiktok')) return 'tiktok';
   if (s.includes('instagram') || s.includes('reel')) return 'instagram';
   if (s === 'x' || s.includes('twitter')) return 'x';
