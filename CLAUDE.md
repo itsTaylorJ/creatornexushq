@@ -5,26 +5,56 @@ gaming-first but explicitly also TCG/card openings, unboxings, vlogs, podcasts,
 beauty, IRL, etc.). Currently in pre-launch beta hardening. The #1 goal is a
 FREE testable beta with real users before any monetization.
 
-## Product vision (what we're actually building)
+## PRODUCT PHILOSOPHY — read this before writing any code
 
-Not another TubeBuddy, vidIQ, or AI dashboard. The real competitor is not a
-company — it's **inconsistency, burnout, overwhelm, and creators quitting before
-they succeed.** Every feature should make someone a more confident, more
-consistent creator, or it doesn't belong.
+**What we are.** The only place that knows *why* a creator's content worked.
+Analytics tools show what happened. We were there when the decision was made —
+the title they picked and the four they didn't, the thumbnail score they
+overrode, the week they skipped. Attach outcomes to decisions and you have
+something no analytics product can reconstruct afterwards.
 
-**The thing that makes this work is memory, not generation.** Text generation is
-a commodity that gets cheaper every year; a creator's accumulated history,
-progress and proof of improvement gets more valuable every week. Charge for the
-asset that compounds, never for the disposable output.
+**What we build.** One connected workflow: idea → make → package → publish →
+review → better idea. The tools are *stages of that loop*, never destinations.
+An operating system emerges from doing one journey exceptionally well, not from
+accumulating unrelated utilities.
 
-Before building anything, ask: *will this help someone become a more successful,
-more confident, more consistent creator?* If no, cut it.
+**What we refuse to build.** Daily-login streaks. Notification badges.
+Artificial urgency. Leaderboards against other creators. "AI-powered" as a
+headline. Referral loops before retention is proven. Anything that raises
+engagement while lowering trust — trust is the only asset that compounds as fast
+as memory, and it is destroyed in one decision.
 
-**Read [STRATEGY.md](STRATEGY.md) before planning new work** — a dated (2026-07-26)
-adversarial review of product, pricing, brand and positioning. Its central
-finding: seven working tools exist, but **nothing a creator produces is ever
-saved**, so there is no mechanical reason to return. Content persistence is the
-highest-priority work in the project.
+**Memory over generation.** Generation is approaching free and gets cheaper every
+year. A creator's history gets more valuable every week. Build and charge for the
+thing that compounds. Every AI capability we want — coaching, prediction, real
+personalisation — is gated on stored history, not on model quality. That is why
+persistence is urgent rather than merely important.
+
+**Quality means.** It works on a phone. It tells the truth when the truth is
+unflattering. It says "nothing to change this week" when that's the honest
+answer. Scores are deterministic where measurement is possible and labelled as
+judgement where it isn't. Failures cost the user nothing and explain themselves.
+
+**How we decide.** Before building anything, ask: *does this plausibly increase
+the chance this creator publishes next week?* If not, it's v2 at best. When
+unsure, prefer the option that makes the product quieter.
+
+**How we prioritise.** MLP → Post-Beta → v2 → Long-Term Vision. Anything not
+needed before the first outside creator touches the product is not MLP, however
+good it is.
+
+**How we measure.** North Star: **Weekly Shipped Rate** — the share of active
+creators who published something this week. Uncheatable by engagement tricks; it
+only moves if creators actually ship. We win only when they do.
+
+**How we think about creators.** They publish weekly, not daily — designing for
+daily use manufactures guilt. They are not "users to engage"; they are people who
+mostly quit before succeeding, and the enemy is inconsistency, burnout and
+overwhelm. Be useful at the moment of decision and quiet the rest of the time.
+
+**Read [STRATEGY.md](STRATEGY.md) before planning work** — the full creator
+journey, information architecture, memory model and AI ladder, with every
+recommendation labelled MLP / Post-Beta / v2 / LTV.
 
 **Live site:** https://creatornexushq-eaf70.web.app
 **API:** https://creatornexushq-api.tjlangston15.workers.dev
@@ -324,46 +354,67 @@ Phase 2 shipped so far:
 **Phase 2 is done — but the 2026-07-26 strategy review reordered what comes
 next. Do NOT start YouTube OAuth yet.**
 
-## Phase 3 — make the product remember (the current priority)
+## Phase 3 — the MLP: wire the loop, make it remember
 
-Per [STRATEGY.md](STRATEGY.md). In order:
+The seven tools are already the stages of making a video. They were built as
+seven destinations; they need to become one connected loop. Full design in
+[STRATEGY.md](STRATEGY.md).
 
-1. **Content data model** — `users/{uid}/content/{id}` holding
-   `{type, platform, topic, inputs, outputs, score, createdAt, status}`. Every
-   tool writes to it. This is the single highest-value change in the project;
-   every retention, motivation and analytics idea depends on it.
-2. **Content history** — see, reuse and revisit everything you've made.
-3. **Weekly Review** — what you shipped, what worked, the one thing to fix.
-   Designed to be **screenshotted and shared**; this is the intended
-   word-of-mouth engine and the brand's signature feature.
-4. **Shipped streak** — weeks published in a row, with honest handling of a
-   planned break. Never a daily-login streak; that's engagement bait and it
-   would cost us the trust that is our main asset.
-5. **Studio home** — a place that shows where you are, not a tool in the middle
-   of a task.
+**Target navigation** (replaces the 7-item tool rail):
 
-**Then** paid inference (the Groq free tier caps around 50 active users, so the
-product cannot serve a paying customer today), corrected pricing, and only after
-that YouTube OAuth — which is far more valuable once history exists, because it
-can say "the titles you wrote here outperformed your others by X%".
+```
+THIS WEEK   ·  the loop — make / ship / review. Default landing.
+LIBRARY     ·  every Content object you've made. The memory, visible.
+PROGRESS    ·  proof you're improving.            (Post-Beta)
+Quick tools ›  the seven, still one click away — steps, not destinations.
+```
 
-**Pricing correction required before any beta invite:** kill "unlimited"
-(measured ~5x reasoning multiplier makes it unprofitable), Creator to ~$19, and
-gate on *memory* rather than volume — free users should feel the loss of history,
-not hit a wall.
+**The core object** — `users/{uid}/content/{id}`:
 
-## Anti-goals (things we deliberately will NOT build)
+```js
+{ type, status, platform, topic, createdAt, publishedAt, url,
+  stages: { idea, hook, title, tags, thumb },   // each: chosen + suggested + score
+  outcome: { views, ctr, avgViewDuration, source: 'manual'|'youtube-api' } }
+```
 
-- Daily-login streaks, notification badges, artificial urgency, leaderboards
-  against other creators — engagement mechanics that corrode trust.
-- "AI-powered" as a headline. AI is how, never what. Lead with the outcome.
-- Referral programs or viral loops before retention is proven; amplifying a
-  leaky product burns the audience.
-- Any metric goal that rewards making the product worse (daily actives, session
-  length, generations per user).
+Plus `users/{uid}/weeks/{isoWeek}` — the Weekly Review, **immutable once closed**.
+`content`, `weeks` and `outcome` are never deleted; they are the moat.
 
-**North Star metric: weekly active creators who published something.** Not
-logins, not generations — the number that is only true if we did our job.
+**MLP order (nothing ships to a creator before all of it):**
+1. Content data model + Firestore rules
+2. Tools write to Content objects — one tool at a time, **Titles first**
+3. Library
+4. This Week
+5. Manual outcome entry (typed-in views/CTR — no API needed)
+6. Weekly Review + shipped streak
+7. Paid inference, or an honest hard cap (Groq free tier ≈ 50 active users)
+8. Corrected pricing — kill "unlimited", Creator ≈ $19, gate on **memory** not
+   volume; measured ~5x reasoning multiplier makes unlimited lossy
+9. Delete the dead pages; retire legacy; run [TESTING.md](TESTING.md)
+10. Invite **10 creators, one niche (TCG/collectibles)**, weekly 15-min calls
+
+**Explicitly waiting:** YouTube OAuth (worth far more *after* history exists —
+only then can it say "the titles you wrote here outperformed your others by X%"),
+community, mobile app, shareable review image, referrals, most polish.
+
+**Deleting (not deferring):** `monetization`, `resources`, `platforms` pages;
+the three "Coming Soon" pages (advertising things that don't exist costs trust);
+the 10 legacy tool pages once the loop ships.
+
+**Mobile is a different product, not a smaller one.** Desktop is the workbench
+(packaging, planning, review, library). Mobile is capture / glance / ship /
+read-the-review. Thumbnail analysis and tag optimisation do **not** belong on a
+phone.
+
+## The AI ladder — each rung is gated on data, not model quality
+
+Generator *(shipped)* → **Assistant** *(MLP — knows this video's context, no
+retyping)* → **Coach** *(Post-Beta — "thumbnails are your weak link, here's
+why", needs ~4 weeks)* → **Creative partner** *(v2 — "this resembles your Feb
+one that flopped", needs ~20 items + outcomes)* → **Business advisor** *(LTV)*.
+
+Rungs 1–2 are copyable in a weekend. Rungs 3–5 need a history competitors can't
+buy. Every stored week climbs a ladder they must start at the bottom of.
 Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
 setup from the owner; Twitch as a fast follow).
 

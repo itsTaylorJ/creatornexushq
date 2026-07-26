@@ -40,6 +40,14 @@ carries a "Back to Studio" link so nothing dead-ends.
 | Collab Finder | `collab.html` | **Coming Soon** gate — was inventing real people |
 | Trend Tracker | `trends.html` | **Coming Soon** gate — LLMs have no real-time data |
 
+## ⚠️ Direction changed 2026-07-26 — read [STRATEGY.md](STRATEGY.md) first
+
+The tool migration below is complete, but shipping seven tools revealed the real
+gap: **nothing a creator makes is ever saved**, so there's no reason to return.
+The next phase is not more tools — it's wiring the seven into one connected loop
+with memory behind it. The tool status board below remains accurate; the *plan*
+after it is superseded by STRATEGY.md.
+
 ## Migration queue — ✅ COMPLETE
 
 All seven tools are live in the Studio. No rail item says "soon". The legacy

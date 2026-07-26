@@ -1,593 +1,472 @@
-# CreatorNexusHQ — Product & Strategy Review
+# CreatorNexusHQ — Product Design & Strategy
 
-**Date:** 2026-07-26
-**Scope:** full repository, product, pricing, brand, positioning, growth
-**Stance:** adversarial by request. This document argues against several decisions
-the owner has already made. Where it does, the reasoning is shown so it can be
-rejected on the merits.
+**Date:** 2026-07-26 · **Supersedes:** the audit-only version of this file
+**Status:** design document. Read before planning work. [CLAUDE.md](CLAUDE.md)
+remains authoritative on *what is currently true*; this file is *where we're going*.
 
-> Read [CLAUDE.md](CLAUDE.md) for current state. This file is a *strategic
-> opinion* dated above, not a status board. Where they disagree, CLAUDE.md wins
-> on facts and this file wins on direction.
+Every recommendation is labelled:
+
+| Label | Meaning |
+|---|---|
+| **MLP** | Minimum Lovable Product. Must exist before one outside creator touches it. |
+| **Post-Beta** | After ~10 creators have used the MLP for a month and we've learned. |
+| **v2** | The year-one product. Real scale, real money. |
+| **LTV** | Long-Term Vision. Directionally committed, deliberately not now. |
 
 ---
 
-## 1. Executive summary
+# Part I — What the audit found
 
-The engineering here is better than the strategy.
+Compressed; the detail is in git history. Three findings drive the redesign.
 
-In roughly one build cycle this went from a set of half-wired pages to seven
-working tools on one design system, with real ranking data, deterministic
-scoring, honest failure states, and a documented architecture. The honesty
-standard is real and enforced in code. That is genuinely uncommon and it is not
-what is wrong.
+**1. Nothing persists.** One localStorage key (`cnx_profile`). No title, tag set,
+thumbnail score, calendar or audit is ever saved. A product with no memory cannot
+compound, cannot show progress, and has no mechanical reason to be opened twice.
 
-What is wrong is structural, and one command surfaces it:
+**2. The seven tools are already a workflow — nobody wired them together.**
+Ideas → Titles → Tags → Thumbnails → Schedule → Publish → Audit *is* the process
+of making a video. They were built as seven destinations. They should have been
+seven stages.
+
+**3. Pricing is arithmetically unsound and the infrastructure cannot serve a
+paying customer.** ~5x measured reasoning multiplier makes "unlimited" at $12
+lossy; the Groq free tier caps around 50 active users.
+
+**The correction to my own earlier advice:** I argued for choosing between "great
+at one thing" and "creator OS". That was a false binary. The OS emerges from one
+connected workflow done exceptionally well. The tools stay. They stop being
+destinations.
+
+---
+
+# Part II — The creator's week
+
+The product is designed around one loop, not one screen. Here is Monday to Sunday
+for a real creator, and what the product owes them at each step.
+
+### Monday — "I need an idea"
+
+*Thinking:* "I should post this week. I don't know what about. Last week's thing
+did okay but I don't know why."
+
+*Needs:* not fifty ideas. **Three ideas that fit them specifically**, with a
+reason attached, ranked by what has actually worked on their own channel.
+
+*AI's job:* not generation — **selection and reasoning**. "You've published four
+box openings; the two that named a specific card did 3x the two that didn't.
+Here are three that name a card."
+
+*Saved:* the chosen idea becomes a **Content** object in `idea` status. The
+rejected ones are saved too — what a creator declines is a signal about taste.
+
+*Remembered forever:* every idea ever accepted or rejected.
+*Gets smarter:* after ~10 published items, idea suggestions are ranked by that
+creator's own outcome history rather than by generic niche patterns.
+
+**MLP:** ideas save as Content objects; three suggestions not eight.
+**Post-Beta:** rank by the creator's own history.
+**v2:** rejected-idea learning.
+
+### Tuesday–Thursday — "I'm making it"
+
+*Thinking:* "I'm filming/editing. I don't want a browser tab. I want the hook
+I wrote down so I don't forget it."
+
+*Needs:* almost nothing. **The product should be quiet here.** This is the phase
+every competitor over-serves and every creator resents.
+
+*AI's job:* stay out of the way. Have the hook and the working title one tap
+away on a phone.
+
+**MLP:** the Content object is viewable on mobile with its idea, hook and notes.
+
+### Thursday — "It's made. Now the packaging."
+
+*Thinking:* "What do I call it? What thumbnail? Am I about to waste a good video
+on a bad title?"
+
+*Needs:* this is where the existing tools are genuinely excellent and should be
+used — but **in sequence, attached to the video**, not as seven separate visits.
+
+*Flow:* open the Content object → Title (with live ranking data) → Tags (scored
+against what ranks) → Thumbnail (measured + judged) → everything saved onto the
+same object.
+
+*AI's job:* generation *and* a go/no-go judgement — "your title scores 78, your
+thumbnail 54. The thumbnail is the weak link, and on this channel thumbnails have
+mattered more than titles."
+
+*Remembered forever:* every title considered, the one chosen, the scores.
+*Gets smarter:* "you consistently pick the second title. Your second picks
+outperform your first by 12%" — a real, personal, uncopyable insight.
+
+**MLP:** tools write to the Content object; stages shown in order with completion
+state.
+**Post-Beta:** chosen-vs-suggested tracking.
+**v2:** the packaging go/no-go verdict.
+
+### Friday — "I published"
+
+*Thinking:* "Done. That's the dopamine."
+
+*Needs:* **acknowledgement.** One good moment. The streak increments. Something
+in the product notices.
+
+*Saved:* status → `published`, timestamp, URL.
+
+*This is the most under-served moment in every creator tool that exists.* They
+all help you publish and then say nothing.
+
+**MLP:** mark as published, streak increments, one honest celebration.
+
+### Sunday — "What worked? What next?"
+
+*Thinking:* "Was that any good? Am I improving or just busy?"
+
+*Needs:* **the Weekly Review.** What you shipped, how it did, one thing that
+worked, one thing to change, and the answer to *"am I getting better?"*
+
+*AI's job:* coaching. Honest, specific, and willing to say "nothing to change
+this week, you're on track" — which no engagement-optimised product will ever say.
+
+*Saved:* the week is **closed and immutable**. It becomes a permanent record.
+
+*Gets smarter:* week 1 is generic. Week 12 compares you to yourself. Week 52 knows
+your seasonality.
+
+**MLP:** manual outcome entry (views/CTR typed in) + a Weekly Review page.
+**Post-Beta:** shareable review image.
+**v2:** YouTube OAuth fills outcomes automatically.
+**LTV:** the review predicts — "based on your last 9 weeks, skip next Tuesday;
+you always underperform after a travel week."
+
+---
+
+# Part III — Information architecture and navigation
+
+**Kill the seven-item tool rail.** It presents seven equal choices and no path.
+
+### The new navigation — 4 destinations
 
 ```
-localStorage keys in use: 'cnx_profile'
+┌─────────────────────────────────────────────────┐
+│  THIS WEEK    ·  the loop. default landing      │
+│  LIBRARY      ·  everything you've made         │
+│  PROGRESS     ·  proof you're improving         │
+│  ─────────────────────────────────────          │
+│  Quick tools  ›  the seven, still one click     │
+│  Account                                        │
+└─────────────────────────────────────────────────┘
 ```
 
-**Nothing a creator produces in this product is ever saved.** No titles, no tag
-sets, no thumbnail scores, no calendars, no audits. Firestore stores a profile
-and nothing else. Every visit begins with empty forms.
-
-That single fact contradicts the stated vision. A product that remembers nothing
-cannot be "the first app they open and the last they close", cannot compound in
-value, cannot show progress, cannot build a habit, and cannot generate a
-shareable artifact. It can only be visited when someone happens to need a title.
-
-So the honest summary is: **this is a good tool belt being described as an
-operating system.** The gap between the two is not more tools. It is memory.
-
-Second structural problem: the seven tools are, with one exception, commodity.
-A competent developer with an API key rebuilds any of them in a weekend. The
-defensible assets in the current build are the *deterministic tag score grounded
-in live ranking data* and the *honesty posture*. Everything else is table stakes
-delivered well.
-
-**The recommendation is to stop adding tools and build the thing that makes the
-tools worth returning to.**
-
-## 2. Scores
-
-Scored against the stated ambition (category-defining creator OS), not against
-"is this a decent app". Against the latter it would score higher throughout.
-
-| Dimension | Score | One-line reason |
-|---|---|---|
-| **Overall product** | **6/10** | Well-executed tools, no product. Solid floor, no ceiling yet. |
-| UI/UX | 7/10 | The Studio is genuinely good. 15 legacy pages drag the average down hard. |
-| Branding | 4/10 | Generic name, generic headline, no memorable asset. Forgettable by tomorrow. |
-| Features | 5/10 | Competent and honest. Almost entirely replicable. No retention mechanic. |
-| Pricing | 3/10 | Economically unsound as published. "Unlimited" at $12 loses money at measured token cost. |
-| Market position | 4/10 | Differentiated in posture, undifferentiated in capability. |
-| **Retention** | **2/10** | Nothing persists. There is no mechanical reason to return tomorrow. |
-| Technical architecture | 6/10 | Clean Worker, honest data split, real tests. Monolithic HTML, heavy duplication. |
-
-The two red numbers are the whole story. Retention is a 2 because the product
-has no memory; pricing is a 3 because the unit economics were measured and then
-not acted on.
-
-## 3. Repository and architecture audit
-
-**Measured, not estimated:**
-
-| Metric | Value | Assessment |
-|---|---|---|
-| Frontend | 17,153 lines across 16 HTML files | Large for a no-build project |
-| `creatornexushq-studio.html` | **1,985 lines / 136KB in one file** | Past the point a single file should carry |
-| Worker | 1,090 lines, single file | Fine for now; will need splitting by ~2,000 |
-| Firebase config copies | **13 files** | Change a key, edit 13 places |
-| Pages with duplicated app-shell CSS | **10** | The known "tripled CSS" debt, still present |
-| Persisted user content | **none** | The central finding |
-| localStorage keys | 1 (`cnx_profile`) | Confirms the above |
-
-**What is good and should be protected:**
-- The KV / Firestore split is correct and clearly documented — ephemeral counters
-  separate from durable profile.
-- `firestore.rules` is properly locked to own-document access.
-- `parseSections()`, `normalizeModelText()`, `cnxFetch()` and the deterministic
-  scorers are real shared infrastructure with real tests behind them.
-- Failure states are honest: no credit spent on failure, and errors name what
-  actually happened.
-
-**What must change:**
-
-1. **Introduce a content data model.** This is the highest-priority technical
-   change in the project. A `users/{uid}/content/{id}` collection holding
-   `{type, platform, topic, inputs, outputs, score, createdAt, status}`. Every
-   tool writes to it. Nothing else on this list matters as much.
-2. **Split the Studio.** 1,985 lines in one file is the ceiling. Extract shared
-   CSS and the tool modules; keep the no-build simplicity but stop growing a
-   single document.
-3. **Centralise Firebase config.** One `cnx-firebase.js`, imported everywhere.
-   Thirteen copies of a config object is a real incident waiting to happen.
-4. **Retire the legacy pages on a date, not "eventually".** Ten pages carrying
-   duplicate CSS, all still linked, is double the maintenance surface for zero
-   incremental value now that all seven Studio tools ship.
-5. **Add a Worker-side model-usage log.** Cost per user is currently invisible.
-   You cannot price what you cannot measure over time.
-
-**Security:** no exposed secrets, backend files verified 404 on hosting,
-Firestore rules correct, tokens verified server-side. No findings.
-
-## 4. Product audit — where creators quit
-
-Walking it as a paying user:
-
-- **The empty studio problem.** A new user lands on seven forms and must invent
-  content before seeing value. "Try an example" (added this cycle) helps and was
-  the right call. It is not sufficient — the *second* visit is still empty.
-- **No sense of place.** There is no home. The Studio opens on Titles. There is
-  nothing that says *here is where you are, here is what you did, here is what's
-  next.* Every tool is a dead end that produces text and stops.
-- **Output goes nowhere.** Generate → copy → paste elsewhere → the product
-  forgets it happened. The user does the filing. That is backwards.
-- **No feedback loop.** Nothing ever tells a creator whether the title they used
-  worked. Without that, the product cannot learn and neither can they.
-- **Seven tools is already too many** for a first session. The rail presents
-  seven equal choices with no recommended path.
-
-**The moment users quit:** visit two. Visit one has novelty. Visit two is the
-same empty forms with nothing to show for visit one. Without persistence there is
-no visit three.
+**THIS WEEK** — the home that doesn't exist today. Three zones:
+*Make* (what to work on, with the next stage for each in-flight item),
+*Ship* (what's ready), *Review* (Sunday's review, or a countdown to it).
+
+**LIBRARY** — every Content object, filterable, reusable. The memory made visible.
+This is the screen that makes leaving expensive.
+
+**PROGRESS** — scores over time, streak, weeks shipped, what improved. The
+emotional payoff.
+
+**Quick tools** — a flyout with the seven, for the creator who just wants a title
+right now and has no video in flight. **This directly answers the "don't delete
+useful tools" note:** they remain individually reachable, they simply stop being
+the primary organising idea. Using a quick tool offers "attach this to a video?"
+— the on-ramp into the loop.
+
+**MLP:** This Week + Library + the quick-tools flyout.
+**Post-Beta:** Progress.
+
+### Content object detail — the real workspace
+
+Opening a Content object shows a stage strip:
+
+```
+IDEA ✓ ──  HOOK ✓ ──  TITLE ✓ ──  TAGS ○ ──  THUMB ○ ──  SCHEDULE ○ ──  PUBLISHED
+                                     ▲ you are here
+```
+
+Each stage opens the existing tool, prefilled from everything already on the
+object. **The tools don't change. Their context does.** Today the Tags tool asks
+you to retype the topic you typed into the Titles tool ten minutes ago; here it
+already knows.
+
+**MLP:** the stage strip with prefill from the object.
+
+---
+
+# Part IV — The memory model
+
+The core architectural recommendation. Shown as schema because that is the
+clearest way to communicate it.
+
+```js
+users/{uid}
+  // profile — exists today, keep
+  { email, first, last, username, niche, platforms[], size, ... }
+
+  content/{contentId}              // THE core object — new
+  {
+    type:      'video' | 'short' | 'stream' | 'post',
+    status:    'idea' | 'making' | 'packaging' | 'ready' | 'published' | 'reviewed',
+    platform:  'YouTube',
+    topic:     'sealed booster box, charizard hunt',
+    createdAt, updatedAt, publishedAt, url,
+
+    stages: {
+      idea:  { chosen: '...', rejected: ['...'], why: '...', at },
+      hook:  { text: '...', at },
+      title: { chosen: '...', suggested: ['...'], score: 78, at },
+      tags:  { chosen: [...], score: 84, rankingOverlap: 0.62, at },
+      thumb: { score: 61, measured: { w,h,ratio }, verdict: '...', at }
+    },
+
+    outcome: {                     // manual first, API later
+      views, ctr, avgViewDuration, newFollowers,
+      source: 'manual' | 'youtube-api',
+      enteredAt
+    }
+  }
+
+  weeks/{2026-W31}                 // immutable once closed
+  {
+    shipped: [contentId], streakWeeks: 9,
+    review: { worked, change, focus, generatedAt },
+    closedAt
+  }
+
+  signals/{signalId}               // derived learning — v2
+  { pattern: 'title-leads-with-number', n: 7, lift: 2.1, confidence: 'low' }
+```
+
+**Never deleted:** `content`, `weeks`, `outcome`. These are the moat. Deleting an
+account should be possible; deleting history casually should not.
+
+**Answering the specific questions asked:**
+
+- *How should AI use previous content?* Every prompt gets a compact "what we know
+  about this creator" block built from their last ~20 published items and their
+  outcomes. That block is the product.
+- *How should creators measure improvement?* Score trend per stage, plus outcome
+  trend. "Your title scores averaged 52 in month one and 74 in month three."
+- *How do we visualise long-term progress?* A single line going up, one number
+  per week, with published items marked. Boring on purpose. Real.
+- *How does memory become the advantage?* A competitor can clone every tool in a
+  weekend and still cannot clone six months of *this* creator's decisions and
+  results. That asset only accrues to whoever starts storing it first — which is
+  why this is urgent rather than important.
+- *How does it make us harder to replace?* Switching costs stop being about
+  features and start being about losing your record.
+
+**MLP:** `content` + `weeks`, manual outcomes.
+**Post-Beta:** outcome-informed prompts.
+**v2:** `signals`, OAuth-filled outcomes.
 
-## 5. Feature audit
+---
 
-| Feature | Problem solved | Frequency | Recurring value | Differentiated | Verdict |
-|---|---|---|---|---|---|
-| Titles & Descriptions | Real, high-stakes | Per upload | Medium | Partly — live ranking data | **Keep, deepen** |
-| Tags & Hashtags | Real but declining in importance | Per upload | Low | **Yes** — deterministic score vs real ranking tags | **Keep — best asset** |
-| Thumbnails | Real, highest-leverage on YouTube | Per upload | Medium | Partly — measured size checks are honest and rare | **Keep, invest** |
-| Ideas, Hooks & CTAs | Real — blank page is the actual enemy | Weekly | Medium | No | **Keep, reframe as the entry point** |
-| Posting Schedule | Real — consistency is the #1 killer | Once, then rarely | **Low as built** | No | **Redesign — see below** |
-| Live Titles | Narrow audience | Per stream | Low | Mildly | **Keep, deprioritise** |
-| Channel Audit | Real and valuable | Monthly | Medium | **Yes** — routing to the fixing tool | **Keep — promote to centrepiece** |
+# Part V — AI strategy: the five rungs
 
-**Remove or fold in:** the Live Titles tool serves a subset of users and adds a
-seventh rail item for everyone. Fold into Titles as a mode. Monetization tracker,
-Resources and Platforms pages are static filler that dilute the rail.
+The ladder asked for, with the honest precondition each rung requires. **Every
+rung is gated on data, not on model quality** — which is exactly why memory is
+the strategy.
 
-**The Posting Schedule is the clearest miss.** It generates a calendar you copy
-into something else. A calendar you cannot *live in* is a document, not a tool.
-This should be the persistent backbone of the product, not a generator.
+| Rung | What it does | Needs | Passes the "remove the word AI" test? | When |
+|---|---|---|---|---|
+| **1. Generator** | Writes titles, tags, ideas | Nothing | Marginal — useful, commodity | *shipped* |
+| **2. Assistant** | Knows this video's context; no retyping | Content object | Yes — it removes real friction | **MLP** |
+| **3. Coach** | "Your thumbnails are the weak link; here's why" | ~4 weeks history | Yes — it's judgement on your data | **Post-Beta** |
+| **4. Creative partner** | "This idea is close to your Feb one that flopped. Try this angle." | ~20 items + outcomes | Yes — nobody else can say it | **v2** |
+| **5. Business advisor** | "Two uploads a week is costing you more than it earns. Here's the sustainable shape." | ~6 months + revenue | Yes — genuinely consequential | **LTV** |
 
-## 6. The core recommendation — three things, not thirty
+**The strategic point:** rungs 1 and 2 are copyable. Rungs 3–5 require a history
+competitors don't have and can't buy. Every week of stored history moves us up a
+ladder they must start climbing from the bottom.
 
-Everything below collapses into three moves. If only these happen, the product
-changes category.
+**Remove "AI-powered" from all marketing.** Lead with the outcome. AI is how,
+never what.
 
-### Move 1 — Content memory (the foundation)
+---
 
-Every generation is saved and attached to a piece of content the creator is
-actually making. The unit of the product stops being *a generation* and becomes
-*a video*.
-
-A video accumulates: its idea, its hook, its titles, its tag set, its thumbnail
-score, its publish date, and — later — how it did. The tools become *stages of a
-video's life* rather than seven unrelated text boxes.
-
-This is the change that makes everything else possible. Without it, none of the
-retention, motivation, or community ideas below can exist.
+# Part VI — North Star
 
-### Move 2 — The Weekly Review (the habit and the brand asset)
+**Recommended: Weekly Shipped Rate — the percentage of active creators who
+published at least one piece of content this week.**
 
-Once a week, the product produces one page: what you shipped, what worked, the
-single thing to fix, and one concrete action for next week. Personal, honest,
-beautifully typeset, and **shareable as an image**.
-
-This is the candidate for the "Apple moment". It is the thing a creator
-screenshots and posts. It is the reason to come back on a schedule rather than on
-a whim. It is also almost impossible to copy well, because it requires the
-content history that competitors' tools do not keep.
-
-### Move 3 — Consistency as the product's actual promise
-
-The owner's own framing names the real enemy correctly: inconsistency, burnout,
-quitting. No competitor is positioned there — they all sell *optimisation* to
-people who are already publishing.
+Why this and not the alternatives:
 
-So sell the thing nobody sells: **the streak that survives real life.** Track
-shipped-per-week, protect it honestly (a planned week off is not a broken
-streak), and make the product the place a creator proves to themselves that they
-are still going.
+- *Weekly videos completed* — rewards volume, and volume is not success.
+- *Creator confidence* — the right thing to care about, unmeasurable weekly.
+  Survey it quarterly as a secondary.
+- *Creator improvement score* — we'd be grading our own homework.
+- *Publishing consistency* — very close; Weekly Shipped Rate is its measurable form.
 
-This is a positioning nobody in the category owns, and it follows directly from
-the mission already written down.
+Weekly Shipped Rate is **uncheatable by engagement tricks** — no notification, no
+badge, no streak gimmick moves it. It only goes up if creators actually publish.
+It is true to the mission (the enemy is quitting) and it aligns the company with
+the creator perfectly: we win only when they ship.
 
-## 7. Pricing — the most urgent fix
+**How every feature supports it:** if a proposed feature doesn't plausibly
+increase the chance a creator publishes next week, it's a v2 at best.
 
-**Current published model:** Free $0 / Creator $12 / Pro $29, Pro described as
-unlimited.
+Supporting metrics: week-4 / week-12 retention · % with a 4-week unbroken streak ·
+% of generated outputs actually used · Weekly Reviews shared.
 
-**Measured reality from this codebase:** one titles generation billed ~2,400
-total tokens for ~390 visible output tokens — a ~5x hidden reasoning multiplier.
-A heavy user on "unlimited" at $12 is unprofitable the moment inference is paid
-for. Thumbnail vision calls cost materially more again.
-
-**This is not a pricing-psychology problem. It is an arithmetic problem, and the
-arithmetic has already been done and not acted upon.**
+---
 
-Second constraint, equally hard: the Groq free tier caps around 1,000 requests
-a day, roughly 50 active users. **The product cannot serve a paying customer
-today**, regardless of price. Paid inference must precede any charging.
+# Part VII — The habit loop
 
-### Recommended model
+- **Why open it today?** To capture an idea before it evaporates, or to move the
+  one thing in flight to its next stage. *(10 seconds, usually mobile.)*
+- **Why come back tomorrow?** You don't necessarily, and that's fine. **The
+  product's rhythm is weekly, not daily** — designing for daily use would create
+  guilt in people who publish weekly.
+- **Why stay six months?** Because Progress now shows a real line going up, and
+  the Library holds every decision you've made.
+- **Why miss it if it vanished?** Because you'd lose the only record of how you
+  got better — and the only thing that noticed when you shipped.
 
-| Tier | Price | Contains |
-|---|---|---|
-| **Free** | $0 | 5 generations/day, content history capped at 10 items, no weekly review |
-| **Creator** | **$19/mo** ($15 annual) | 40 generations/day, unlimited history, Weekly Review, streaks, calendar |
-| **Studio** | **$39/mo** ($31 annual) | 150/day, channel audit history and trends, multi-channel, export, priority vision |
+**Explicitly refused:** daily login streaks, notification badges, artificial
+urgency, competitive leaderboards. They'd raise engagement and cost us trust,
+which is the only asset we have that compounds as fast as memory.
+
+**The one nudge we allow:** if a creator with an active streak hasn't shipped by
+Saturday, one message — *"you've shipped 8 weeks running. Anything I can help get
+over the line?"* Offer, not guilt. And a **planned break never breaks a streak.**
+
+---
+
+# Part VIII — Desktop and mobile are different products
+
+Agreeing with the asymmetric split, with a sharper line.
 
-Three deliberate changes:
+**Desktop = the workbench.** Packaging (title/tags/thumbnail), planning the week,
+the Weekly Review, the Library, deep analytics. Everything requiring a keyboard,
+comparison, or judgement.
 
-1. **Kill "unlimited" permanently.** It is a promise the unit economics cannot
-   keep and it attracts exactly the users who destroy margin.
-2. **Raise Creator to $19.** $12 anchors below vidIQ and TubeBuddy and signals a
-   lesser product. Creator software buyers do not shop on price; they shop on
-   whether it works. $12 costs money *and* credibility.
-3. **Gate on memory, not volume.** The compelling upgrade is not "more
-   generations" — it is *"keep my history, show me my progress, send me my
-   weekly review."* Free users should feel the loss of memory, not a wall.
+**Mobile = the companion.** Four things only:
+1. **Capture** — an idea in 10 seconds, from anywhere. The single most-used
+   surface in the product.
+2. **Glance** — what's in flight, what's next.
+3. **Ship** — mark published, feel the streak move. Often done from the phone
+   right after upload.
+4. **Review** — read the weekly review, share the image.
 
-**Charge for the accumulating asset, not the disposable output.** Generations
-are a commodity that gets cheaper every year. History, progress and insight get
-more valuable every week.
+**Deliberately NOT on mobile:** thumbnail analysis, tag optimisation, calendar
+building. Cramming the workbench onto a phone is how good products become bad
+ones.
 
-## 8. Competitive analysis
+**MLP:** mobile-responsive capture + glance + ship (the current responsive build
+mostly covers this).
+**v2:** a real mobile app, when idea capture justifies it.
 
-| | Where they beat us | Where we can win |
-|---|---|---|
-| **vidIQ** | Distribution, browser extension in-workflow, real channel data, brand recognition | Their scores are vanity metrics; ours are honest and deterministic |
-| **TubeBuddy** | Per-tag rank (genuinely better), bulk tools, years of trust | They are a YouTube plugin; the creator's life is multi-platform |
-| **Metricool / Buffer / Later** | Real scheduling and publishing, integrations, team features | They are schedulers with no creative help |
-| **Opus Clip / Repurpose** | Solve one painful job extremely well, obvious ROI | Narrow; no strategy layer |
-| **Notion** | Creators already run their lives in it | Generic; no creator intelligence |
-
-**The uncomfortable truth:** every incumbent is *inside the creator's workflow* —
-as a browser extension on the upload page, as a scheduler holding the queue, as
-the doc where the plan lives. This product is a separate website you must
-remember to visit. That is the weakest possible position, and no amount of
-feature quality fixes it.
+---
 
-**Two responses, both worth doing:** own the *weekly cycle* (where nobody is),
-and eventually get into the upload moment (extension) where the decision is
-actually made.
+# Part IX — Beta strategy
 
-**SWOT, compressed.**
-*Strengths:* honest posture enforced in code; deterministic scoring; real ranking
-data; genuinely fast build velocity; clean backend.
-*Weaknesses:* no persistence; no habit loop; commodity features; unprofitable
-pricing; ~50-user infrastructure ceiling; forgettable brand; solo bus factor.
-*Opportunities:* the consistency/burnout position is unoccupied; the weekly
-review as a shareable artifact; honest scoring as a wedge against vanity metrics.
-*Threats:* incumbents add AI faster than we add distribution; model providers
-commoditise every generation feature; a free tier that cannot scale.
+**What must exist first (MLP):**
+1. Content objects — every tool writes to one
+2. This Week + Library
+3. Manual outcome entry
+4. The Weekly Review
+5. Shipped streak
+6. Paid inference or an honest hard cap
+7. Corrected pricing (no "unlimited")
 
-## 9. Branding
+**What intentionally waits:** YouTube OAuth, community, mobile app, signals,
+shareable review images, referrals, most visual polish.
 
-**Verdict: 4/10. This is the weakest dimension and the cheapest to fix.**
+**Who:** **10 creators, one niche — TCG/collectibles.** Small enough to talk to
+every week, and the infrastructure can't serve more anyway. One niche makes
+"what works" legible; ten niches makes it noise.
 
-- **"CreatorNexusHQ"** — three generic nouns. Hard to say, harder to spell,
-  impossible to own. "Nexus" and "HQ" are both 2010s SaaS filler. It sounds like
-  a Discord server, not a product.
-- **"Stop Guessing. Start Growing."** — this exact headline is on hundreds of
-  SaaS landing pages. It says nothing true about this product specifically.
-- **Purple-to-cyan gradient on near-black** — competent and completely
-  indistinguishable from every AI startup since 2023.
-- No mascot, no memorable shape, no signature interaction, no voice.
+**Feedback:** a weekly 15-minute call, not a form. Ten calls a week is the single
+highest-information activity available and it stops working at ~30 users, which is
+exactly why it's worth doing now.
 
-**Recommended positioning:** stop selling optimisation, sell *continuation*.
+**Beta succeeds if:** ≥6 of 10 publish in week 4 · ≥4 have an unbroken 4-week
+streak · ≥5 say they'd be disappointed to lose it · at least one shares a Weekly
+Review unprompted.
 
-> **The tool that keeps you posting.**
-> Most creators don't quit because their titles were bad. They quit because
-> week six was hard and nobody noticed they stopped.
+**Beta says delay if:** creators use tools but never complete a loop · the Weekly
+Review gets read once and ignored · nobody enters outcome data (the whole thesis
+depends on it) · week-4 retention under 40%.
 
-That is honest, specific, emotionally true, and nobody else is saying it.
+---
 
-On the name: a rename is disruptive and I would not do it this week. But
-"CreatorNexusHQ" will cap word-of-mouth — people cannot recommend what they
-cannot recall. Plan a rename before any real marketing spend, not after.
+# Part X — Features: remove, merge, add
 
-## 10. Emotional experience and motivation
+**Remove (MLP)**
+- `monetization`, `resources`, `platforms` pages — static filler, no recurring value
+- `competitor`, `collab`, `trends` "Coming Soon" pages — three pages advertising
+  things that don't exist reads as vaporware and costs trust
+- The 10 legacy tool pages, once the loop ships
+- "AI-powered" from all marketing copy
 
-Currently the product produces text and says nothing about the person using it.
-There is no moment of pride anywhere in it.
+**Merge (MLP)**
+- All seven tools → stages of a Content object (still individually reachable)
+- Live Titles → a Content **type** (`stream`), not a separate tool
+- Channel Audit → the monthly depth view of the Weekly Review, one family
 
-Recommended, in order of value-to-effort:
-
-1. **Weekly Review** — the emotional core. Honest, personal, shareable.
-2. **Shipped streak** — weeks published in a row, with a deliberate "planned
-   break" that does not break it. Protecting the streak honestly is the
-   difference between motivation and manipulation.
-3. **First-week milestones** — first title used, first thumbnail scored, first
-   week completed. Small, real, once.
-4. **Score-over-time** — "your titles average 71 now, they averaged 48 in
-   January." Proof of improvement is the most motivating thing software can show
-   a creator, and it requires only the content history from Move 1.
+**Add**
+- **MLP:** Content object · This Week · Library · manual outcomes · Weekly Review ·
+  shipped streak · idea capture
+- **Post-Beta:** Progress page · shareable review image · outcome-informed prompts ·
+  packaging go/no-go
+- **v2:** YouTube OAuth · signals engine · cohorts · mobile app · multi-platform
+  content mapping
+- **LTV:** predictive weekly planning · business advisor rung · creator-to-creator
+  benchmarks (opt-in, aggregate, never leaderboards)
 
-**Explicitly avoid:** daily login streaks, notification badges, artificial
-urgency, leaderboards against other creators. These raise short-term engagement
-and corrode trust — which is the one asset this product actually has.
+---
 
-## 11. Daily and weekly usage
-
-Honest assessment: **this should not be a daily-use product, and chasing daily
-use would damage it.** Creators publish weekly. A tool demanding daily attention
-from someone who ships once a week is a tool generating guilt.
-
-Design for the real rhythm:
-
-- **Weekly:** the review. The one non-negotiable ritual.
-- **Per-video:** the pipeline — idea → hook → title → tags → thumbnail → publish.
-- **Ad hoc:** idea capture. An always-available inbox for the shower thought.
-  This is the one genuinely daily surface, and it should be one tap.
-- **Monthly:** the channel audit, tracked over time so bottlenecks show movement.
-
-## 12. Community and moat
-
-Community is where a creator tool becomes hard to leave — but it is also where
-most attempts die quietly. Empty forums are worse than no forums.
-
-Sequence it: **cohorts before community.** Ten creators who started the same week,
-who see each other's weekly reviews, is a real relationship at a scale you can
-actually fill. Broad community can come later or never.
-
-**Moat ranking, hardest to copy first:**
-
-1. **Content history and the personalisation it enables.** A competitor can copy
-   the feature in a week and still not have six months of *this creator's* work.
-   This is the only true moat available, and it costs one data model to start.
-2. **Trust from the honesty posture** — slow to build, instantly destroyed,
-   nearly impossible to fake.
-3. **The weekly ritual** — habits are stickier than features.
-4. Community and cohorts.
-5. Brand — currently a liability, potentially an asset.
-
-Features are not on this list. They are all copyable.
-
-## 13. Retention — why they stay
-
-- **30 days:** because the Weekly Review told them something true they didn't know.
-- **90 days:** because their history now shows measurable improvement, and
-  leaving means losing the record of it.
-- **1 year:** because the product knows their channel better than any new tool
-  could, and because the streak represents a year of their life.
-
-Every one of those depends on Move 1. **There is currently no answer to "why
-would they stay 30 days", and pretending otherwise would be dishonest.**
-
-## 14. AI strategy
-
-Applying the owner's own test — *would creators pay if AI weren't mentioned?*
-
-| Feature | Passes? |
-|---|---|
-| Deterministic tag score vs live ranking data | **Yes** — it's measurement |
-| Thumbnail size checks and true-size previews | **Yes** — measurement, not AI at all |
-| Weekly Review | **Yes** — it's their data reflected back |
-| Title/idea/CTA generation | **Marginal** — genuinely useful, entirely commodity |
-| "AI-powered" as a marketing line | **No** — remove it |
-
-**Strategic point: AI should be invisible.** In two years every competitor has
-the same models at lower cost. Generation is not a moat and should not be the
-pitch. The pitch is the outcome: *you published nine weeks running and your
-titles improved 40%.* AI is how, never what.
-
-Also stop leading with "AI" on the landing page. It is now a negative signal to a
-meaningful share of creators.
-
-## 15. UI/UX
-
-The Studio is good work: consistent design system, honest empty states, real
-loading states, deterministic scores, mobile-clean at 375px, per-platform
-guidance. Better than most solo products and better than parts of vidIQ.
-
-Specific weaknesses:
-
-- **No home surface.** Opening on a tool is opening in the middle of a task.
-- **Seven equal rail items** with no hierarchy or suggested order.
-- **Results are a wall of stacked cards.** Everything is the same visual weight,
-  so nothing is emphasised. The eye has no entry point.
-- **Legacy pages are visibly a different product.** A user who follows any legacy
-  link experiences a downgrade.
-- **No transitions.** Tool switches are instant swaps; results appear abruptly.
-  A 150ms fade costs nothing and materially changes perceived quality.
-- **Accessibility unaudited.** No focus-visible styling, no keyboard path through
-  the rail, no reduced-motion handling, no formal contrast pass since the
-  purple-on-purple fix.
-
-**Micro-interactions worth adding:** score ring counting up (already there —
-extend the idea), copy-button success ripple, streak increment animation on the
-weekly review, and a genuine celebration the first time a creator's score beats
-their own average.
-
-## 16. Growth and go-to-market
-
-**Beta:** 10 creators, hand-picked, in one niche (TCG/collectibles is the obvious
-choice given the examples and the owner's fluency). Not 100 across every niche.
-Ten people you talk to weekly will teach you more than a thousand silent signups,
-and the infrastructure ceiling means you cannot serve a thousand anyway.
-
-**The word-of-mouth engine must be the Weekly Review.** It is the only artifact
-in the roadmap that a creator would voluntarily show another creator. Design it
-to be screenshotted: fixed aspect ratio, beautiful typography, the creator's
-name, no heavy branding beyond a small mark. Shareable proof of progress is the
-entire growth strategy — everything else is a supporting act.
-
-**Sequence:** private beta (10) → fix on feedback → open to a waitlist within one
-niche → creator ambassadors get free Studio for a public weekly review → SEO on
-honest comparison content ("what vidIQ's score actually measures") → only then
-consider paid.
-
-**Do not build:** referral programs, viral loops, or an ambassador scheme before
-retention is proven. Amplifying a leaky product just burns the audience you'd
-otherwise have converted later.
-
-## 17. The $10M ARR question
-
-At $19/mo blended, $10M ARR is roughly **44,000 paying creators** — an enormous
-number that only happens through word of mouth if something is genuinely
-remarkable.
-
-- **Why would creators tell friends?** Because the Weekly Review made them feel
-  seen, and creators talk constantly about what keeps them going.
-- **Why would YouTubers review it?** "Creator tools" videos are a reliable
-  content format. Give them a *screenshot-shaped* artifact and a genuinely
-  contrarian angle ("this tool told me my tag score was fine and to stop worrying
-  about tags").
-- **The feature synonymous with the brand:** the Weekly Review. One thing, owned
-  completely.
-- **The Apple moment:** a creator opens their review and sees *"nine weeks in a
-  row. Your titles are 40% better than when you started."* — and screenshots it.
-- **What competitors copy immediately:** the weekly review format. They will copy
-  the layout and fail to copy the history behind it.
-- **The decision made today that matters most:** building the content data model
-  now, before more tools. Every week without it is a week of user history that
-  does not exist and can never be recovered.
-
-## 18. Founder pushback — three things I'd argue against
-
-**1. "Great at 1–2 things" and "operating system for creators" are in direct
-conflict, and you are currently doing neither.** Seven tools is too many for
-focus and far too few for an OS. Pick: either go deep enough on YouTube
-titles/thumbnails that you beat vidIQ measurably, or commit to owning the
-creator's weekly process. My recommendation is the process — the tools are
-commodity and the process is unowned — but the choice matters more than which
-one you pick.
-
-**2. Honesty is a retention asset, not an acquisition asset.** Nobody switches
-tools because a competitor is more honest; they've never used you, so they can't
-tell. Honesty keeps the users you get and earns forgiveness when things break.
-It will not, on its own, get anyone through the door. Do not let it become the
-whole positioning.
-
-**3. "Polish over speed" is right in general and is currently costing you.** The
-last cycle shipped seven polished tools that nobody has used. Ten real creators
-in week one would have told you within days that the missing thing was memory,
-not more generators. Polish the things users have touched; ship the untouched
-things rough and early.
-
-**One more, smaller:** the plan to add YouTube OAuth next is the right feature at
-the wrong time. OAuth without content history gives you a chart. OAuth *with*
-history lets you say "the titles you wrote with us outperformed your others by
-23%" — which is the entire product in one sentence. Build memory first.
-
-## 19. If I founded this today
-
-Ignoring the current implementation entirely:
-
-I would build **the creator's operating rhythm**, not a toolbox.
-
-The product is a single weekly loop. On Monday it tells you what to make and why,
-based on your own history and what's working in your niche. Through the week it
-helps you make it — but only at the moments you're actually stuck. On Sunday it
-shows you what happened and what to change, honestly, including when the answer
-is "nothing, you're fine, keep going."
-
-**Assumptions in the current build that may already be outdated:**
-
-- *That generation is valuable.* It is approaching free. Every model release
-  makes seven text generators less defensible. Judgment, memory and taste hold
-  value; text does not.
-- *That tags matter.* You already know they mostly don't, and you say so
-  honestly. Building a tool around a declining signal is a strategic decision
-  worth revisiting even though the implementation is your best work.
-- *That "AI-powered" attracts.* Increasingly it repels. The word is now noise at
-  best.
-- *That the competition is vidIQ.* The competition is Notion, a Google Doc, and
-  giving up.
-
-**What we may be blind to:**
-
-- **Multi-platform is the actual reality and nobody serves it well.** Creators
-  live across YouTube, TikTok and Shorts simultaneously. Every incumbent is
-  platform-locked. The cross-post pack already hints at this — it may be the real
-  product rather than a feature.
-- **Short-form has inverted the funnel.** Volume plus iteration beats
-  optimisation. A tool that helps someone ship 20 things and learn beats one that
-  perfects one thing.
-- **The next five years favour taste over production.** When everyone can
-  generate infinitely, the scarce skill is knowing what's worth making. A product
-  that develops a creator's judgment — rather than substituting for it — is
-  durable in a way a generator is not.
-
-## 20. Prioritised plan
-
-**CRITICAL — before any beta invite**
-1. Content data model; every tool writes to it
-2. Content history view — see and reuse everything you've made
-3. Paid inference (removes the ~50-user ceiling)
-4. Fix pricing: kill "unlimited", Creator to $19, gate on memory
-5. Run [TESTING.md](TESTING.md) end to end
-
-**HIGH — the product thesis**
-6. Weekly Review, designed to be screenshotted
-7. Shipped-streak with honest break handling
-8. Studio home surface: what you're working on, what's next
-9. Retire the legacy pages; one product, one design system
-10. Video pipeline — tools become stages, not islands
-
-**MEDIUM**
-11. Score-over-time from history
-12. Idea inbox (one tap, always available)
-13. Accessibility pass (focus states, keyboard, reduced motion)
-14. Split the Studio file; centralise Firebase config
-15. YouTube OAuth — *after* history exists, so it can compare
-
-**LOW / LATER**
-16. Cohorts, ambassadors, referral
-17. Browser extension at the upload moment
-18. Rename, before marketing spend
-19. Multi-channel and team features
-
-## 21. KPIs beyond revenue
-
-**North Star: weekly active creators who published something.**
-
-Not logins, not generations. The metric that is true only if the product is
-doing its job — a creator opened it *and shipped*. It cannot be gamed by
-engagement tricks and it aligns exactly with creator success.
-
-Supporting:
-- Week-4 and week-12 retention (the honest survival curves)
-- % of users with an unbroken 4-week shipped streak
-- % of generated outputs actually used (requires history)
-- Self-reported confidence, asked quarterly, one question
-- Weekly Reviews shared — the word-of-mouth proxy
-
-Deliberately *not* tracked as goals: daily actives, session length, generations
-per user. Optimising those would make the product worse.
-
-## 22. Pre-beta readiness
-
-- [ ] Content persistence shipped (**blocking — the beta teaches you nothing without it**)
-- [ ] Paid inference, or a hard cap and honest waitlist
-- [ ] Pricing page corrected; "unlimited" removed
-- [ ] [TESTING.md](TESTING.md) run end to end on desktop and phone
-- [ ] Groq vision model id refreshed
-- [ ] 10 named creators invited personally, in one niche
-- [ ] A way to hear from them that isn't a mailto link
-- [ ] Someone other than the owner completes signup → first output unaided
-
-## 23. Final honest assessment
-
-The build quality is high and the instincts about honesty are genuinely
-differentiating. The last cycle produced more working, tested, honestly-labelled
-software than most funded teams ship in a quarter.
-
-But **the product as it stands has no reason to be opened twice**, and no amount
-of additional tools changes that. The gap between "seven good generators" and
-"the operating system for creators" is not five more features — it is memory,
-ritual, and proof of progress.
-
-The good news is that this is one data model and one weekly ritual away from
-being a genuinely different product, and both are small compared to what has
-already been built.
-
-The risk is continuing to build tools because building tools is going well.
-
-**Stop adding tools. Make the product remember. Then show creators they're
-getting better — that's the whole company.**
+# Part XI — Implementation order
+
+**CRITICAL — the MLP, in this order**
+1. Content data model + Firestore rules
+2. Tools write to Content objects (one tool at a time, Titles first)
+3. Library
+4. This Week
+5. Manual outcome entry
+6. Weekly Review + streak
+7. Paid inference; corrected pricing
+8. Delete removed pages; retire legacy
+9. Run [TESTING.md](TESTING.md); invite 10 creators
+
+**HIGH — Post-Beta:** Progress · shareable review · outcome-informed prompts ·
+accessibility pass · split the Studio file
+
+**MEDIUM — v2:** OAuth · signals · cohorts · mobile app · rename before spend
+
+**LOW — LTV:** predictive planning · business advisor · extension · teams
+
+---
+
+# Part XII — If I founded this today
+
+**The company is: the only place that knows *why* your content worked.**
+
+Every creator flies blind. They publish, numbers arrive, and nobody ever connects
+the numbers back to the decisions that produced them. Analytics tools show *what*
+happened. Nothing shows *why*, because nothing was there when the choice was made.
+
+We are there when the choice is made. That's the whole thing. We see the title
+they picked and the four they didn't, the thumbnail score they overrode, the week
+they skipped. Attach outcomes to those decisions and you have something no
+analytics product can reconstruct after the fact and no competitor can backfill.
+
+**The five-year product:** a creator's second brain that has watched them work for
+three years and can say *"you're about to make the same mistake you made in
+March,"* and be right.
+
+**Assumptions worth abandoning now:**
+- *That generation is the value.* It's approaching free.
+- *That we compete with vidIQ.* We compete with Notion, a Google Doc, and quitting.
+- *That more tools mean more product.* Seven disconnected tools are worth less
+  than three connected ones.
+- *That analytics is the endgame.* Analytics is a commodity feed. **Judgement
+  informed by personal history is not.**
+
+**What creators would wonder how they lived without:** not the title generator.
+The thing that remembered, noticed they were improving, and told them the truth
+on a Sunday.
