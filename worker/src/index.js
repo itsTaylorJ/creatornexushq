@@ -420,6 +420,36 @@ TOP 3 ACTIONS: [three specific things to do THIS WEEK]
 METRIC TO WATCH: [one number to focus on and why]`,
   },
 
+  // ---- Studio: the Weekly Review ----
+  // The facts arrive already computed from the creator's own record. The model
+  // does NOT get to invent numbers — it interprets. It is also explicitly
+  // permitted to say nothing needs changing, which no engagement-optimised
+  // product will ever say and which is the whole reason this is trustworthy.
+  'weekly-review': {
+    system: `You are CreatorNexusHQ's weekly review. You write one short, honest, personal reflection on a creator's week, addressed to them directly as "you". You are warm but never flattering, and specific rather than motivational. You are reading figures the creator recorded themselves — never claim to have seen their analytics. If the data is thin, say so plainly instead of manufacturing insight. If nothing needs changing, say that; a week that went fine is allowed to have gone fine. Never invent a number that isn't given to you.`,
+    build: (f) => `Write this creator's weekly review from their own recorded figures.
+
+THEIR GOAL: ${f.goal || 'not set'}
+SHIPPED THIS WEEK: ${f.shippedCount}
+WEEKS IN A ROW THEY'VE SHIPPED: ${f.streak}
+NICHE: ${f.niche || 'general'}
+${f.weeksOfHistory <= 1 ? 'THIS IS ONE OF THEIR FIRST WEEKS — there is no history to compare against yet. Talk about the habit they are starting, not about trends you cannot see.' : `WEEKS OF HISTORY: ${f.weeksOfHistory}`}
+
+WHAT THEY PUBLISHED:
+${f.shipped || '(nothing published this week)'}
+
+${f.scoreLine || ''}
+${f.viewsLine || ''}
+${f.missingOutcomes ? `NOTE: ${f.missingOutcomes} of their published videos have no numbers recorded, so any comparison is partial. Mention this once, lightly, without nagging.` : ''}
+
+Respond in plain text using these exact ALL-CAPS labels, one per line, nothing else:
+
+HEADLINE: [one sentence summing up the week, in their terms. No exclamation marks.]
+WHAT WORKED: [something specific and true from the figures above. If there isn't enough data to say, say that instead.]
+ONE THING TO CHANGE: [one small, concrete change for next week. If the week genuinely went well and nothing needs changing, write exactly: Nothing — this week worked. Keep going.]
+NEXT WEEK: [one concrete action, sized to what they actually shipped this week — never more ambitious than their goal]`,
+  },
+
   // ---- Studio: Channel Audit ----
   // Works from numbers the creator types in by hand, on ANY platform — we have
   // no analytics connection yet and must never imply we do. Ends with a

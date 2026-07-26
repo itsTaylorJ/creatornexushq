@@ -137,6 +137,23 @@
   .tagchip.strong .rk{color:var(--good);opacity:.8}
   .tagnote{font-size:11.5px;color:var(--faint);margin:9px 0 0;line-height:1.5}
   /* "try an example" affordance */
+  /* this week */
+  .twgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:11px;margin-bottom:20px}
+  .twstat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;min-width:0}
+  .twstat .tv{display:block;font-family:var(--mono);font-size:28px;font-weight:700;color:#f0f0ff;letter-spacing:-.03em;line-height:1}
+  .twstat .tl{display:block;font-size:12.5px;color:var(--text-soft);margin-top:7px}
+  .twstat .ts{display:block;font-size:11px;color:var(--faint);margin-top:3px}
+  .review{background:linear-gradient(150deg,rgba(124,58,237,.11),rgba(6,182,212,.07));border:1px solid rgba(139,92,246,.3);border-radius:16px;padding:22px 24px}
+  .rvweek{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--cyan)}
+  .rvhead{font-size:18px;font-weight:700;line-height:1.35;color:#f0f0ff;letter-spacing:-.02em;margin:9px 0 0}
+  .rvnums{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+  .rvnums span{font-size:12.5px;color:var(--muted)}
+  .rvnums b{font-family:var(--mono);font-size:16px;color:var(--cyan);font-weight:700;margin-right:5px}
+  .rvlist{margin:14px 0 0;padding-left:18px}
+  .rvlist li{font-size:13px;color:var(--text-soft);line-height:1.6}
+  .rvb{margin-top:15px}
+  .rvl{display:block;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);margin-bottom:4px}
+  .rvb p{font-size:13.5px;color:var(--text-soft);line-height:1.6;margin:0}
   /* my content */
   .navsep{height:1px;background:var(--border);margin:8px 12px}
   .mccard{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;margin-bottom:11px}
@@ -305,6 +322,7 @@
     <a class="brand" href="index.html"><span class="logo">Creator<span>NexusHQ</span></span></a>
     <div class="rail-label">Studio</div>
     <nav id="nav">
+      <button class="navitem" data-tool="week" onclick="switchTool('week',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>This Week</button>
       <button class="navitem" data-tool="content" onclick="switchTool('content',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h6l2 2h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z"/></svg>My Content</button>
       <div class="navsep"></div>
       <button class="navitem active" data-tool="titles" onclick="switchTool('titles',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.83 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>Titles &amp; Descriptions</button>
@@ -341,6 +359,15 @@
 
     <div class="work">
       <!-- ============ TITLES & DESCRIPTIONS ============ -->
+      <section class="tool" id="tool-week">
+        <div class="tool-head">
+          <div class="kicker">This Week</div>
+          <h1>Where you are.</h1>
+          <p>What you've shipped, what's still open, and an honest look back once a week. Every number here is your own &mdash; nothing is estimated.</p>
+        </div>
+        <div id="tw-body"><div class="placeholder"><div class="big">📅</div>Loading…</div></div>
+      </section>
+
       <section class="tool" id="tool-content">
         <div class="tool-head">
           <div class="kicker">My Content</div>
@@ -957,6 +984,13 @@
     <div class="field"><label>Channel size</label>
       <select class="inp" id="p-size"><option>Just starting</option><option>Under 1K</option><option>1K–10K</option><option>10K–100K</option><option>100K+</option></select>
     </div>
+    <div class="field"><label>How often do you want to post?</label>
+      <select class="inp" id="p-cadence">
+        <option>A few times a month</option><option selected>Once a week</option>
+        <option>2–3 times a week</option><option>Most days</option><option>Every day</option>
+      </select>
+      <p class="modehint">You can change this any time. We use it to hold you to your own goal &mdash; not to nag you.</p>
+    </div>
     <label class="check"><input type="checkbox" id="p-optin"><span>Send me growth tips &amp; product news. No spam, unsubscribe anytime.</span></label>
     <div class="modal-actions">
       <button class="btn-primary" onclick="saveProfile()">Save &amp; start</button>
@@ -1014,6 +1048,7 @@
     document.getElementById('p-game').value=p.game||'';
     setPills('p-platforms', profilePlatforms(p)); setPills('p-grow', p.grow||[]);
     document.getElementById('p-size').value=p.size||'Just starting'; document.getElementById('p-optin').checked=!!p.optin;
+    document.getElementById('p-cadence').value=p.cadence||'Once a week';
     document.getElementById('profileTitle').textContent = p.niche ? 'Your channel' : "Welcome — let's set up your channel";
     toggleGameField(); document.getElementById('profileScrim').classList.add('open');
   }
@@ -1027,6 +1062,7 @@
     p.game=document.getElementById('p-game').value.trim();
     p.platforms=pillsSel('p-platforms'); p.grow=pillsSel('p-grow'); p.platform=p.platforms[0]||'';
     p.size=document.getElementById('p-size').value; p.optin=document.getElementById('p-optin').checked;
+    p.cadence=document.getElementById('p-cadence').value;
     setProfile(p);
     if(window.__saveProfileRemote) window.__saveProfileRemote(p);
     closeProfile(); toast('Channel saved — tools are personalized to you.');
@@ -1044,6 +1080,7 @@
     if(id==='schedule') prefillSchedule();
     if(id==='live') liveHint();
     if(id==='content') loadMyContent();
+    if(id==='week') loadThisWeek();
     closeDrawer();
     window.scrollTo({top:0});
   }
@@ -1606,6 +1643,188 @@
     const fn=EXAMPLES[tool]; if(!fn) return;
     if(!fn()) toast('Example filled in — hit generate to see what it does.');
   }
+
+  // ================= This Week & the Weekly Review =================
+  // Architecture rule: every number here is COMPUTED from the creator's own
+  // record. The model only interprets. If the model call fails the review still
+  // renders — a review that can be blocked by an API is not a ritual.
+
+  // ISO-8601 week, so the key sorts and matches how the rest of the world counts.
+  function isoWeekOf(d){
+    const t=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay()||7));            // to Thursday
+    const yStart=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+    const wk=Math.ceil(((t-yStart)/86400000 + 1)/7);
+    return t.getUTCFullYear()+'-W'+String(wk).padStart(2,'0');
+  }
+  function weekStart(d){
+    const x=new Date(d); const day=(x.getDay()||7);                    // Mon=1..Sun=7
+    x.setDate(x.getDate()-day+1); x.setHours(0,0,0,0); return x;
+  }
+  const GOAL_TARGET = { 'A few times a month':1, 'Once a week':1, '2–3 times a week':2, 'Most days':5, 'Every day':7 };
+
+  // The deterministic core. No AI, no network beyond reading their own record.
+  function summariseWeek(items, when){
+    const start = weekStart(when||new Date());
+    const end = new Date(start); end.setDate(end.getDate()+7);
+    const published = items.filter(i=>i.status==='published' && i.publishedAt);
+    const thisWeek = published.filter(i=>{ const p=new Date(i.publishedAt); return p>=start && p<end; });
+    const earlier  = published.filter(i=>new Date(i.publishedAt) < start);
+
+    const withScore = (arr)=>arr.map(i=>i.stages&&i.stages.title&&i.stages.title.score).filter(n=>typeof n==='number');
+    const avg = (a)=>a.length ? Math.round(a.reduce((x,y)=>x+y,0)/a.length) : null;
+    const wkScore = avg(withScore(thisWeek)), priorScore = avg(withScore(earlier));
+
+    const views = (arr)=>arr.filter(i=>i.outcome&&typeof i.outcome.views==='number');
+    const wkViews = views(thisWeek), priorViews = views(earlier);
+    const wkViewAvg = wkViews.length ? Math.round(wkViews.reduce((a,b)=>a+b.outcome.views,0)/wkViews.length) : null;
+    const priorViewAvg = priorViews.length ? Math.round(priorViews.reduce((a,b)=>a+b.outcome.views,0)/priorViews.length) : null;
+
+    // streak: consecutive weeks back from this one containing a publish
+    let streak=0; const cursor=new Date(start);
+    for(let k=0;k<104;k++){
+      const s=new Date(cursor), e=new Date(cursor); e.setDate(e.getDate()+7);
+      const any=published.some(i=>{ const p=new Date(i.publishedAt); return p>=s && p<e; });
+      if(any) streak++; else if(k>0) break; else if(!any) { /* current week empty — keep looking back */ }
+      cursor.setDate(cursor.getDate()-7);
+    }
+    const weeksOfHistory = published.length ? Math.max(1, Math.ceil((Date.now()-new Date(published[published.length-1].publishedAt))/(7*86400000))) : 0;
+
+    return { start, end, thisWeek, earlier, wkScore, priorScore, wkViewAvg, priorViewAvg,
+             streak, weeksOfHistory, missingOutcomes: thisWeek.filter(i=>!i.outcome).length };
+  }
+
+  async function loadThisWeek(){
+    const wrap=document.getElementById('tw-body'); if(!wrap) return;
+    if(!window.__currentUser){
+      wrap.innerHTML='<div class="placeholder"><div class="big">📅</div>Sign in to see your week.</div>'; return;
+    }
+    wrap.innerHTML='<div class="loading"><span class="dots"><i></i><i></i><i></i></span> Reading your week…</div>';
+    const items = await window.__contentList(100);
+    const s = summariseWeek(items);
+    const p = getProfile();
+    const goal = p.cadence || '';
+    const target = GOAL_TARGET[goal] || null;
+
+    let html='';
+    // --- the honest scoreboard: their numbers, not our opinion ---
+    html+='<div class="twgrid">'+
+      twStat(s.thisWeek.length, 'published this week', target?('goal: '+target+'+'):'')+
+      twStat(s.streak, s.streak===1?'week in a row':'weeks in a row', s.streak>=4?'that\'s a habit now':'')+
+      twStat(s.wkScore!==null?s.wkScore:'—', 'average title score',
+             (s.wkScore!==null&&s.priorScore!==null) ? (s.wkScore>=s.priorScore?('up from '+s.priorScore):('down from '+s.priorScore)) : 'no history yet')+
+    '</div>';
+
+    // --- what's still open ---
+    const open = items.filter(i=>i.status!=='published').slice(0,4);
+    if(open.length){
+      html+='<div class="res-group"><h3>Still open <span class="cnt">'+open.length+'</span></h3>'+
+        open.map(i=>{
+          const st=stageStrip(i); const next=STAGES.find(x=>!(i.stages||{})[x.k]);
+          return '<div class="item"><div class="txt"><span class="lab">'+esc(next?('next: '+next.label):'ready to publish')+'</span>'+
+            esc((i.stages&&i.stages.title&&i.stages.title.chosen)||i.topic||'Untitled')+
+            '<div class="ideawhy">'+st.done+' of '+STAGES.length+' done</div></div>'+
+            '<button class="mcbtn" onclick="openContent(\''+i.id+'\')">Open</button></div>';
+        }).join('')+'</div>';
+    }
+
+    // --- the review ---
+    const wk = isoWeekOf(new Date());
+    html+='<div class="res-group"><h3>Your week in review</h3><div id="tw-review">'+
+      '<p class="tagnote" style="margin-top:0">'+
+        (s.thisWeek.length
+          ? 'You shipped '+s.thisWeek.length+' this week. Write it up and it\'s saved for good — reviews can\'t be edited later, so it stays an honest record.'
+          : 'Nothing published this week yet. You can still write the review — an honest quiet week is worth recording.')+
+      '</p>'+
+      '<button class="gen" id="tw-gen" onclick="runReview()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Write my review for '+esc(wk)+'</button>'+
+    '</div></div>';
+
+    wrap.innerHTML = html;
+    // If this week's review is already closed, show it instead of the button.
+    const existing = await window.__weekGet(wk);
+    if(existing) renderReview(existing, true);
+  }
+
+  function twStat(value, label, sub){
+    return '<div class="twstat"><span class="tv">'+esc(String(value))+'</span><span class="tl">'+esc(label)+'</span>'+
+           (sub?'<span class="ts">'+esc(sub)+'</span>':'')+'</div>';
+  }
+
+  async function runReview(){
+    if(!window.__currentUser){ openSignin(); return; }
+    const btn=document.getElementById('tw-gen'); const host=document.getElementById('tw-review');
+    if(!btn) return;
+    if(!btn.dataset.orig) btn.dataset.orig=btn.innerHTML;
+    btn.disabled=true; btn.innerHTML='<span class="dots"><i></i><i></i><i></i></span> Looking back…';
+
+    const items = await window.__contentList(100);
+    const s = summariseWeek(items);
+    const p = getProfile();
+    const shipped = s.thisWeek.map(i=>{
+      const t=(i.stages&&i.stages.title&&i.stages.title.chosen)||i.topic||'Untitled';
+      const sc=i.stages&&i.stages.title&&i.stages.title.score;
+      const v=i.outcome&&typeof i.outcome.views==='number' ? fmtN(i.outcome.views)+' views' : 'no numbers recorded';
+      return '- "'+t+'" — '+(typeof sc==='number'?('title score '+sc+', '):'')+v;
+    }).join('\n');
+
+    const body={ tool:'weekly-review', goal:p.cadence||'', niche:p.game||p.niche||'general',
+      shippedCount:s.thisWeek.length, streak:s.streak, weeksOfHistory:s.weeksOfHistory,
+      shipped:shipped, missingOutcomes:s.missingOutcomes,
+      scoreLine: (s.wkScore!==null&&s.priorScore!==null)
+        ? 'THEIR AVERAGE TITLE SCORE THIS WEEK: '+s.wkScore+' (their previous average: '+s.priorScore+')' : '',
+      viewsLine: (s.wkViewAvg!==null&&s.priorViewAvg!==null)
+        ? 'AVERAGE VIEWS THIS WEEK: '+s.wkViewAvg+' (their previous average: '+s.priorViewAvg+')' : ''
+    };
+
+    // The computed half stands on its own; the written half is a bonus.
+    let sec = null;
+    try{
+      const r=await cnxFetch(WORKER_URL, body);
+      if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
+      if(r.status!==429){
+        const d=await r.json();
+        if(r.ok && d.text){ sec=parseSections(d.text); if(d.plan) updatePlanBadge(d.plan,d.remaining); }
+      }
+    }catch(e){ /* fall through — the review still gets written */ }
+
+    const wk=isoWeekOf(new Date());
+    const record={
+      week:wk, shipped:s.thisWeek.length, streak:s.streak,
+      avgScore:s.wkScore, prevAvgScore:s.priorScore,
+      avgViews:s.wkViewAvg, prevAvgViews:s.priorViewAvg,
+      titles:s.thisWeek.map(i=>(i.stages&&i.stages.title&&i.stages.title.chosen)||i.topic||'Untitled'),
+      headline: sec ? (sec['HEADLINE']||'') : '',
+      worked:   sec ? (sec['WHAT WORKED']||'') : '',
+      change:   sec ? (sec['ONE THING TO CHANGE']||'') : '',
+      next:     sec ? (sec['NEXT WEEK']||'') : '',
+      written:  !!sec,
+      closedAt: new Date().toISOString()
+    };
+    const saved = await window.__weekClose(wk, record);
+    btn.disabled=false; btn.innerHTML=btn.dataset.orig;
+    if(!saved && host){ toast('Couldn\'t save the review — it may already be written for this week.'); }
+    renderReview(record, saved);
+  }
+
+  function renderReview(r, saved){
+    const host=document.getElementById('tw-review'); if(!host) return;
+    let html='<div class="review">'+
+      '<div class="rvweek">'+esc(r.week)+(saved?' · saved for good':'')+'</div>'+
+      (r.headline?'<p class="rvhead">'+esc(r.headline)+'</p>':'')+
+      '<div class="rvnums">'+
+        '<span><b>'+r.shipped+'</b> shipped</span>'+
+        '<span><b>'+r.streak+'</b> week'+(r.streak===1?'':'s')+' in a row</span>'+
+        (r.avgScore!==null&&r.avgScore!==undefined?'<span><b>'+r.avgScore+'</b> avg title score</span>':'')+
+      '</div>';
+    if(r.titles&&r.titles.length) html+='<ul class="rvlist">'+r.titles.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>';
+    if(r.worked) html+=rvBlock('What worked', r.worked);
+    if(r.change) html+=rvBlock('One thing to change', r.change);
+    if(r.next)   html+=rvBlock('Next week', r.next);
+    if(!r.written) html+='<p class="tagnote">The written part couldn\'t be generated just now, but your numbers above are recorded and the week is saved.</p>';
+    html+='</div>';
+    host.innerHTML=html;
+  }
+  function rvBlock(label, val){ return '<div class="rvb"><span class="rvl">'+esc(label)+'</span><p>'+esc(val)+'</p></div>'; }
 
   // ================= My Content =================
   // The stages a piece of content moves through. The count is the mechanic that
@@ -2212,7 +2431,7 @@
     try{ await setDoc(doc(db,'users',u.uid), {
       name:p.name||'', first:p.first||'', last:p.last||'', username:p.username||'',
       niche:p.niche||'', game:p.game||'', platforms:p.platforms||[], grow:p.grow||[],
-      size:p.size||'', keyword:p.keyword||'', optin:!!p.optin, profileComplete:true, updatedAt:new Date().toISOString()
+      size:p.size||'', keyword:p.keyword||'', cadence:p.cadence||'', optin:!!p.optin, profileComplete:true, updatedAt:new Date().toISOString()
     }, {merge:true}); }catch(e){}
   };
 
@@ -2258,6 +2477,27 @@
       const snap = await getDoc(doc(db, 'users', u.uid, 'content', id));
       return snap.exists() ? Object.assign({ id: snap.id }, snap.data()) : null;
     } catch (e) { return null; }
+  };
+
+  // Weeks are written once and never edited. The rules refuse updates, so this
+  // uses setDoc with a known id and simply fails if the week is already closed —
+  // which is the correct behaviour, not an error to work around.
+  window.__weekGet = async (weekId) => {
+    const u = window.__currentUser; if (!u || !weekId) return null;
+    try {
+      const snap = await getDoc(doc(db, 'users', u.uid, 'weeks', weekId));
+      return snap.exists() ? snap.data() : null;
+    } catch (e) { return null; }
+  };
+
+  window.__weekClose = async (weekId, record) => {
+    const u = window.__currentUser; if (!u || !weekId) return false;
+    try {
+      const existing = await getDoc(doc(db, 'users', u.uid, 'weeks', weekId));
+      if (existing.exists()) return false;            // already closed — never overwrite
+      await setDoc(doc(db, 'users', u.uid, 'weeks', weekId), record);
+      return true;
+    } catch (e) { console.warn('week close failed', e); return false; }
   };
 
   window.__contentDelete = async (id) => {

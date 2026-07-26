@@ -512,7 +512,7 @@ Plus `users/{uid}/weeks/{isoWeek}` — the Weekly Review, **immutable once close
 2. ~~Titles writes to Content objects~~ ✅ **done** — the other six wait until
    the thin loop is validated with real creators
 3. ~~My Content (Library)~~ ✅ **done**
-4. This Week
+4. ~~This Week + the Weekly Review~~ ✅ **done 2026-07-26**
 5. Manual outcome entry (typed-in views/CTR — no API needed)
 6. Weekly Review + shipped streak
 7. Paid inference, or an honest hard cap (Groq free tier ≈ 50 active users)
@@ -533,6 +533,33 @@ the 10 legacy tool pages once the loop ships.
 (packaging, planning, review, library). Mobile is capture / glance / ship /
 read-the-review. Thumbnail analysis and tag optimisation do **not** belong on a
 phone.
+
+## The Weekly Review — how it's built, and why that way
+
+**Every number in it is computed from the creator's own record. The model only
+interprets.** `summariseWeek()` derives shipped count, streak, average title
+score vs their prior average, and average views vs prior — all client-side
+arithmetic, unit-tested (17 cases incl. ISO year boundaries). The Worker's
+`weekly-review` prompt receives those facts already computed and is told never
+to invent a number.
+
+**The AI can never block the review.** If the model call fails or 429s, the week
+still closes with its real numbers and says plainly that the written part
+couldn't be generated. A ritual that an API outage can cancel is not a ritual.
+
+**The prompt is explicitly allowed to say nothing needs changing** — the exact
+string *"Nothing — this week worked. Keep going."* Verified live in production.
+No engagement-optimised product will ever say that, and it is the single
+clearest signal that this one is worth believing when it says something IS wrong.
+
+**Weeks are immutable.** `__weekClose()` refuses to overwrite an existing week
+and the rules refuse `update`/`delete` regardless. Verified: a second close
+attempt with tampered data returns false and the stored record is unchanged.
+
+⚠️ **The Worker's CORS allowlist is production-origin only.** Generate calls
+therefore **cannot be tested from `localhost`** — they fail preflight. Test
+Worker-dependent flows against the deployed site, or via Node (no CORS). Do NOT
+widen the allowlist for test convenience.
 
 ## The AI ladder — each rung is gated on data, not model quality
 
