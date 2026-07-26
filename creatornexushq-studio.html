@@ -153,6 +153,19 @@
   .mcbtn:hover{border-color:var(--violet)}
   .mcbtn.ghost{color:var(--muted)}
   .mcbtn.ghost:hover{color:var(--bad);border-color:rgba(248,113,113,.4)}
+  .mcbtn.ship{border-color:rgba(139,92,246,.45);color:#f0f0ff}
+  .mcbtn.ship:hover{background:rgba(139,92,246,.14)}
+  /* the outcome ask — an offer, never a nag: no badge, no counter, dismissible */
+  .ocask{margin-top:12px;padding:11px 13px;border-radius:10px;background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.28)}
+  .ocask span{display:block;font-size:12.5px;color:var(--text-soft);line-height:1.5}
+  .ocaskbtns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .ocbox{margin-top:12px;padding:13px;border-radius:10px;background:var(--surface-2);border:1px solid var(--border)}
+  .ocgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(130px,100%),1fr));gap:9px}
+  .ocf{display:block;min-width:0}
+  .ocf span{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px}
+  .ocf .inp{padding:8px 10px;font-size:13px}
+  .octiny{font-size:11px;color:var(--faint);margin:9px 0 11px;line-height:1.5}
+  .ocdone{margin-top:11px;font-family:var(--mono);font-size:12px;color:var(--cyan);word-break:break-word}
   .savedtag{font-size:12px;color:var(--good);margin-top:9px;opacity:0;transition:opacity .25s}
   .savedtag.show{opacity:1}
   .exbtn{font:inherit;font-size:12.5px;font-weight:600;color:var(--cyan);background:none;border:0;border-bottom:1px dashed rgba(34,211,238,.45);padding:0 0 1px;margin-top:10px;cursor:pointer}
@@ -1645,14 +1658,111 @@
           '<div class="mctitle">'+esc(title)+'</div>'+
           (score!==null?'<span class="mcscore '+(score>=80?'good':score>=55?'warn':'bad')+'">'+score+'</span>':'')+
         '</div>'+
-        '<div class="mcmeta">'+esc(it.platform||'YouTube')+' · '+s.done+' of '+STAGES.length+' done · '+esc(whenText(it.updatedAt))+'</div>'+
+        '<div class="mcmeta">'+esc(it.platform||'YouTube')+' · '+s.done+' of '+STAGES.length+' done · '+
+          (it.status==='published' ? 'published '+esc(whenText(it.publishedAt)) : esc(whenText(it.updatedAt)))+'</div>'+
         s.html+
+        outcomeRow(it)+
         '<div class="mcacts">'+
           '<button class="mcbtn" onclick="openContent(\''+it.id+'\')">Open</button>'+
+          (it.status!=='published' ? '<button class="mcbtn ship" onclick="markPublished(\''+it.id+'\')">Mark published</button>' : '')+
           '<button class="mcbtn ghost" onclick="removeContent(\''+it.id+'\')">Delete</button>'+
         '</div>'+
       '</div>';
     }).join('');
+  }
+
+  // ---------- publish + outcome ----------
+  // Outcomes are the half of the record that makes the other half worth having:
+  // a decision with no result attached teaches nobody anything.
+  // We ask ONCE per video, only after the numbers mean something, and never
+  // with a badge or a counter. Dismissing is permanent for that video.
+  const OUTCOME_ASK_AFTER_DAYS = 3;
+
+  function daysSince(iso){ return iso ? (Date.now()-new Date(iso).getTime())/86400000 : 0; }
+
+  function shouldAskOutcome(it){
+    return it.status==='published' && !it.outcome && !it.outcomeDismissed
+        && daysSince(it.publishedAt) >= OUTCOME_ASK_AFTER_DAYS;
+  }
+
+  async function markPublished(id){
+    const url = prompt('Link to the published video? (optional — leave blank to skip)') || '';
+    const ok = await window.__contentUpdate(id, {
+      status:'published', publishedAt:new Date().toISOString(), url:url.trim()
+    });
+    if(ok){ toast('Nice — that\'s one shipped.'); loadMyContent(); }
+    else toast('Couldn\'t save that — try again.');
+  }
+
+  async function dismissOutcome(id){
+    await window.__contentUpdate(id, { outcomeDismissed:true });
+    loadMyContent();
+  }
+
+  function openOutcome(id){
+    const el=document.getElementById('oc-'+id); if(!el) return;
+    el.style.display = el.style.display==='none' ? 'block' : 'none';
+    if(el.style.display==='block') el.querySelector('input').focus();
+  }
+
+  async function saveOutcome(id){
+    const g=(s)=>{ const v=(document.querySelector('#oc-'+id+' [data-f="'+s+'"]').value||'').replace(/[^0-9.]/g,''); return v?parseFloat(v):null; };
+    const views=g('views');
+    if(views===null){ toast('Views is the one number we need — the rest can wait.'); return; }
+    const outcome={ views:views, ctr:g('ctr'), retention:g('ret'), newFollowers:g('subs'),
+                    source:'manual', enteredAt:new Date().toISOString() };
+    const ok=await window.__contentUpdate(id, { outcome:outcome });
+    if(!ok){ toast('Couldn\'t save that — try again.'); return; }
+    const line = await outcomeComparison(views, id);
+    toast(line || 'Saved.');
+    loadMyContent();
+  }
+
+  // The payback. On the SECOND video with numbers we can already say something
+  // true — waiting until there's a big dataset means nobody ever gets there.
+  async function outcomeComparison(views, exceptId){
+    const items = await window.__contentList(50);
+    const others = items.filter(i=>i.id!==exceptId && i.outcome && typeof i.outcome.views==='number');
+    if(!others.length) return 'Saved. Add one more and I can start comparing.';
+    const avg = others.reduce((a,b)=>a+b.outcome.views,0)/others.length;
+    if(!avg) return 'Saved.';
+    const pct = Math.round((views-avg)/avg*100);
+    const n = others.length+1;
+    if(Math.abs(pct) < 10) return 'Saved — right about your average across '+n+' videos.';
+    return pct>0 ? 'Saved — '+pct+'% above your average across '+n+' videos.'
+                 : 'Saved — '+Math.abs(pct)+'% below your average across '+n+' videos.';
+  }
+
+  function outcomeForm(it){
+    const f=(k,ph,lab)=>'<label class="ocf"><span>'+lab+'</span><input class="inp" data-f="'+k+'" inputmode="numeric" placeholder="'+ph+'"></label>';
+    return '<div class="ocbox" id="oc-'+it.id+'" style="display:none">'+
+      '<div class="ocgrid">'+
+        f('views','e.g. 4200','Views *')+f('ctr','e.g. 5.4','CTR %')+
+        f('ret','e.g. 42','Retention %')+f('subs','e.g. 60','New followers')+
+      '</div>'+
+      '<p class="octiny">Only views is needed. Copy them from your own dashboard — we can\'t read your analytics.</p>'+
+      '<button class="mcbtn" onclick="saveOutcome(\''+it.id+'\')">Save how it did</button>'+
+    '</div>';
+  }
+
+  function outcomeRow(it){
+    if(it.outcome){
+      const o=it.outcome, bits=[fmtN(o.views)+' views'];
+      if(o.ctr!=null) bits.push(o.ctr+'% CTR');
+      if(o.retention!=null) bits.push(o.retention+'% retention');
+      if(o.newFollowers!=null) bits.push('+'+fmtN(o.newFollowers)+' followers');
+      return '<div class="ocdone">'+esc(bits.join(' · '))+'</div>';
+    }
+    if(shouldAskOutcome(it)){
+      return '<div class="ocask">'+
+        '<span>How did this one do? Takes about ten seconds, and it\'s what lets me tell you what\'s working.</span>'+
+        '<div class="ocaskbtns">'+
+          '<button class="mcbtn" onclick="openOutcome(\''+it.id+'\')">Add the numbers</button>'+
+          '<button class="mcbtn ghost" onclick="dismissOutcome(\''+it.id+'\')">Not now</button>'+
+        '</div></div>'+outcomeForm(it);
+    }
+    if(it.status==='published') return outcomeForm(it);
+    return '';
   }
 
   // Opening a piece of content puts you back in the tool with its context
