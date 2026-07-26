@@ -63,7 +63,7 @@ Read this first so you don't chase things we already know:
 ## C. Studio shell and navigation
 
 14. [ ] Every rail item opens its tool. **Titles, Tags, Thumbnails, Ideas,
-        Posting Schedule and Live Titles are live**; only Channel Audit shows "soon".
+        Posting Schedule, Live Titles and Channel Audit are all live** — nothing says "soon".
 15. [ ] Clicking the account block at the bottom opens the **Account page**.
 16. [ ] Edit the channel context via the **Edit** button top-right — changes
         show immediately in the bar.
@@ -168,64 +168,86 @@ Read this first so you don't chase things we already know:
 63. [ ] Try **Rumble** — output should look YouTube-ish, front-loaded and plain.
 64. [ ] No title comes back wrapped in quote marks.
 
-## J. "Try an example" (the first-run path)
+## J. Channel Audit
 
-65. [ ] On **each** live tool, click **"Try an example →"** under the heading.
-66. [ ] The form fills with a realistic scenario and you can hit generate
+65. [ ] Read the note at the top of the form. It should say plainly that **no
+        analytics account is connected** and these are your own numbers.
+66. [ ] Enter real figures from your dashboard. Leave one or two blank on
+        purpose.
+67. [ ] You get **"Your numbers, worked out"** — views per follower, what % of
+        your following an average post reaches, new followers per 1,000 views.
+        **Check the arithmetic against your own dashboard.**
+68. [ ] The audit names **one bottleneck**, not a list, and explains why using
+        your actual figures.
+69. [ ] It mentions which blank field would have sharpened it.
+70. [ ] There's a **"Start here"** card with a button to a specific tool.
+        **Click it — it should jump straight to that tool** and the sidebar
+        should follow.
+71. [ ] The tool it picks makes sense for the problem. If it sends a "nobody
+        clicks" channel anywhere other than Titles or Thumbnails, say so.
+72. [ ] Run it again with a **very different** channel profile (say, someone who
+        can't post consistently). **The bottleneck and the routed tool should
+        change.** If everything routes to the same tool, that's a real failure.
+73. [ ] Nothing anywhere claims to have read your analytics.
+
+## K. "Try an example" (the first-run path)
+
+74. [ ] On **each** live tool, click **"Try an example →"** under the heading.
+75. [ ] The form fills with a realistic scenario and you can hit generate
         immediately without inventing anything.
-67. [ ] On Thumbnails it fills the text fields and tells you to add your own
+76. [ ] On Thumbnails it fills the text fields and tells you to add your own
         image — it does **not** pretend to have one.
 
-## K. Copy buttons (check this everywhere)
+## L. Copy buttons (check this everywhere)
 
-68. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
+77. [ ] Click **Copy** on a title, a tag line, a hashtag block, a thumbnail
         prompt and an idea. Paste each one somewhere.
-69. [ ] The pasted text is **exactly** what was on screen — including line
+78. [ ] The pasted text is **exactly** what was on screen — including line
         breaks in multi-line blocks like the full description.
-70. [ ] The button flips to **✓ Copied** and back.
+79. [ ] The button flips to **✓ Copied** and back.
 
-## L. Account page
+## M. Account page
 
-71. [ ] Name, username and email are correct.
-72. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
-73. [ ] The channel summary matches your survey answers.
-74. [ ] Change your username, save, reload — **it stuck**.
-75. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
-76. [ ] **Sign out** works and returns you to a logged-out state.
+80. [ ] Name, username and email are correct.
+81. [ ] Plan shows **Pro trial** (or Free) and explains what that means.
+82. [ ] The channel summary matches your survey answers.
+83. [ ] Change your username, save, reload — **it stuck**.
+84. [ ] Toggle the marketing opt-in, save, reload — **it stuck**.
+85. [ ] **Sign out** works and returns you to a logged-out state.
 
-## M. Limits and honesty
+## N. Limits and honesty
 
-77. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
+86. [ ] While signed out, click Generate on any tool → **sign-in prompt**, not an
         error and not a redirect that loses your work.
-78. [ ] The usage counter in the rail **decreases by exactly one** per successful
+87. [ ] The usage counter in the rail **decreases by exactly one** per successful
         generation.
-79. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
+88. [ ] Force a failure (turn off wi-fi mid-generation). You get a clear error
         and **the counter does not drop**.
-80. [ ] Nowhere in the app does anything imply you can **pay** yet.
-81. [ ] No tool claims live TikTok/Instagram trend data.
+89. [ ] Nowhere in the app does anything imply you can **pay** yet.
+90. [ ] No tool claims live TikTok/Instagram trend data.
 
-## N. Legacy pages still work
+## O. Legacy pages still work
 
-82. [ ] From the landing Tools menu, open the older pages
+91. [ ] From the landing Tools menu, open the older pages
         (`app`, `analyze`, `thumbnail`, `streaming`, `platforms`).
-83. [ ] Each one has a **"Back to Studio"** link that works.
-84. [ ] Deep links land on the right tab, e.g.
+92. [ ] Each one has a **"Back to Studio"** link that works.
+93. [ ] Deep links land on the right tab, e.g.
         `creatornexushq-analyze.html?tab=analytics` opens **Analytics Advice**,
         not the default tab.
-85. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
+94. [ ] Competitor Research, Collab Finder and Trend Tracker are honestly gated
         **Coming Soon** — no fake output.
 
-## O. Mobile pass (do this on a real phone)
+## P. Mobile pass (do this on a real phone)
 
-86. [ ] Repeat steps 18, 24, 36 and 50 on your phone.
-87. [ ] **No page scrolls sideways at any point.** This is the single most
+95. [ ] Repeat steps 18, 24, 36 and 50 on your phone.
+96. [ ] **No page scrolls sideways at any point.** This is the single most
         common regression in this codebase — check every results screen,
         including the thumbnail size-preview strip (it should scroll on its own).
-88. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
+97. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
 
-## P. Cleanup
+## Q. Cleanup
 
-89. [ ] **Delete every throwaway account** in the Firebase console
+98. [ ] **Delete every throwaway account** in the Firebase console
         (Authentication → Users). Non-negotiable.
 
 ---

@@ -420,6 +420,44 @@ TOP 3 ACTIONS: [three specific things to do THIS WEEK]
 METRIC TO WATCH: [one number to focus on and why]`,
   },
 
+  // ---- Studio: Channel Audit ----
+  // Works from numbers the creator types in by hand, on ANY platform — we have
+  // no analytics connection yet and must never imply we do. Ends with a
+  // machine-readable FIX FIRST line so the client can route them straight to
+  // the tool that addresses the bottleneck.
+  'channel-audit': {
+    system: `You are CreatorNexusHQ's channel audit engine. You read a creator's own reported numbers and tell them the single most important thing to fix. Be direct and specific, never generic encouragement. You are working from self-reported figures, not a connected analytics account — never claim to have seen their dashboard. If a number they gave is implausible or missing, say so rather than inventing an interpretation. Format with ALL CAPS labels followed by a colon.`,
+    build: (f) => `Audit this ${f.platform || 'YouTube'} creator in the ${f.niche || 'general'} niche using the figures they reported themselves.
+
+REPORTING PERIOD: ${f.period || 'last 28 days'}
+FOLLOWERS / SUBSCRIBERS: ${f.subs || 'not given'}
+VIEWS THIS PERIOD: ${f.views || 'not given'}
+NEW FOLLOWERS THIS PERIOD: ${f.newSubs || 'not given'}
+AVERAGE VIEWS PER POST: ${f.avgViews || 'not given'}
+RETENTION / AVERAGE VIEW DURATION: ${f.retention || 'not given'}
+POSTING FREQUENCY: ${f.frequency || 'not given'}
+THEIR BEST RECENT CONTENT: ${f.top || 'not given'}
+WHAT THEY SAY IS HARDEST: ${f.challenge || 'not given'}
+
+Respond in plain text using these exact ALL-CAPS labels, each on its own line,
+in this order. Output every label. No markdown, no headings of your own, and
+never qualify a label with a parenthetical.
+
+DIAGNOSIS: [2-3 sentences on what these numbers actually say. Reference their specific figures.]
+THE BOTTLENECK: [the single biggest constraint on their growth, named plainly]
+WHY IT'S THE BOTTLENECK: [the reasoning from their numbers, in one or two sentences]
+WHAT'S WORKING: [what they should keep doing — be specific to what they reported]
+BENCHMARK: [how their ratios compare to typical channels of this size in this niche, stated as a range and clearly as a rule of thumb rather than measured data]
+DO THIS WEEK 1: [one concrete action]
+DO THIS WEEK 2: [one concrete action]
+DO THIS WEEK 3: [one concrete action]
+METRIC TO WATCH: [the one number that tells them it's working, and what good looks like]
+FIX FIRST: [exactly ONE word from this list and nothing else on the line: TITLES, TAGS, THUMBNAILS, IDEAS, SCHEDULE, LIVE]
+WHY THAT TOOL: [one sentence connecting the bottleneck to that tool]${f.missing ? `
+
+NOTE: they left some fields blank (${f.missing}). Say plainly which missing number would sharpen the audit most, in the DIAGNOSIS.` : ''}`,
+  },
+
   // ---- creatornexushq-streaming.html ----
   'stream-titles': {
     system: `You are CreatorNexusHQ's stream title specialist. You write stream titles that are optimized for each platform's specific algorithm, audience, and culture. You know that Twitch titles need to stand out in directories, YouTube Live titles need SEO, Kick titles need authenticity, Facebook Gaming needs community language, and TikTok Live needs punchy hooks. Always write platform-native titles. Be specific and creative — never generic.`,

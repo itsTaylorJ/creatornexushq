@@ -33,22 +33,27 @@ carries a "Back to Studio" link so nothing dead-ends.
 | Ideas, Hooks & CTAs | **Studio** ✅ migrated | Real — ideas each carry a ready-to-say hook; CTAs split verbal vs on-screen with placement advice |
 | Posting Schedule | **Studio** ✅ migrated | Real — build a week around your real availability, or have your current schedule rated |
 | Live Titles | **Studio** ✅ migrated | Real — 6 platforms incl. TikTok Live and Rumble, per-platform discovery hints and character budgets |
-| Channel Audit | `analyze.html` (analytics advice, patterns) | Real advice; **manual metric entry not built yet** |
+| Channel Audit | **Studio** ✅ migrated | Real — manual metric entry on any platform, computed ratios, a named bottleneck, and a button through to the tool that fixes it |
 | Monetization tracker | `monetization.html` | Real — client-side math, accurate thresholds |
 | Resources / Platforms | `resources.html`, `platforms.html` | Real — manual stat entry is honest; OAuth connect shows an honest "coming soon" |
 | Competitor Research | `competitor.html` | **Coming Soon** gate — was inventing real channel names |
 | Collab Finder | `collab.html` | **Coming Soon** gate — was inventing real people |
 | Trend Tracker | `trends.html` | **Coming Soon** gate — LLMs have no real-time data |
 
-## Migration queue (one at a time, check in after each)
+## Migration queue — ✅ COMPLETE
+
+All seven tools are live in the Studio. No rail item says "soon". The legacy
+pages remain live and linked, and can now be retired one at a time once the
+Studio versions have been used in anger.
+
+
 
 1. ~~Tags & Hashtags~~ ✅ done
 2. ~~Thumbnails~~ ✅ done
 3. ~~Ideas, Hooks & CTAs~~ ✅ done
 4. ~~Posting Schedule~~ ✅ done
 5. ~~Live Titles~~ ✅ done
-6. **Channel Audit** ← last one — + manual metric entry, benchmark → diagnose →
-   route to the fixing tool
+6. ~~Channel Audit~~ ✅ done
 
 The legacy `analyze.html` tag tool stays live and untouched until the Studio
 version is confirmed working against the deployed Worker.

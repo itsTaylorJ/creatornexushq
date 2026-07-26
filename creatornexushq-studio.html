@@ -183,6 +183,19 @@
   .slotwhy{font-size:12px;color:var(--faint);margin-top:5px;line-height:1.5}
   .lvlen{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:5px}
   .lvlen.over{color:var(--warn)}
+  /* channel audit */
+  .auditnote{font-size:12px;color:var(--muted);line-height:1.55;margin:0 0 16px;padding:10px 12px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border)}
+  .bneck{font-size:16px;font-weight:700;line-height:1.35;color:#f0f0ff;margin:2px 0 6px;letter-spacing:-.01em}
+  .fixcard{background:linear-gradient(120deg,rgba(124,58,237,.16),rgba(6,182,212,.12));border:1px solid rgba(139,92,246,.4);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+  .fixlab{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+  .fixwhy{font-size:13.5px;color:var(--text-soft);line-height:1.5;margin:0 0 12px}
+  .fixbtn{font:inherit;font-size:13.5px;font-weight:700;color:#fff;background:var(--grad);border:0;border-radius:9px;padding:10px 16px;cursor:pointer}
+  .fixbtn:hover{filter:brightness(1.1)}
+  .ratios{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:9px}
+  .ratios .ratio{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;min-width:0}
+  .ratios .rv{display:block;font-family:var(--mono);font-size:19px;font-weight:700;color:var(--cyan);letter-spacing:-.02em}
+  .ratios .rk{display:block;font-size:12px;color:var(--text-soft);margin-top:3px;line-height:1.35}
+  .ratios .rn{display:block;font-size:10.5px;color:var(--faint);margin-top:2px}
 
   .res-group{margin-bottom:18px}
   .res-group h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;display:flex;align-items:center;gap:8px}
@@ -267,7 +280,7 @@
       <button class="navitem" data-tool="ideas" onclick="switchTool('ideas',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>Ideas, Hooks &amp; CTAs</button>
       <button class="navitem" data-tool="schedule" onclick="switchTool('schedule',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Posting Schedule</button>
       <button class="navitem" data-tool="live" onclick="switchTool('live',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg>Live Titles</button>
-      <button class="navitem" data-tool="audit" onclick="switchTool('audit',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg>Channel Audit<span class="soon">soon</span></button>
+      <button class="navitem" data-tool="audit" onclick="switchTool('audit',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg>Channel Audit</button>
     </nav>
     <div class="rail-foot">
       <div class="acct" id="acctLoggedIn" style="display:none;cursor:pointer" onclick="switchTool('account')" title="Your account">
@@ -775,8 +788,81 @@
         </div>
       </section>
 
-      <section class="tool" id="tool-audit"><div class="tool-head"><div class="kicker">Channel Audit</div><h1>Channel Audit</h1></div>
-        <div class="comingsoon"><div class="ic">📈</div><h2>Coming soon — your growth coach</h2><p>Connect YouTube or enter your numbers from any platform, and get benchmarked, diagnosed, and pointed at the exact tool that fixes your bottleneck.</p><a href="creatornexushq-analyze.html">Open the current analyzer →</a></div></section>
+      <section class="tool" id="tool-audit">
+        <div class="tool-head">
+          <div class="kicker">Channel Audit</div>
+          <h1>Find the one thing holding you back.</h1>
+          <p>Type in your own numbers from any platform. You'll get your real ratios worked out, a diagnosis of the bottleneck, and a route straight to the tool that fixes it.</p>
+          <button class="exbtn" onclick="fillExample('audit')">Try an example →</button>
+        </div>
+        <div class="split">
+          <div class="card">
+            <p class="auditnote">We can't read your analytics yet &mdash; there's no connection to any platform, so nothing here is pulled from your account. Copy the numbers from your own dashboard. Leave anything you don't have blank and we'll say what's missing.</p>
+            <div class="field">
+              <label>Platform</label>
+              <div class="pills" id="au-platform">
+                <button class="pill-btn on" onclick="pick(this)">YouTube</button>
+                <button class="pill-btn" onclick="pick(this)">TikTok</button>
+                <button class="pill-btn" onclick="pick(this)">Instagram</button>
+                <button class="pill-btn" onclick="pick(this)">Twitch</button>
+                <button class="pill-btn" onclick="pick(this)">Kick</button>
+                <button class="pill-btn" onclick="pick(this)">Facebook</button>
+              </div>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label>Reporting period</label>
+                <select class="inp" id="au-period"><option>Last 28 days</option><option>Last 7 days</option><option>Last 90 days</option><option>Last 12 months</option></select>
+              </div>
+              <div class="field">
+                <label>Followers / subscribers</label>
+                <input class="inp" id="au-subs" inputmode="numeric" placeholder="e.g. 4200">
+              </div>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label>Views this period</label>
+                <input class="inp" id="au-views" inputmode="numeric" placeholder="e.g. 38000">
+              </div>
+              <div class="field">
+                <label>New followers this period</label>
+                <input class="inp" id="au-newsubs" inputmode="numeric" placeholder="e.g. 310">
+              </div>
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label>Average views per post</label>
+                <input class="inp" id="au-avgviews" inputmode="numeric" placeholder="e.g. 1900">
+              </div>
+              <div class="field">
+                <label>Retention <span class="opt">— % or avg duration</span></label>
+                <input class="inp" id="au-retention" placeholder="e.g. 42% or 3:10">
+              </div>
+            </div>
+            <div class="field">
+              <label>How often do you post?</label>
+              <input class="inp" id="au-frequency" placeholder="e.g. 1 long video and 3 Shorts a week">
+            </div>
+            <div class="field">
+              <label>Your best recent content <span class="opt">— what did well and roughly how well</span></label>
+              <textarea class="inp" id="au-top" placeholder="e.g. 'I Opened a Sealed Booster Box' did 41k, about 20x my normal"></textarea>
+            </div>
+            <div class="field">
+              <label>What feels hardest right now?</label>
+              <select class="inp" id="au-challenge">
+                <option>Nobody clicks my videos</option><option>People click but don't stay</option>
+                <option>Views are flat no matter what I do</option><option>Views but no subscribers</option>
+                <option>I can't post consistently</option><option>I've run out of ideas</option>
+                <option>I don't know what's working</option>
+              </select>
+            </div>
+            <button class="gen" id="au-gen" onclick="runAudit()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg> Audit my channel</button>
+          </div>
+          <div class="results" id="au-results">
+            <div class="placeholder"><div class="big">📈</div>Your ratios, your bottleneck, and the tool that fixes it will appear here.</div>
+          </div>
+        </div>
+      </section>
     </div>
   </div>
 </div>
@@ -1406,6 +1492,14 @@
       setV('id-count','8');
       pickPill('ct-platform','YouTube'); setV('ct-goal','Comment'); setV('ct-tone','Chill / natural'); setV('ct-format','Long-form video');
     },
+    audit(){
+      pickPill('au-platform','YouTube'); setV('au-period','Last 28 days');
+      setV('au-subs','4200'); setV('au-views','38000'); setV('au-newsubs','310');
+      setV('au-avgviews','1900'); setV('au-retention','42%');
+      setV('au-frequency','1 long video and 3 Shorts a week');
+      setV('au-top','"I Opened a Sealed Booster Box" did 41k, about 20x my normal');
+      setV('au-challenge','Views but no subscribers');
+    },
     live(){
       pickPill('lv-platform','Twitch'); liveHint();
       setV('lv-game','Warzone ranked grind'); setV('lv-vibe','Challenge / grind');
@@ -1425,6 +1519,94 @@
   function fillExample(tool){
     const fn=EXAMPLES[tool]; if(!fn) return;
     if(!fn()) toast('Example filled in — hit generate to see what it does.');
+  }
+
+  // ================= Channel Audit =================
+  // FIX FIRST comes back as one word; this maps it to a real tool so the audit
+  // ends somewhere useful instead of on a wall of advice.
+  const FIX_TOOLS = {
+    TITLES:{id:'titles',label:'Titles & Descriptions'}, TAGS:{id:'tags',label:'Tags & Hashtags'},
+    THUMBNAILS:{id:'thumbs',label:'Thumbnails'}, IDEAS:{id:'ideas',label:'Ideas, Hooks & CTAs'},
+    SCHEDULE:{id:'schedule',label:'Posting Schedule'}, LIVE:{id:'live',label:'Live Titles'}
+  };
+  function auNum(id){ const v=String(document.getElementById(id).value||'').replace(/[^0-9.]/g,''); return v?parseFloat(v):null; }
+  function fmtN(n){ return n>=1e6?(n/1e6).toFixed(1).replace(/\.0$/,'')+'M':n>=1e3?(n/1e3).toFixed(1).replace(/\.0$/,'')+'K':String(Math.round(n)); }
+
+  // Pure arithmetic on the numbers they typed. Not a judgement, not a benchmark
+  // — the model's BENCHMARK section does the interpreting, and says so.
+  function auditRatios(){
+    const subs=auNum('au-subs'), views=auNum('au-views'), newSubs=auNum('au-newsubs'), avg=auNum('au-avgviews');
+    const out=[];
+    if(views!==null&&subs) out.push({k:'Views per follower', v:(views/subs).toFixed(2), n:'this period'});
+    if(avg!==null&&subs) out.push({k:'Average post reaches', v:Math.round(avg/subs*100)+'%', n:'of your following'});
+    if(newSubs!==null&&views) out.push({k:'New followers per 1,000 views', v:(newSubs/views*1000).toFixed(1), n:'conversion'});
+    if(views!==null&&avg) out.push({k:'Posts’ worth of views', v:Math.round(views/avg), n:'implied by your totals'});
+    return out;
+  }
+
+  async function runAudit(){
+    if(!window.__currentUser){ openSignin(); return; }
+    const subs=auNum('au-subs'), views=auNum('au-views');
+    if(subs===null && views===null){ toast('Give us at least your follower count and views — the rest can be blank.'); document.getElementById('au-subs').focus(); return; }
+    const p=getProfile();
+    const ids={ 'au-views':'views this period','au-newsubs':'new followers','au-avgviews':'average views per post','au-retention':'retention','au-frequency':'posting frequency','au-top':'best recent content' };
+    const missing=Object.keys(ids).filter(id=>!String(document.getElementById(id).value||'').trim()).map(id=>ids[id]).join(', ');
+    const btn=document.getElementById('au-gen'), res=document.getElementById('au-results');
+    if(!btn.dataset.orig) btn.dataset.orig=btn.innerHTML;
+    btn.disabled=true; btn.innerHTML='<span class="dots"><i></i><i></i><i></i></span> Working through it…';
+    res.innerHTML='<div class="loading"><span class="dots"><i></i><i></i><i></i></span> Reading your numbers…</div>';
+    const body={ tool:'channel-audit',
+      platform:((document.querySelector('#au-platform .pill-btn.on')||{}).textContent||'YouTube').trim(),
+      niche:p.game||p.niche||'general', period:document.getElementById('au-period').value,
+      subs:document.getElementById('au-subs').value.trim(), views:document.getElementById('au-views').value.trim(),
+      newSubs:document.getElementById('au-newsubs').value.trim(), avgViews:document.getElementById('au-avgviews').value.trim(),
+      retention:document.getElementById('au-retention').value.trim(), frequency:document.getElementById('au-frequency').value.trim(),
+      top:document.getElementById('au-top').value.trim(), challenge:document.getElementById('au-challenge').value,
+      missing:missing };
+    try{
+      const r=await cnxFetch(WORKER_URL, body);
+      if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
+      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      const d=await r.json();
+      if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
+      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      renderAudit(d.text);
+    }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
+    finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
+  }
+
+  function renderAudit(text){
+    const res=document.getElementById('au-results');
+    const sec=parseSections(text);
+    let html='';
+    if(sec['THE BOTTLENECK']){
+      html+='<div class="score-hero"><div><p class="verdict">Your bottleneck</p>'+
+        '<p class="bneck">'+esc(sec['THE BOTTLENECK'])+'</p>'+
+        (sec["WHY IT'S THE BOTTLENECK"]||sec['WHY IT’S THE BOTTLENECK']?'<p class="sub">'+esc(sec["WHY IT'S THE BOTTLENECK"]||sec['WHY IT’S THE BOTTLENECK'])+'</p>':'')+
+        '</div></div>';
+    }
+    // the routing payoff — send them to the tool that addresses it
+    const fixKey=String(sec['FIX FIRST']||'').toUpperCase().replace(/[^A-Z]/g,'');
+    const fix=FIX_TOOLS[fixKey];
+    if(fix){
+      html+='<div class="fixcard"><div class="fixlab">Start here</div>'+
+        (sec['WHY THAT TOOL']?'<p class="fixwhy">'+esc(sec['WHY THAT TOOL'])+'</p>':'')+
+        '<button class="fixbtn" onclick="switchTool(\''+fix.id+'\')">Open '+esc(fix.label)+' →</button></div>';
+    }
+    const ratios=auditRatios();
+    if(ratios.length){
+      html+='<div class="res-group"><h3>Your numbers, worked out</h3><div class="ratios">'+
+        ratios.map(r=>'<div class="ratio"><span class="rv">'+esc(r.v)+'</span><span class="rk">'+esc(r.k)+'</span><span class="rn">'+esc(r.n)+'</span></div>').join('')+
+        '</div><p class="tagnote">Straight arithmetic on the figures you entered — no account is connected, so these are only as good as what you typed.</p></div>';
+    }
+    if(sec['DIAGNOSIS']) html+=blockItem('What the numbers say', sec['DIAGNOSIS']);
+    if(sec["WHAT'S WORKING"]||sec['WHAT’S WORKING']) html+=blockItem('Keep doing this', sec["WHAT'S WORKING"]||sec['WHAT’S WORKING']);
+    if(sec['BENCHMARK']) html+=blockItem('Roughly where you sit', sec['BENCHMARK']);
+    const actions=[sec['DO THIS WEEK 1'],sec['DO THIS WEEK 2'],sec['DO THIS WEEK 3']].filter(Boolean);
+    if(actions.length) html+=group('Do this week', actions);
+    if(sec['METRIC TO WATCH']) html+=blockItem('The number to watch', sec['METRIC TO WATCH']);
+    html+='<p class="aiflag">This reads the numbers you typed in — we have no connection to your analytics, and benchmarks are rules of thumb for your size and niche rather than measured data. Your own dashboard always wins.</p>';
+    res.innerHTML=html||'<div class="placeholder">The audit came back in an unexpected shape — try again.</div>';
   }
 
   // ================= Live Titles =================

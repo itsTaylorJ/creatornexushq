@@ -224,7 +224,7 @@ tripled/minified CSS and are being retired tool-by-tool, never big-bang):
 | **Ideas, Hooks & CTAs** ✅ migrated | content ideas (each with a hook) + CTAs |
 | **Posting Schedule** ✅ migrated | weekly calendar builder + schedule rating |
 | **Live Titles** ✅ migrated | stream planner + TikTok Live + Rumble |
-| Channel Audit | analytics advice + content patterns + **manual metric entry** |
+| **Channel Audit** ✅ migrated | manual metric entry → ratios → bottleneck → routes to the fixing tool |
 
 Rules while migrating: old pages stay live until their replacement is verified;
 every legacy page has a **"Back to Studio"** link; sidebar sub-links use
@@ -282,7 +282,23 @@ Phase 2 shipped so far:
   Measured proof the rules bite: same input returns avg 65 chars on Twitch,
   **38 on TikTok Live**, 52 on Rumble, each shaped for that platform.
 
-**Next in line:** Channel Audit — the last Studio tool.
+- **Channel Audit** migrated — **the Studio consolidation is COMPLETE. All 7
+  tools are live and no rail item says "soon".** Works from self-entered
+  numbers on any platform. Three layers, deliberately separated: **arithmetic**
+  (views per follower, % of following reached, new followers per 1,000 views —
+  computed client-side from what they typed), **judgement** (the AI diagnosis
+  and benchmark, hedged as rules of thumb), and **the routing payoff** — the
+  prompt ends with a machine-readable `FIX FIRST:` naming one of TITLES / TAGS /
+  THUMBNAILS / IDEAS / SCHEDULE / LIVE, which `FIX_TOOLS` turns into a button
+  that jumps straight to that tool. That line is load-bearing: if the model
+  returns anything else the button silently won't render, so any prompt edit
+  there needs a live re-test.
+- The audit says **plainly, in the form and again in the results**, that no
+  analytics account is connected and the numbers are the user's own. Never
+  soften that — it's the difference between honest and fraudulent here.
+
+**Phase 2 is done. Next: run [TESTING.md](TESTING.md) end-to-end, then Phase 4
+(My Analytics / YouTube OAuth) or Phase 3 (paid inference → Stripe).**
 Then "My Analytics" (YouTube read-only OAuth, needs ~30 min of Google Cloud
 setup from the owner; Twitch as a fast follow).
 
