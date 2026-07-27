@@ -379,7 +379,7 @@
       <div class="acct" id="acctLoggedIn" style="display:none">
         <button type="button" class="acct-main" onclick="switchTool('account')">
           <span class="av" id="acctAv">?</span>
-          <span class="who"><span class="nm" id="acctName">Creator</span><span class="pl" id="acctPlan">Free plan</span></span>
+          <span class="who"><span class="nm" id="acctName">Creator</span><span class="pl" id="acctPlan">Private beta</span></span>
         </button>
         <button class="acct-menu-btn" onclick="signOut()" title="Sign out" aria-label="Sign out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
       </div>
@@ -882,12 +882,12 @@
           </div>
           <div>
             <div class="card" style="margin-bottom:16px">
-              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Plan</div>
-              <div style="display:flex;align-items:center;gap:12px">
-                <div style="font-size:22px;font-weight:800;letter-spacing:-.02em" id="a-plan-name">Free</div>
-                <div style="font-size:13px;color:var(--muted)" id="a-plan-detail">5 generations a day</div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Access</div>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <div style="font-size:22px;font-weight:800;letter-spacing:-.02em" id="a-plan-name">Private beta</div>
+                <div style="font-size:13px;color:var(--label)" id="a-plan-detail">Checking with the server…</div>
               </div>
-              <p style="font-size:12.5px;color:var(--muted);margin:12px 0 0;line-height:1.55">Every new account gets a free 7-day Pro trial (50 generations a day). Paid plans launch after beta — you'll never be charged without choosing to.</p>
+              <p style="font-size:12.5px;color:var(--label);margin:12px 0 0;line-height:1.55">CreatorNexus is invite-only while we test with a handful of creators. <strong style="color:var(--text-soft)">There is nothing to buy</strong> — no card, no checkout, no trial to run out. Allowances reset at midnight UTC.</p>
             </div>
             <div class="card">
               <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Your channel</div>
@@ -1049,8 +1049,8 @@
   <div class="modal" style="max-width:400px;text-align:center">
     <div style="font-size:30px;margin-bottom:8px">✦</div>
     <h2>Sign in to generate</h2>
-    <p class="msub">Create a free account to use the Studio — no credit card, 5 free generations a day, and a 7-day Pro trial on the house.</p>
-    <a class="btn-primary" href="creatornexushq-auth.html" style="display:block;text-decoration:none;padding:13px">Create free account →</a>
+    <p class="msub">CreatorNexus is in a small private beta. Generating needs an invited account — there's no card, no checkout and nothing to buy.</p>
+    <a class="btn-primary" href="creatornexushq-auth.html" style="display:block;text-decoration:none;padding:13px">Sign in →</a>
     <button class="btn-ghost" onclick="closeSignin()" style="width:100%;margin-top:10px">Not now</button>
   </div>
 </div>
@@ -1246,9 +1246,22 @@
     document.getElementById('a-username').value = p.username || '';
     document.getElementById('a-email').value = (u && u.email) || p.email || '';
     document.getElementById('a-optin').checked = !!p.optin;
-    const plan = p.plan || 'free';
-    document.getElementById('a-plan-name').textContent = plan==='pro'?'Pro':plan==='trial'?'Pro trial':'Free';
-    document.getElementById('a-plan-detail').textContent = plan==='pro'?'Unlimited generations':plan==='trial'?'50 generations a day':'5 generations a day';
+    // Access reflects the Worker's verdict, not any stored plan field.
+    const a = readAllowance();
+    const nameEl = document.getElementById('a-plan-name');
+    const detailEl = document.getElementById('a-plan-detail');
+    if(a && a.access === 'none'){
+      nameEl.textContent = 'No beta access';
+      detailEl.textContent = 'This account hasn’t been invited yet.';
+    } else if(a){
+      nameEl.textContent = 'Private beta';
+      detailEl.textContent = a.text + ' of ' + BETA_TEXT_MAX + ' text generations and ' +
+                             a.vision + ' of ' + BETA_VISION_MAX + ' thumbnail analyses left today';
+    } else {
+      nameEl.textContent = 'Private beta';
+      detailEl.textContent = BETA_TEXT_MAX + ' text generations and ' + BETA_VISION_MAX +
+                             ' thumbnail analyses a day for invited creators';
+    }
     const plats=profilePlatforms(p);
     const rows=[
       ['Makes', p.niche==='Gaming'&&p.game ? p.game+' (Gaming)' : (p.niche||'—')],
@@ -1327,10 +1340,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       const parsed = renderTitles(d.text, d.ytData, body.keyword);
       saveTitleStage(body, parsed);   // fire-and-forget; never blocks the result
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
@@ -1513,10 +1526,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       renderTags(d.text, d.ytData, current, title);
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; tagMode(); }
@@ -1652,10 +1665,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       renderThumbScore(d.text);
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
@@ -1723,10 +1736,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       renderThumbPrompts(d.text, body.aiTool);
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
@@ -2014,7 +2027,7 @@
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
       if(r.status!==429){
         const d=await r.json();
-        if(r.ok && d.text){ sec=parseSections(d.text); if(d.plan) updatePlanBadge(d.plan,d.remaining); }
+        if(r.ok && d.text){ sec=parseSections(d.text); updateAllowance(d); }
       }
     }catch(e){ /* fall through — the review still gets written */ }
 
@@ -2336,10 +2349,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       renderAudit(d.text);
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
@@ -2414,10 +2427,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       renderLiveTitles(d.text);
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
@@ -2501,10 +2514,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       render(d.text);
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
@@ -2575,10 +2588,10 @@
     try{
       const r=await cnxFetch(WORKER_URL, body);
       if(r.status===401){ window.__currentUser=null; applyAuth(null); openSignin(); return; }
-      if(r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML='<div class="placeholder">'+esc(d.message||"You've hit today's limit.")+'</div>'; return; }
+      if(r.status===403||r.status===429){ const d=await r.json().catch(()=>({})); res.innerHTML=accessNotice(d); return; }
       const d=await r.json();
       if(!r.ok||!d.text){ res.innerHTML='<div class="placeholder">'+esc(d.message||d.detail||'Something went wrong — try again.')+'</div>'; return; }
-      if(d.plan) updatePlanBadge(d.plan, d.remaining);
+      updateAllowance(d);
       render(d.text);
     }catch(e){ res.innerHTML='<div class="placeholder">Couldn\'t reach the AI backend. Check your connection and try again.</div>'; }
     finally{ btn.disabled=false; btn.innerHTML=btn.dataset.orig; }
@@ -2669,16 +2682,85 @@
   function closeSignin(){ document.getElementById('signinScrim').classList.remove('open'); }
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeProfile(); closeSignin(); closeDrawer(); closePublish(); } });
 
-  function updatePlanBadge(plan, remaining){
-    // remember the server's verdict so the rail + account page agree on reload
-    if(plan){ const p=getProfile();
-      if(p.plan!==plan){ p.plan=plan; localStorage.setItem('cnx_profile', JSON.stringify(p));
-        if(window.__savePlanRemote) window.__savePlanRemote(plan);   // so a new device isn't stale
-      } }
-    const el=document.getElementById('acctPlan'); if(!el) return;
-    if(plan==='pro'){ el.textContent='★ Pro'; el.classList.add('pro'); }
-    else if(plan==='trial'){ el.textContent = (remaining==null?'★ Pro trial':'★ Trial · '+remaining+' left today'); el.classList.add('pro'); }
-    else if(typeof remaining==='number'){ el.textContent = remaining+' free left today'; }
+  /* ---------- private beta allowance ----------
+     There are no plans during the private beta — no Free/Creator/Pro, no
+     trial, nothing to buy. There is one invite-only allowance with two
+     separate lanes, and the WORKER decides all of it. The client only
+     renders whatever the server last said; it never computes entitlement. */
+  const BETA_TEXT_MAX = 15, BETA_VISION_MAX = 3;
+
+  // Cache the server's verdict per-account so the rail and Account page agree
+  // on reload. Stamped with uid, like the rest of the profile cache, so a
+  // previous creator's allowance is never shown to the next one.
+  function cacheAllowance(d){
+    const u = window.__currentUser; if(!u) return;
+    try{
+      localStorage.setItem('cnx_beta', JSON.stringify({
+        uid: u.uid, access: d.access || 'beta',
+        text: typeof d.textRemaining === 'number' ? d.textRemaining : null,
+        vision: typeof d.visionRemaining === 'number' ? d.visionRemaining : null,
+        day: new Date().toISOString().slice(0,10)
+      }));
+    }catch(e){}
+  }
+  function readAllowance(){
+    const u = window.__currentUser; if(!u) return null;
+    try{
+      const a = JSON.parse(localStorage.getItem('cnx_beta')||'null');
+      if(!a || a.uid !== u.uid) return null;
+      // Allowances reset at midnight UTC — a cache from an earlier day is
+      // stale by definition, so drop it rather than show a wrong number.
+      if(a.day !== new Date().toISOString().slice(0,10)) return null;
+      return a;
+    }catch(e){ return null; }
+  }
+
+  function updateAllowance(d){
+    if(!d) return;
+    if(d.access === 'beta') cacheAllowance(d);
+    paintAllowance();
+  }
+
+  function paintAllowance(){
+    const el = document.getElementById('acctPlan'); if(!el) return;
+    if(!window.__currentUser){ el.textContent = ''; return; }
+    const a = readAllowance();
+    if(!a){ el.textContent = 'Private beta'; el.classList.remove('pro'); return; }
+    if(a.access === 'none'){
+      el.textContent = 'No beta access';
+      el.removeAttribute('title'); el.removeAttribute('aria-label');
+      el.classList.remove('pro'); return;
+    }
+    // The rail slot is ~127px, so the visible string has to stay short or the
+    // thumbnail count gets ellipsised away — which would hide half the state.
+    // Short label on screen, full sentence for assistive tech and on hover.
+    const bits = [];
+    if(a.text   !== null) bits.push(a.text   + ' text');
+    if(a.vision !== null) bits.push(a.vision + ' thumb');
+    if(!bits.length){
+      el.textContent = 'Private beta';
+      el.removeAttribute('title'); el.removeAttribute('aria-label');
+    } else {
+      el.textContent = bits.join(' · ');
+      const full = a.text + ' of ' + BETA_TEXT_MAX + ' text generations and ' +
+                   a.vision + ' of ' + BETA_VISION_MAX +
+                   ' thumbnail analyses left today — private beta, resets at midnight UTC';
+      el.setAttribute('title', full);
+      el.setAttribute('aria-label', full);
+    }
+    el.classList.add('pro');
+  }
+
+  // One renderer for both refusals so no tool can drift from the Worker's
+  // wording. 403 = not invited. 429 = allowance spent, or site at capacity.
+  // Neither ever offers an upgrade, because there is nothing to buy.
+  function accessNotice(d){
+    const msg = (d && d.message) ||
+      'CreatorNexus is in a small private beta and this account does not have access yet.';
+    const sub = (d && d.error === 'not_invited')
+      ? '<div class="tagnote" style="margin-top:10px">Nothing to buy — access is granted by invitation while we test with a handful of creators.</div>'
+      : '';
+    return '<div class="placeholder" role="status">' + esc(msg) + sub + '</div>';
   }
 
   /* ---------- auth UI ---------- */
@@ -2689,9 +2771,9 @@
       const label = p.username || p.first || p.name || email.split('@')[0];
       document.getElementById('acctName').textContent = p.username ? '@'+p.username : label;
       document.getElementById('acctAv').textContent = label.trim()[0]||'?';
-      // keep the rail's plan line in step with the stored plan
-      const planEl=document.getElementById('acctPlan');
-      if(planEl && p.plan){ planEl.textContent = p.plan==='pro'?'★ Pro':p.plan==='trial'?'★ Pro trial':'Free plan'; planEl.classList.toggle('pro', p.plan==='pro'||p.plan==='trial'); }
+      // The rail shows the server's last allowance verdict — never a plan
+      // name, because during the private beta there are no plans.
+      paintAllowance();
     } else { inEl.style.display='none'; outEl.style.display='flex'; }
   }
 
@@ -2715,14 +2797,10 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Mirror the Worker's entitlement verdict into the profile doc so a creator
-  // signing in on a second device still sees their trial rather than "Free".
-  // KV remains the authority; this is only so the badge isn't stale on arrival.
-  window.__savePlanRemote = async (plan)=>{
-    const u=window.__currentUser; if(!u||!plan) return;
-    try{ await setDoc(doc(db,'users',u.uid), { plan:plan, planSeenAt:new Date().toISOString() }, { merge:true }); }
-    catch(e){ /* cosmetic only — never surface */ }
-  };
+  // NOTE: the old __savePlanRemote() mirror is gone. During the private beta
+  // there is no plan to mirror — KV `beta:<email>` is the sole entitlement and
+  // the Worker is asked on every generation. The legacy `plan` field may still
+  // exist on old Firestore user docs; it is inert and must never gate anything.
 
   // Persist the content profile to the durable Firestore user doc (merge).
   window.__saveProfileRemote = async (p)=>{
@@ -2815,10 +2893,13 @@
     let cached={};
     try{ cached = JSON.parse(localStorage.getItem('cnx_profile')||'{}'); }catch(e){}
     if(cached.uid && cached.uid !== u.uid){ localStorage.removeItem('cnx_profile'); cached={}; }
-    // An UNSTAMPED cache predates this check and could belong to anyone, so its
-    // entitlement is not trusted either — only a cache stamped for this account
-    // may override the server's copy of the plan.
-    const trustCachedPlan = cached.uid === u.uid;
+    // The cached beta allowance is per-account too — a foreign or unstamped
+    // one must never be shown as this creator's remaining generations.
+    try{
+      const b = JSON.parse(localStorage.getItem('cnx_beta')||'null');
+      if(b && b.uid !== u.uid) localStorage.removeItem('cnx_beta');
+    }catch(e){ localStorage.removeItem('cnx_beta'); }
+    paintAllowance();
     // Pull the durable profile and merge it into the local shared context.
     try{
       const snap = await getDoc(doc(db,'users',u.uid));
@@ -2827,12 +2908,10 @@
         localStorage.setItem('cnx_profile', JSON.stringify(Object.assign({}, local, {
           uid:u.uid,   // stamped so the ownership check above can fire
           first:r.first||local.first, last:r.last||local.last, username:r.username||local.username,
-          // plan: the WORKER is the authority (KV trial/pro state). Firestore's
-          // copy is written once at signup and never updated, so letting it win
-          // made an active trial read "Free plan" on every reload — the app
-          // claiming 5/day while the server metered 50.
+          // `plan` is deliberately NOT hydrated any more. Entitlement lives in
+          // KV `beta:<email>` and is decided by the Worker on every request;
+          // any Firestore plan field is legacy display data and gates nothing.
           name:r.name||local.name, email:r.email||u.email||local.email,
-          plan:(trustCachedPlan && local.plan) || r.plan,
           niche:r.niche||local.niche, game:r.game||local.game,
           platforms:(r.platforms&&r.platforms.length)?r.platforms:local.platforms,
           grow:(r.grow&&r.grow.length)?r.grow:local.grow,
@@ -2854,7 +2933,10 @@
   // on the next sign-in, so nothing durable is lost.
   window.signOut = async ()=>{
     try{ await fbSignOut(auth); }
-    finally { try{ localStorage.removeItem('cnx_profile'); }catch(e){} window.location.href='index.html'; }
+    finally {
+      try{ localStorage.removeItem('cnx_profile'); localStorage.removeItem('cnx_beta'); }catch(e){}
+      window.location.href='index.html';
+    }
   };
   // Worker fetch with a single token-refresh retry on 401 (prevents false sign-outs)
   window.cnxFetch = async (url, body)=>{

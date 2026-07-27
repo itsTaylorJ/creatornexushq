@@ -49,16 +49,41 @@ good. That's the actual product; the tools are the steps.
   trend data to work. If you ever see this product advertising something it
   can't do, that's the most useful bug report you can send me.
 - **There is no payment of any kind.** No checkout, no card, nothing to buy.
-  Pricing on the homepage is what it *will* cost after the beta.
+  The homepage used to show Free/Creator/Pro prices with an "unlimited" tier —
+  that's gone. Nothing can be purchased today, and the page says so.
 
 **Nobody has live TikTok or Instagram trend data** — not us, not anyone selling
 you a tool that claims otherwise. Where we don't have real data, the app says so.
 
+## Your access, precisely
+
+You've been invited to a **private beta**. It's genuinely small — a handful of
+creators — because I'd rather it work properly for three people than badly for
+fifty.
+
+- **15 text generations a day** (titles, tags, ideas, schedule, live, audit)
+- **3 thumbnail analyses a day** (image analysis is slower and more expensive)
+- Both reset at **midnight UTC**
+- These are two separate pools: running out of thumbnails doesn't touch your
+  text generations, and vice versa
+- **There is nothing to buy.** No card, no checkout, no subscription, no trial
+  that expires and asks for money. If you ever see this product trying to sell
+  you something, that's a bug and I want to hear about it immediately.
+
+The limits are small on purpose. They're what I can serve reliably right now —
+not a tier, and not something anyone can pay to lift. If 15 a day turns out to
+be the wrong number for how you actually work, that's genuinely useful feedback.
+
+If you hit a limit, the app says so plainly and tells you when it resets. If
+you see *"CreatorNexus is at today's capacity"*, that's my end, not yours —
+nothing was counted against your allowance.
+
 ## Getting started
 
-1. Sign up with email or Google. It asks for your name, a username, and a few
-   questions about your channel — that's what personalises the tools.
-2. You get **50 generations a day for 7 days**, automatically. No card.
+1. Sign in with the account you were invited on — the invite is tied to that
+   email address, so use the same one.
+2. It asks for your name, a username, and a few questions about your channel.
+   That's what personalises the tools; it takes about a minute.
 3. Every tool has a **"Try an example →"** link under its heading. Click it and
    hit generate — you'll see what the tool does in about ten seconds without
    having to think up content first.

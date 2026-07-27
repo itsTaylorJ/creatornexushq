@@ -168,19 +168,77 @@ documentation outlives the conversation that produced it. Open the file first.
 `GROQ_API_KEY`, `GEMINI_API_KEY`, `YOUTUBE_API_KEY`. (An old Anthropic key
 exists as `ANTHROPIC_API_KEY` reserved for a future paid tier; unused.)
 
-## Limits & plans (server-enforced in the Worker)
+## PRIVATE BETA — access & capacity (server-enforced in the Worker)
 
-- Free: 5 generations/day. Trial: auto 7-day Pro trial starting at FIRST
-  generation, metered 50/day. Pro (KV grant by email): unmetered.
-- `GLOBAL_DAILY_LIMIT = 800`/day site-wide (protects Groq free tier ~1k/day).
-- Credits increment only AFTER successful generation.
-- Pricing (landing page, honest "billing launches after beta"): Free $0 /
-  Creator $12/mo ($120/yr) / Pro $29/mo ($290/yr). NO Stripe yet — payment is
-  deliberately LAST, after beta validates value.
+**There are no plans. No Free/Creator/Pro, no trial, nothing to buy.** Access is
+invite-only and every generation is checked against KV, server-side, on the
+verified token's email. Replaced the old Free/Trial/Pro model on 2026-07-27.
+
+| Thing | Value | Where |
+|---|---|---|
+| Entitlement | `beta:<lowercased-email>` = last active day `YYYY-MM-DD` UTC | KV |
+| Per-user text | **15**/day (`BETA_TEXT_DAILY`) | `usage:text:<uid>:<day>` |
+| Per-user vision | **3**/day (`BETA_VISION_DAILY`) | `usage:vision:<uid>:<day>` |
+| Site-wide text | **60**/day (`GLOBAL_TEXT_DAILY`) | `usage:global:text:<day>` |
+| Site-wide vision | **20**/day (`GLOBAL_VISION_DAILY`) | `usage:global:vision:<day>` |
+
+- **Text and vision are separate lanes** — different providers, wildly
+  different ceilings. Burning thumbnail analyses must not eat the text
+  allowance a creator needs to finish a video. `TOOLS[tool].isVision` routes.
+- **Allowance is spent only AFTER a successful generation.** Failures,
+  timeouts, provider 429s and oversize images cost the creator nothing.
+- **Per-user is checked before global**, so someone who spent their own
+  allowance is told that — not handed a site-capacity message that sounds
+  like our fault.
+- Keys are UTC-day scoped and expire after 48h.
+- No account is unmetered. The old `pro:<email>` unmetered grant is **not
+  consulted during the private beta** — an unmetered account could drain the
+  day's supply for everyone else.
+
+### The capacity arithmetic — redo this before inviting a 4th creator
+
+**Confirmed from official provider docs (2026-07-27), not assumption:**
+Groq `openai/gpt-oss-120b` free tier — **RPM 30 · RPD 1,000 · TPM 8,000 ·
+TPD 200,000**. Gemini free Flash — **10 RPM · 250 RPD · 250K TPM**.
+
+⚠️ **The binding constraint is TOKENS per day, not requests.** This file used
+to say the Groq ceiling was "~1k/day" and cap ~50 users — that read the RPD
+figure and was wrong by an order of magnitude.
+
+```
+measured spend      ~2,400 tokens per generation (~390 visible; ~5x reasoning)
+Groq TPD 200,000 / 2,400   ≈ 83 generations/day before tokens run out
+GLOBAL_TEXT_DAILY 60 × 2,400 = 144,000  (72% of TPD — 28% buffer)
+worst case 60 × ~3,800       = 228,000  → spills to Gemini, degrades not fails
+3 pilot creators × 15        = 45 ≤ 60  (global sits 33% above the sum)
+```
+
+Vision is Gemini-primary (Groq keeps retiring its vision ids) and Gemini's
+250 RPD is **also** the text fallback pool — hence the tight vision cap.
+
+**Residual risk we did NOT solve:** Groq TPM 8,000 ≈ 3 generations/minute.
+Three partners hitting Generate simultaneously can trip a burst limit. Daily
+caps can't fix that; a per-minute throttle would, if it ever bites.
+
 - **Cost reality (measured, not estimated):** a titles generation billed ~2,400
   total tokens for ~390 visible output tokens — roughly a **5x hidden reasoning
-  multiplier**. "Unlimited" at $12 loses money once inference is paid — kill it,
-  and see STRATEGY.md for the corrected tiers.
+  multiplier**. This is why "unlimited" was killed everywhere.
+
+### Exact user-facing beta wording (keep these consistent)
+
+- Not invited (403): *"CreatorNexus is currently in a small private beta. This
+  account does not have beta access yet."*
+- Text spent (429): *"That's your 15 text generations for today — resets at
+  midnight UTC."*
+- Vision spent (429): *"That's your 3 thumbnail analyses for today — resets at
+  midnight UTC."*
+- Site at capacity (429): *"CreatorNexus is at today's capacity for the beta —
+  it frees up at midnight UTC. Nothing was counted against your allowance."*
+
+**None of these may ever offer an upgrade, name a provider, or mention a
+quota.** There is nothing to buy, and infrastructure detail isn't the
+creator's problem. Rendered by one shared `accessNotice()` in the Studio so
+no tool can drift out of sync.
 
 ## Page map
 
@@ -239,12 +297,11 @@ during the migration.
   page-level overflow check reports a clean 0. When a row is a scroll container,
   measure **that element's** `scrollWidth - clientWidth` too.
 - **Entitlement authority is the Worker (KV), never Firestore.** Firestore's
-  `plan` is written once at signup and never updated, so hydrating it over the
-  Worker's verdict made an active trial read "Free plan" on every reload — the UI
-  claiming 5/day while the server metered 50, which the honesty standard forbids.
-  The Studio now prefers the cached verdict, but **only when the cache is stamped
-  with the current `uid`** — an unstamped or foreign cache is discarded, or a
-  previous user's `pro` would be read as this user's.
+  `plan` field is legacy display data from the pre-beta model — it is no longer
+  hydrated and **gates nothing**. Access is `beta:<email>` in KV, re-checked on
+  every single generation. Anything the client believes about access is a
+  cache of the server's last answer, stamped with `uid` in
+  `localStorage.cnx_beta` and dropped on mismatch, sign-out, or a new UTC day.
 - **`localStorage.cnx_profile` is per-account and must be treated that way.** It
   holds name, username, **email**, niche, platforms and size. It is cleared on
   sign-out and dropped on a `uid` mismatch at sign-in. Before that, signing out
@@ -375,24 +432,37 @@ costs days. If you have genuinely new information, say what changed.
   Gemini/Groq key → unlimited for them at $0 marginal cost to us. Roughly two
   days of work and it directly relieves the ~50-user ceiling.
 
-## Pro grants & entitlements (operational runbook)
+## Beta invites (operational runbook)
 
-**Automatic trial:** every account gets a 7-day Pro trial starting at its *first
-generation*, not signup. KV `trial:<uid>`, no TTL, so a lapsed trial can't
-restart. Metered 50/day.
+**One entitlement, granted by hand.** KV `beta:<email>` — email lowercased and
+trimmed, matching the verified sign-in email. Value = the last day the invite
+is active, `YYYY-MM-DD` UTC. It expires on its own, so a lapsed pilot stops
+consuming capacity without any cleanup step.
 
-**Manual comps:** Worker checks KV `pro:<email>` (lowercased sign-in email);
-value = last active day `YYYY-MM-DD` UTC. Manual grants beat trial state and
-expire on their own — no cleanup needed.
+There is **no admin UI and no self-serve path**, deliberately. Three creators
+do not justify building invite management, and every screen that doesn't exist
+is a screen that can't leak.
 
 ```bash
-wrangler kv key put --namespace-id=1df69e401a134d08829ef71f645d5f88 "pro:friend@example.com" "2026-07-31" --remote
-wrangler kv key delete --namespace-id=1df69e401a134d08829ef71f645d5f88 "pro:friend@example.com" --remote
+# grant (pick an end date you actually intend)
+wrangler kv key put --namespace-id=1df69e401a134d08829ef71f645d5f88 "beta:partner@example.com" "2026-12-31" --remote
+# revoke immediately
+wrangler kv key delete --namespace-id=1df69e401a134d08829ef71f645d5f88 "beta:partner@example.com" --remote
+# who is invited
 wrangler kv key list --namespace-id=1df69e401a134d08829ef71f645d5f88 --remote
 ```
 
 ⚠️ The Wrangler **KV CLI crashes on the Windows box** (libuv assertion). Use the
 Cloudflare dashboard there, or run these from the other machine.
+
+**Privacy:** a creator only ever learns about their *own* access. No endpoint
+reveals whether some other email is invited, and the 403 body is identical for
+"never invited" and "invite expired" — so it can't be used to probe.
+
+**Legacy keys, now dormant:** `pro:<email>` and `trial:<uid>` are no longer
+read by the Worker. Leave them; they cost nothing and are the audit trail of
+the pre-beta model. They must NOT be revived as an entitlement path without
+redoing the capacity arithmetic above.
 
 ## The design sequence (standing method — each step gates the next)
 

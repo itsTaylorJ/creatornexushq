@@ -8,6 +8,7 @@ node_modules/
 # Agent tooling artifacts — not project code
 .agents/
 .playwright-mcp/
+skills-lock.json
 # AGENTS.md is a generated mirror of CLAUDE.md. Two copies of project context
 # is exactly how one goes stale and causes a wrong call — CLAUDE.md is the one.
 AGENTS.md

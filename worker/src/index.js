@@ -2,11 +2,38 @@ import { jwtVerify, createRemoteJWKSet } from 'jose';
 
 const FIREBASE_PROJECT_ID = 'creatornexushq-eaf70';
 const ALLOWED_ORIGIN = 'https://creatornexushq-eaf70.web.app';
-const DAILY_FREE_LIMIT = 5;
-// Site-wide cap across all users (Pro included) — protects the free Groq
-// request quota (~1,000/day) while leaving headroom for its token limits.
-// 150 was too tight once several testers are active at once.
-const GLOBAL_DAILY_LIMIT = 800;
+// ============================================================
+// PRIVATE BETA — invite-only access and pilot-scale capacity
+// ============================================================
+// CreatorNexus is in a small, invite-only beta. There is no free tier, no
+// trial, and nothing to buy. The ONLY entitlement is an explicit invite in
+// KV (`beta:<email>`), checked server-side on every generation.
+//
+// CAPACITY MATH (re-derived 2026-07-27 from official provider docs — do not
+// raise these without redoing it):
+//   Groq openai/gpt-oss-120b free tier: RPM 30 · RPD 1,000 · TPM 8,000 ·
+//   TPD 200,000.  The binding constraint is TOKENS per day, not requests —
+//   an earlier note in CLAUDE.md read the 1,000 RPD as the ceiling and was
+//   wrong by an order of magnitude.
+//   A measured titles generation bills ~2,400 total tokens (~390 visible
+//   output; the rest is hidden reasoning — a ~5x multiplier).
+//     200,000 / 2,400  ≈  83 generations/day on Groq before TPD is spent.
+//   GLOBAL_TEXT_DAILY = 60  ->  60 * 2,400 = 144,000 tokens (72% of TPD).
+//   Worst case (every output maxing max_tokens) ≈ 3,800 tok -> 228,000,
+//   which spills to the Gemini fallback (250 RPD) rather than failing.
+//   3 invited creators * 15 = 45, so the global rail sits 33% above the sum
+//   of per-user allowances: it catches runaway usage without ever being the
+//   thing a well-behaved pilot user hits first.
+// Vision is Gemini-primary (Groq's vision ids keep getting retired), and
+// Gemini's 250 RPD is ALSO the text fallback pool — so vision is capped
+// tightly to avoid eating the safety net.
+//
+// ⚠️ These are three-person pilot numbers. Revisit the arithmetic above
+// before inviting a fourth creator, and certainly before ten.
+const BETA_TEXT_DAILY = 15;
+const BETA_VISION_DAILY = 3;
+const GLOBAL_TEXT_DAILY = 60;
+const GLOBAL_VISION_DAILY = 20;
 // Free tier today; ANTHROPIC_MODEL/ANTHROPIC_API_KEY are reserved for a future
 // paid tier once Stripe/plan-tracking exists (see ROADMAP.md).
 const GROQ_MODEL = 'openai/gpt-oss-120b';
@@ -152,60 +179,67 @@ async function verifyFirebaseToken(request) {
   }
 }
 
-// Pro entitlements are granted by the site owner directly in KV — no
-// billing required. Key "pro:<email>" holds the last day (YYYY-MM-DD,
-// UTC) the grant is active. Grant/revoke via wrangler; see ROADMAP.md.
-async function checkProGrant(env, email) {
+// The ONE entitlement during private beta. Key "beta:<email>" (lowercased,
+// trimmed) holds the last day the invite is active as YYYY-MM-DD UTC — same
+// shape as the old pro grant, so an invite expires on its own and a lapsed
+// pilot can't quietly keep burning capacity. Granted and revoked by hand;
+// there is deliberately no admin UI and no self-serve path.
+//
+// This is the AUTHORITY. Firestore has a `plan` field left over from the
+// pre-beta design — it is a display mirror and must never gate anything.
+//
+// Privacy: the caller only ever learns about their OWN access. There is no
+// endpoint that reveals whether some other email is invited.
+async function checkBetaAccess(env, email) {
   if (!email) return false;
-  const until = await env.RATE_LIMIT.get('pro:' + email);
+  const until = await env.RATE_LIMIT.get('beta:' + String(email).trim().toLowerCase());
   if (!until) return false;
   const today = new Date().toISOString().slice(0, 10);
   return today <= until.trim();
 }
 
-const TRIAL_DAYS = 7;
-// Trial users are metered (generous, but real) so one tester can't
-// single-handedly drain GLOBAL_DAILY_LIMIT for everyone else.
-const TRIAL_DAILY_LIMIT = 50;
+// Text and vision are metered SEPARATELY. They hit different providers with
+// very different ceilings, so a creator burning thumbnail analyses must not
+// consume the text allowance they need to actually finish a video — and
+// vice versa.
+const LANES = {
+  text:   { userMax: BETA_TEXT_DAILY,   globalMax: GLOBAL_TEXT_DAILY },
+  vision: { userMax: BETA_VISION_DAILY, globalMax: GLOBAL_VISION_DAILY },
+};
 
-// Every account gets an automatic Pro trial starting from its FIRST
-// generation (not signup — nobody burns trial days before trying the
-// product). The trial record is permanent (no TTL) so a lapsed trial
-// can't restart by the key expiring out of KV.
-async function checkTrial(env, uid) {
-  const key = 'trial:' + uid;
-  let until = await env.RATE_LIMIT.get(key);
-  if (!until) {
-    until = new Date(Date.now() + TRIAL_DAYS * 86400000).toISOString().slice(0, 10);
-    await env.RATE_LIMIT.put(key, until);
-  }
-  const today = new Date().toISOString().slice(0, 10);
-  return today <= until.trim();
-}
-
-// Read-only check — does NOT spend a credit. Call incrementUsage() only
-// after a generation actually succeeds, so failed/errored attempts don't
-// burn the user's daily allowance. dailyLimit === null means unmetered (Pro).
-async function checkUsage(env, uid, dailyLimit) {
+// Read-only check — does NOT spend allowance. incrementUsage() runs only
+// after a generation actually succeeds, so failures, timeouts, provider
+// 429s and image-too-large rejections all cost the creator nothing.
+async function checkUsage(env, uid, lane) {
   const day = new Date().toISOString().slice(0, 10); // UTC YYYY-MM-DD
-  const userKey = `usage:${uid}:${day}`;
-  const globalKey = `usage:global:${day}`;
+  const { userMax, globalMax } = LANES[lane];
+  const userKey = `usage:${lane}:${uid}:${day}`;
+  const globalKey = `usage:global:${lane}:${day}`;
   const userCount = parseInt((await env.RATE_LIMIT.get(userKey)) || '0', 10);
   const globalCount = parseInt((await env.RATE_LIMIT.get(globalKey)) || '0', 10);
-  if (globalCount >= GLOBAL_DAILY_LIMIT) {
-    return { allowed: false, reason: 'global' };
+  // Per-user first: a creator who has spent their own allowance should be
+  // told that, not handed a site-capacity message that sounds like our fault.
+  if (userCount >= userMax) {
+    return { allowed: false, reason: 'user', lane, userMax };
   }
-  if (dailyLimit !== null && userCount >= dailyLimit) {
-    return { allowed: false, reason: 'user' };
+  if (globalCount >= globalMax) {
+    return { allowed: false, reason: 'global', lane };
   }
-  return { allowed: true, userKey, userCount, globalKey, globalCount };
+  return { allowed: true, lane, userKey, userCount, globalKey, globalCount, userMax };
 }
 
-async function incrementUsage(env, usage, dailyLimit) {
+async function incrementUsage(env, usage) {
   await env.RATE_LIMIT.put(usage.globalKey, String(usage.globalCount + 1), { expirationTtl: 60 * 60 * 48 });
-  if (dailyLimit === null) return null; // Pro has no per-user meter
   await env.RATE_LIMIT.put(usage.userKey, String(usage.userCount + 1), { expirationTtl: 60 * 60 * 48 });
-  return dailyLimit - (usage.userCount + 1);
+  return usage.userMax - (usage.userCount + 1);
+}
+
+// What's left in the OTHER lane, so the client can show both allowances
+// without a second round trip.
+async function readLaneRemaining(env, uid, lane) {
+  const day = new Date().toISOString().slice(0, 10);
+  const used = parseInt((await env.RATE_LIMIT.get(`usage:${lane}:${uid}:${day}`)) || '0', 10);
+  return Math.max(0, LANES[lane].userMax - used);
 }
 
 // ============================================================
@@ -1067,25 +1101,35 @@ export default {
       return json({ error: 'unknown_tool' }, 400, origin);
     }
 
-    const isPro = await checkProGrant(env, authUser.email);
-    let plan = isPro ? 'pro' : 'free';
-    if (!isPro) {
-      const onTrial = await checkTrial(env, authUser.uid);
-      if (onTrial) plan = 'trial';
+    // ---- invite-only gate -------------------------------------------------
+    // Signing in is open; GENERATING is not. Enforced here, server-side, on
+    // the verified token's email — never on anything the client claims.
+    const invited = await checkBetaAccess(env, authUser.email);
+    if (!invited) {
+      return json({
+        error: 'not_invited',
+        message: 'CreatorNexus is currently in a small private beta. This account does not have beta access yet.',
+      }, 403, origin);
     }
-    // Per-plan daily caps. Trial is generous but METERED — an unmetered
-    // trial let one enthusiastic tester drain the site-wide budget and
-    // lock everyone else out. Pro stays unmetered.
-    const dailyLimit = plan === 'pro' ? null : plan === 'trial' ? TRIAL_DAILY_LIMIT : DAILY_FREE_LIMIT;
-    const usage = await checkUsage(env, authUser.uid, dailyLimit);
+
+    // ---- allowance --------------------------------------------------------
+    // Vision and text draw on different providers, so they get their own
+    // lanes. TOOLS[tool].isVision is the single source of that routing.
+    const lane = TOOLS[tool].isVision ? 'vision' : 'text';
+    const usage = await checkUsage(env, authUser.uid, lane);
     if (!usage.allowed) {
       if (usage.reason === 'global') {
-        return json({ error: 'global_limit', message: "The beta has hit today's site-wide generation limit — it resets at midnight UTC. Thanks for stress-testing us!" }, 429, origin);
+        // Honest and non-blaming: it isn't their fault and it isn't broken.
+        // Deliberately says nothing about which provider or what quota.
+        return json({
+          error: 'capacity',
+          message: "CreatorNexus is at today's capacity for the beta — it frees up at midnight UTC. Nothing was counted against your allowance.",
+        }, 429, origin);
       }
-      const msg = plan === 'trial'
-        ? "You've hit today's trial limit of " + TRIAL_DAILY_LIMIT + " generations — it resets at midnight UTC."
-        : "You've used all your free generations today. Upgrade to Pro for unlimited access!";
-      return json({ error: 'daily_limit', message: msg }, 429, origin);
+      const msg = lane === 'vision'
+        ? "That's your " + BETA_VISION_DAILY + " thumbnail analyses for today — resets at midnight UTC."
+        : "That's your " + BETA_TEXT_DAILY + " text generations for today — resets at midnight UTC.";
+      return json({ error: 'daily_limit', lane, message: msg }, 429, origin);
     }
 
     if (!env.GROQ_API_KEY && !env.GEMINI_API_KEY) {
@@ -1110,9 +1154,22 @@ export default {
       return json(result, 502, origin);
     }
 
-    // Only spend a credit once generation actually succeeded.
-    const remaining = await incrementUsage(env, usage, dailyLimit);
-    const payload = { text: normalizeModelText(result.text), remaining, plan };
+    // Only spend allowance once generation actually succeeded.
+    const remaining = await incrementUsage(env, usage);
+    const other = lane === 'text' ? 'vision' : 'text';
+    const otherRemaining = await readLaneRemaining(env, authUser.uid, other);
+    // The client renders BOTH allowances, so send both every time — the rail
+    // must never show a stale number for the lane that wasn't just used.
+    const payload = {
+      text: normalizeModelText(result.text),
+      access: 'beta',
+      lane,
+      remaining,                                    // this lane, after the spend
+      textRemaining:   lane === 'text'   ? remaining : otherRemaining,
+      visionRemaining: lane === 'vision' ? remaining : otherRemaining,
+      textMax: BETA_TEXT_DAILY,
+      visionMax: BETA_VISION_DAILY,
+    };
     // Ship the ranking data so the client can render "what's ranking now".
     if (fields.__yt) payload.ytData = fields.__yt;
     return json(payload, 200, origin);

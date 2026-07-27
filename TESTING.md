@@ -1,7 +1,11 @@
 # CreatorNexusHQ — Manual Testing Checklist
 
 Run this end-to-end before inviting any real user. It covers everything built
-so far — **156 steps**. Tick as you go; anything that fails, note the step number.
+so far — **176 steps**. Tick as you go; anything that fails, note the step number.
+
+⚠️ **Section X is the private-beta gate and it needs two accounts** — one with a
+`beta:<email>` invite in KV and one without. Without both, you are not testing
+the thing that protects the pilot.
 
 Sections **V** and **W** were added after the 2026-07-26 verification pass and
 the 2026-07-27 Trust & Flow release. Every check in them corresponds to a bug
@@ -406,11 +410,56 @@ Setup and readability:
 154. [ ] Tab to the account block in the sidebar and press Enter. The Account
          page opens without touching the mouse.
 
+## X. Private beta access and allowances
+
+**Setup:** you need two accounts — one with `beta:<email>` set in KV, one
+without. Grant with the runbook in CLAUDE.md.
+
+Non-invited account:
+
+157. [ ] Sign in with the account that has **no** invite. Signing in works —
+         being invited is only required to *generate*.
+158. [ ] Click Generate on any tool. You get: *"CreatorNexus is currently in a
+         small private beta. This account does not have beta access yet."*
+159. [ ] That message offers **no upgrade, no price, no way to buy anything**.
+         If it does, stop and report it.
+160. [ ] The rail shows **No beta access** — not a plan name, not a fake tier.
+
+Invited account:
+
+161. [ ] Generate once. The rail shows the two allowances separately, e.g.
+         **14 text · 3 thumb**.
+162. [ ] Hover it (or read it with a screen reader): the full sentence says how
+         many of 15 and how many of 3 are left, and that it resets midnight UTC.
+163. [ ] Run a **thumbnail analysis**. The thumb number drops; **the text number
+         does not**. The two lanes are independent — this is the point.
+164. [ ] Spend all 15 text generations. The 16th says *"That's your 15 text
+         generations for today — resets at midnight UTC."*
+165. [ ] With text spent, a **thumbnail analysis still works**. (3 of them.)
+166. [ ] Spend all 3 thumbnails. The 4th gives the thumbnail-specific message.
+167. [ ] Force a failure (turn off wi-fi mid-generation). The allowance
+         **does not drop** — failures are free.
+168. [ ] Reload. The rail shows the same numbers it showed before the reload.
+169. [ ] Sign out and back in. Still the same numbers, from the server.
+170. [ ] Sign in as the **other** account on the same browser. You see *their*
+         access state immediately — never the previous creator's numbers.
+171. [ ] Account page → Access reads **Private beta**, states both allowances,
+         and says plainly there is nothing to buy.
+
+Nothing purchasable anywhere:
+
+172. [ ] Search the landing page, Studio and auth page for: Unlimited, Pro
+         trial, Go Pro, Upgrade, subscription, checkout, billing period.
+         **Zero hits** outside code comments that explain their removal.
+173. [ ] The landing pricing section shows the private-beta panel — no tiers,
+         no prices, no buttons that imply a purchase.
+
 ## U. Cleanup
 
-155. [ ] **Delete every throwaway account** in the Firebase console
+174. [ ] Delete any `beta:<email>` KV keys created for testing.
+175. [ ] **Delete every throwaway account** in the Firebase console
          (Authentication → Users). Non-negotiable.
-156. [ ] Delete that account's **Firestore documents too** (`users/<uid>` and its
+176. [ ] Delete that account's **Firestore documents too** (`users/<uid>` and its
          `content` / `weeks` subcollections) — and do it **before** deleting the
          account. Once the account is gone the rules lock the data away from
          every client and only the console can reach it.
