@@ -190,7 +190,21 @@ things worth restating because they're counterintuitive:
 ## 5. Creator Memory — not content storage
 
 The distinction asked for is the right one. Storage is a filing cabinet; memory
-is understanding. Four layers:
+is understanding.
+
+**And the distinction has a second half that's easy to miss: memory has to be
+*recallable*.** For a stretch in July 2026 the product wrote a faithful record of
+every generation — the chosen title, the four passed over, both descriptions, the
+score — and then never showed any of it back. Reopening a video presented an
+empty form. Every byte was correct and the creator's experience was still
+amnesia, because the only route to work they already owned was paying to generate
+it again as different text.
+
+A record nobody can read is a filing cabinet that happens to be full. **The test
+of memory is not "did we store it" but "can they see it when they come back."**
+Apply that test to every layer below.
+
+Four layers:
 
 **Identity** — niche, audience, goals, voice, constraints. *Mostly stated by them,
 corrected by observation.* If they say "educational" but every winner is a

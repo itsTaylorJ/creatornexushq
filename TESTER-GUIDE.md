@@ -20,18 +20,34 @@ The bit I care most about getting right: **titles and tags on YouTube should
 beat what vidIQ and TubeBuddy give you.** If they don't, that's the most useful
 thing you can tell me.
 
+The part that isn't like other tools: **it remembers.** Generating titles saves
+that video to **My Content** with the title you got and the four you didn't.
+Come back tomorrow, open it, and your work is still there — you never pay to
+regenerate something you already made. **This Week** shows what you've shipped
+and what's unfinished, and once a week you can write a review that's saved for
+good. That's the actual product; the tools are the steps.
+
 ## What's real, and what isn't
 
-**Real and working:**
-- Titles & Descriptions, Tags & Hashtags, Thumbnails, Ideas/Hooks/CTAs, and
-  Posting Schedule all generate genuine output from a real AI backend
+**Real and working — all seven tools:**
+- Titles & Descriptions, Tags & Hashtags, Thumbnails, Ideas/Hooks/CTAs,
+  Posting Schedule, Live Titles and Channel Audit all generate genuine output
+  from a real AI backend. **Nothing in the sidebar says "soon" any more.**
 - For YouTube, the title and tag tools pull the videos **actually ranking right
   now** for your topic and write against them. Those view counts are real.
+- My Content, This Week and the Weekly Review are live. Every number in the
+  review is calculated from your own record — the AI writes the words, it never
+  invents a figure. If a quiet week was quiet, it says so.
+- **Channel Audit works from numbers you type in yourself.** No analytics
+  account is connected — the app says that plainly, twice, and it isn't going to
+  pretend otherwise.
 
-**Not built yet, and labelled as such in the app:**
-- Live Titles and Channel Audit still say "soon"
-- Competitor Research, Collab Finder and Trend Tracker are deliberately gated —
-  they'd have to invent channel names and fake trend data to work, so they don't
+**Not built yet, and we say so rather than showing it:**
+- Competitor Research, Collab Finder and Trend Tracker don't exist. They used to
+  be listed on the homepage as features — one of them tagged "Free" — which was
+  wrong, and they've been taken down. They'd have to invent channel names and
+  trend data to work. If you ever see this product advertising something it
+  can't do, that's the most useful bug report you can send me.
 - **There is no payment of any kind.** No checkout, no card, nothing to buy.
   Pricing on the homepage is what it *will* cost after the beta.
 
@@ -59,6 +75,18 @@ Not bugs, don't report these:
 - The **tag score is the same every time** for the same tags — that's on purpose.
   The **thumbnail sub-scores drift a few points** between runs, because those are
   an AI opinion rather than a measurement. The app labels which is which.
+- **Only the Titles tool saves a video to My Content so far.** The other six work
+  fine, they just don't attach to a video yet. Deliberate — I want the loop
+  proven with one tool before wiring six more.
+- **Every tool now has its own link.** Back and Forward move between tools,
+  refreshing keeps you where you were, and you can bookmark or send someone a
+  link straight to a specific tool — or to one of your own saved videos.
+- **Reopening a saved video doesn't show the "ranking on YouTube right now"
+  list.** That was true when you generated it and I don't store it, so showing it
+  again would be making it up. Your titles and descriptions all come back.
+- **A week can only be reviewed once.** A history you can rewrite isn't a record.
+- **After you publish, the app waits 3 days before asking how it did** — numbers
+  before then don't mean anything.
 
 ## What I actually want to know
 
@@ -75,6 +103,12 @@ Not "it's cool" — I need the awkward stuff:
    genuinely useful answer, and it won't offend me.
 6. **Compared to vidIQ or TubeBuddy** (if you've used them): better, worse, or
    not close?
+7. **After you publish something, would you actually come back and type in your
+   views?** Be honest — the whole "it learns what works for you" idea depends on
+   it, and if the answer is no, I need to know that now rather than after I
+   build six months on top of it.
+8. **Did it feel like it remembered you?** Open a video you made yesterday. Was
+   your work there? Did the app know your channel without being told again?
 
 ## Sending feedback
 

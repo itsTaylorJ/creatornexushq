@@ -14,6 +14,13 @@
     --bg:#08080e; --surface:#0f0e17; --surface-2:#16141f; --surface-3:#1d1a29;
     --border:#221f30; --border-2:#2f2b42;
     --text:#f2f1fb; --text-soft:#cac8de; --muted:#8b889f; --faint:#5e5b76;
+    /* --faint (#5e5b76) measures 2.95:1 on our surfaces — under the 4.5:1 AA
+       floor. It stays, because it's right for genuinely decorative marks.
+       --label is its accessible sibling, for functional text a creator has to
+       be able to READ: goal targets, empty-state instructions, counts, and the
+       channel-status labels. Applied per-use, never as a blanket swap — that
+       would flatten the hierarchy across every page. */
+    --label:#9a97b0;
     --violet:#8b5cf6; --violet-deep:#7c3aed; --violet-soft:#c4b5fd; --cyan:#22d3ee; --cyan-deep:#06b6d4;
     --good:#34d399; --warn:#fbbf24; --bad:#f87171;
     --grad:linear-gradient(120deg,#7c3aed,#06b6d4);
@@ -38,7 +45,7 @@
   .brand{display:flex;align-items:center;gap:9px;text-decoration:none;padding:4px 8px 2px}
   .brand .logo{font-weight:800;font-size:18px;letter-spacing:-.02em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
   .brand .logo span{-webkit-text-fill-color:var(--text);color:var(--text)}
-  .rail-label{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:18px 10px 8px}
+  .rail-label{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--label);padding:18px 10px 8px}
 
   .navitem{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;cursor:pointer;color:var(--text-soft);font-size:13.5px;font-weight:600;padding:10px 11px;border-radius:10px;transition:background .15s,color .15s;text-decoration:none;position:relative}
   .navitem svg{width:17px;height:17px;flex-shrink:0;stroke:currentColor}
@@ -50,10 +57,17 @@
 
   .rail-foot{margin-top:auto;padding-top:14px}
   .acct{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border)}
+  /* The account entry was a div with an onclick — the one destination in the
+     app you couldn't reach without a mouse. It's a button now. Sign-out has to
+     be a SIBLING, not a child: a button inside a button is invalid and browsers
+     drop the inner one. */
+  .acct-main{display:flex;align-items:center;gap:10px;flex:1;min-width:0;padding:0;
+             background:none;border:0;color:inherit;font:inherit;text-align:left;cursor:pointer;border-radius:8px}
   .acct .av{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff;flex-shrink:0;text-transform:uppercase}
-  .acct .who{min-width:0;flex:1}
-  .acct .nm{font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .acct .pl{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* spans now (they live inside a button), so they need explicit block display */
+  .acct .who{min-width:0;flex:1;display:block}
+  .acct .nm{display:block;font-size:12.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .acct .pl{display:block;font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .acct .pl.pro{color:var(--warn);font-weight:700}
   .acct-menu-btn{background:none;border:0;color:var(--muted);cursor:pointer;padding:4px;border-radius:6px;flex-shrink:0}
   .acct-menu-btn:hover{color:var(--text);background:var(--surface-3)}
@@ -61,15 +75,25 @@
 
   /* ---------- CONTEXT BAR ---------- */
   .ctxbar{height:var(--ctxh);border-bottom:1px solid var(--border);background:rgba(15,14,23,.72);backdrop-filter:blur(16px);position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:0 clamp(16px,3vw,30px)}
-  .ctxbar .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);flex-shrink:0}
+  .ctxbar .lbl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--label);flex-shrink:0}
   .ctx-chips{display:flex;align-items:center;gap:7px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
   .ctx-chips::-webkit-scrollbar{display:none}
   .chip{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;padding:5px 11px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border-2);font-size:12.5px;font-weight:600;color:var(--text-soft);white-space:nowrap}
   .chip .ck{color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
-  .chip.empty{color:var(--faint);border-style:dashed}
+  .chip.empty{color:var(--label);border-style:dashed}
   .ctx-edit{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;background:none;border:1px solid var(--border-2);color:var(--text-soft);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s}
   .ctx-edit:hover{border-color:var(--violet);color:var(--text)}
   .ctx-edit svg{width:14px;height:14px;stroke:currentColor}
+  /* Empty chips are the prompt to finish setup, so they're real buttons. */
+  button.chip{cursor:pointer;font-family:inherit}
+  button.chip.empty:hover{border-color:var(--violet);color:var(--text)}
+
+  /* Inline validation + the published link */
+  .fielderr{margin:7px 0 0;font-size:12px;line-height:1.5;color:var(--bad)}
+  .mclink{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;font-weight:600;
+          color:var(--cyan);text-decoration:none;border-bottom:1px solid transparent}
+  .mclink:hover{border-bottom-color:currentColor}
+  .mclink svg{flex-shrink:0}
 
   /* ---------- WORK AREA ---------- */
   .work{flex:1;padding:clamp(20px,3vw,36px) clamp(16px,3vw,36px) 80px;max-width:1200px;width:100%;margin:0 auto}
@@ -91,7 +115,7 @@
   .field{margin-bottom:15px}
   .field:last-child{margin-bottom:0}
   .field label{display:block;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--text-soft);margin-bottom:7px}
-  .field label .opt{font-weight:500;color:var(--faint);text-transform:none;letter-spacing:0}
+  .field label .opt{font-weight:500;color:var(--label);text-transform:none;letter-spacing:0}
   .inp,textarea.inp,select.inp{width:100%;background:var(--surface-2);border:1px solid var(--border-2);border-radius:10px;color:var(--text);font-family:inherit;font-size:14px;padding:11px 13px;transition:border-color .15s;outline:none}
   textarea.inp{resize:vertical;min-height:78px;line-height:1.5}
   .inp:focus,textarea.inp:focus,select.inp:focus{border-color:var(--violet)}
@@ -111,7 +135,7 @@
 
   /* results */
   .results{min-height:220px}
-  .placeholder{border:1px dashed var(--border-2);border-radius:16px;padding:52px 28px;text-align:center;color:var(--faint);font-size:13.5px}
+  .placeholder{border:1px dashed var(--border-2);border-radius:16px;padding:52px 28px;text-align:center;color:var(--label);font-size:13.5px}
   .placeholder .big{font-size:30px;margin-bottom:12px;opacity:.8}
   .loading{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;padding:36px;justify-content:center}
   .dots{display:inline-flex;gap:4px}
@@ -138,16 +162,16 @@
   .tagchip.strong{border-color:rgba(52,211,153,.4);color:var(--good)}
   .tagchip.dead{border-color:rgba(248,113,113,.35);color:var(--bad)}
   .tagchip.missing{border-color:rgba(251,191,36,.4);color:var(--warn);border-style:dashed}
-  .tagchip .rk{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--faint);letter-spacing:-.02em}
+  .tagchip .rk{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--label);letter-spacing:-.02em}
   .tagchip.strong .rk{color:var(--good);opacity:.8}
-  .tagnote{font-size:11.5px;color:var(--faint);margin:9px 0 0;line-height:1.5}
+  .tagnote{font-size:11.5px;color:var(--label);margin:9px 0 0;line-height:1.5}
   /* "try an example" affordance */
   /* this week */
   .twgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,100%),1fr));gap:11px;margin-bottom:20px}
   .twstat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 17px;min-width:0}
   .twstat .tv{display:block;font-family:var(--mono);font-size:28px;font-weight:700;color:#f0f0ff;letter-spacing:-.03em;line-height:1}
   .twstat .tl{display:block;font-size:12.5px;color:var(--text-soft);margin-top:7px}
-  .twstat .ts{display:block;font-size:11px;color:var(--faint);margin-top:3px}
+  .twstat .ts{display:block;font-size:11px;color:var(--label);margin-top:3px}
   .review{background:linear-gradient(150deg,rgba(124,58,237,.11),rgba(6,182,212,.07));border:1px solid rgba(139,92,246,.3);border-radius:16px;padding:22px 24px}
   .rvweek{font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--cyan)}
   .rvhead{font-size:18px;font-weight:700;line-height:1.35;color:#f0f0ff;letter-spacing:-.02em;margin:9px 0 0}
@@ -166,9 +190,9 @@
   .mctitle{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.4;letter-spacing:-.01em;min-width:0}
   .mcscore{font-family:var(--mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);flex-shrink:0}
   .mcscore.good{color:var(--good)} .mcscore.warn{color:var(--warn)} .mcscore.bad{color:var(--bad)}
-  .mcmeta{font-size:11.5px;color:var(--faint);margin-top:5px}
+  .mcmeta{font-size:11.5px;color:var(--label);margin-top:5px}
   .strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
-  .strip .st{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--faint)}
+  .strip .st{font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);color:var(--label)}
   .strip .st.on{color:var(--good);border-color:rgba(52,211,153,.35)}
   .mcacts{display:flex;gap:8px;margin-top:12px}
   .mcbtn{font:inherit;font-size:12.5px;font-weight:600;color:#f0f0ff;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:7px 13px;cursor:pointer}
@@ -186,7 +210,7 @@
   .ocf{display:block;min-width:0}
   .ocf span{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:4px}
   .ocf .inp{padding:8px 10px;font-size:13px}
-  .octiny{font-size:11px;color:var(--faint);margin:9px 0 11px;line-height:1.5}
+  .octiny{font-size:11px;color:var(--label);margin:9px 0 11px;line-height:1.5}
   .ocdone{margin-top:11px;font-family:var(--mono);font-size:12px;color:var(--cyan);word-break:break-word}
   .savedtag{font-size:12px;color:var(--good);margin-top:9px;opacity:0;transition:opacity .25s}
   .savedtag.show{opacity:1}
@@ -219,9 +243,9 @@
      defeat the whole point of the check. */
   .minis{display:flex;gap:16px;align-items:flex-end;overflow-x:auto;padding-bottom:6px;min-width:0}
   .mini{flex:0 0 auto;margin:0}
-  .mini figcaption{font-size:10.5px;color:var(--faint);margin-top:5px;font-family:var(--mono)}
+  .mini figcaption{font-size:10.5px;color:var(--label);margin-top:5px;font-family:var(--mono)}
   .mini img{display:block;border-radius:3px;background:#000}
-  .aiflag{font-size:11.5px;color:var(--faint);margin:10px 0 0;line-height:1.5;border-left:2px solid var(--border);padding-left:9px}
+  .aiflag{font-size:11.5px;color:var(--label);margin:10px 0 0;line-height:1.5;border-left:2px solid var(--border);padding-left:9px}
   .ideawhy{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.55}
   .ideahook{margin-top:9px;padding:8px 10px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);font-size:13px;color:var(--text-soft);line-height:1.5}
   .ideahook .hk{display:block;font-size:9.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
@@ -233,8 +257,8 @@
   .slotmeta .tm{font-family:var(--mono);font-size:11.5px;font-weight:700;color:var(--cyan)}
   .slotmeta .pf,.slotmeta .ty{font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:5px;background:var(--surface-2);border:1px solid var(--border);color:var(--muted)}
   .slotidea{font-size:13.5px;color:var(--text-soft);line-height:1.5}
-  .slotwhy{font-size:12px;color:var(--faint);margin-top:5px;line-height:1.5}
-  .lvlen{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:5px}
+  .slotwhy{font-size:12px;color:var(--label);margin-top:5px;line-height:1.5}
+  .lvlen{font-family:var(--mono);font-size:10.5px;color:var(--label);margin-top:5px}
   .lvlen.over{color:var(--warn)}
   /* channel audit */
   .auditnote{font-size:12px;color:var(--muted);line-height:1.55;margin:0 0 16px;padding:10px 12px;border-radius:9px;background:var(--surface-2);border:1px solid var(--border)}
@@ -248,11 +272,11 @@
   .ratios .ratio{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;min-width:0}
   .ratios .rv{display:block;font-family:var(--mono);font-size:19px;font-weight:700;color:var(--cyan);letter-spacing:-.02em}
   .ratios .rk{display:block;font-size:12px;color:var(--text-soft);margin-top:3px;line-height:1.35}
-  .ratios .rn{display:block;font-size:10.5px;color:var(--faint);margin-top:2px}
+  .ratios .rn{display:block;font-size:10.5px;color:var(--label);margin-top:2px}
 
   .res-group{margin-bottom:18px}
   .res-group h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 9px;display:flex;align-items:center;gap:8px}
-  .res-group h3 .cnt{color:var(--faint)}
+  .res-group h3 .cnt{color:var(--label)}
   .item{display:flex;align-items:flex-start;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:8px}
   .item .txt{flex:1;min-width:0;font-size:14.5px;line-height:1.5}
   .item .txt .lab{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--violet-soft);margin-bottom:4px}
@@ -296,13 +320,26 @@
     .ctxbar{top:0;position:sticky}
   }
 
+  /* On a phone the context bar was a 149px window onto 445px of chips: two of
+     the three — the platforms you post on and your channel size — sat behind a
+     horizontal scroll with no scrollbar, no fade and no affordance, so they
+     simply looked absent. The page-level overflow check reported a clean 0,
+     which is why it went unnoticed. Let it wrap and be a fixed height no more. */
+  @media(max-width:560px){
+    .ctxbar{height:auto;min-height:var(--ctxh);flex-wrap:wrap;align-items:flex-start;
+            padding-top:10px;padding-bottom:10px;gap:8px}
+    .ctxbar .lbl{width:100%}
+    .ctx-chips{flex-wrap:wrap;overflow-x:visible;flex:1 1 100%;row-gap:7px}
+    .ctx-edit{margin-left:auto}
+  }
+
   /* ---------- MODALS ---------- */
   .scrim{position:fixed;inset:0;background:rgba(4,4,9,.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
   .scrim.open{display:flex}
   .modal{background:var(--surface);border:1px solid var(--border-2);border-radius:20px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:26px}
   .modal h2{font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 4px}
   .modal .msub{color:var(--muted);font-size:13.5px;margin:0 0 20px}
-  .modal .why{font-size:11.5px;color:var(--faint);margin-top:6px}
+  .modal .why{font-size:11.5px;color:var(--label);margin-top:6px}
   .modal-actions{display:flex;gap:10px;margin-top:22px}
   .btn-primary{flex:1;padding:13px;border-radius:12px;border:0;background:var(--grad);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
   .btn-ghost{padding:13px 18px;border-radius:12px;border:1px solid var(--border-2);background:none;color:var(--text-soft);font-weight:700;font-size:14px;cursor:pointer}
@@ -339,10 +376,12 @@
       <button class="navitem" data-tool="audit" onclick="switchTool('audit',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg>Channel Audit</button>
     </nav>
     <div class="rail-foot">
-      <div class="acct" id="acctLoggedIn" style="display:none;cursor:pointer" onclick="switchTool('account')" title="Your account">
-        <div class="av" id="acctAv">?</div>
-        <div class="who"><div class="nm" id="acctName">Creator</div><div class="pl" id="acctPlan">Free plan</div></div>
-        <button class="acct-menu-btn" onclick="event.stopPropagation();signOut()" title="Sign out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+      <div class="acct" id="acctLoggedIn" style="display:none">
+        <button type="button" class="acct-main" onclick="switchTool('account')">
+          <span class="av" id="acctAv">?</span>
+          <span class="who"><span class="nm" id="acctName">Creator</span><span class="pl" id="acctPlan">Free plan</span></span>
+        </button>
+        <button class="acct-menu-btn" onclick="signOut()" title="Sign out" aria-label="Sign out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
       </div>
       <a class="signin-cta" id="acctLoggedOut" href="creatornexushq-auth.html">Sign in to generate</a>
     </div>
@@ -392,8 +431,8 @@
         <div class="split">
           <div class="card" id="t-form">
             <div class="field">
-              <label>Platform</label>
-              <div class="pills" id="t-platform">
+              <label id="t-platform-lbl">Platform</label>
+              <div class="pills" role="group" aria-labelledby="t-platform-lbl" id="t-platform">
                 <button class="pill-btn on" onclick="pick(this)">YouTube</button>
                 <button class="pill-btn" onclick="pick(this)">TikTok</button>
                 <button class="pill-btn" onclick="pick(this)">Instagram</button>
@@ -403,16 +442,16 @@
               </div>
             </div>
             <div class="field">
-              <label>What's this video? <span class="opt">— a sentence is plenty</span></label>
+              <label for="t-desc">What's this video? <span class="opt">— a sentence is plenty</span></label>
               <textarea class="inp" id="t-desc" placeholder="e.g. opening a sealed Pokémon booster box hunting a Charizard"></textarea>
             </div>
             <div class="field">
-              <label>Target keyword <span class="opt">— what someone would search (optional)</span></label>
+              <label for="t-keyword">Target keyword <span class="opt">— what someone would search (optional)</span></label>
               <input class="inp" id="t-keyword" placeholder="e.g. pokemon card unboxing">
             </div>
             <div class="row2">
               <div class="field">
-                <label>Content type</label>
+                <label for="t-type">Content type</label>
                 <select class="inp" id="t-type">
                   <option>Gaming clip</option><option>Unboxing / TCG opening</option><option>Tutorial / how-to</option>
                   <option>Vlog / story</option><option>Funny / reaction</option><option>Challenge</option>
@@ -421,7 +460,7 @@
                 </select>
               </div>
               <div class="field">
-                <label>Tone</label>
+                <label for="t-tone">Tone</label>
                 <select class="inp" id="t-tone">
                   <option>Hype / excited</option><option>Mysterious / intriguing</option><option>Funny / mocking</option>
                   <option>Educational / clear</option><option>Story / emotional</option><option>Analytical / honest</option>
@@ -431,7 +470,7 @@
               </div>
             </div>
             <div class="field">
-              <label>Video length</label>
+              <label for="t-length">Video length</label>
               <select class="inp" id="t-length">
                 <option>Under 60s (Short)</option><option>1–5 minutes</option><option>5–15 minutes</option><option>15+ minutes</option>
               </select>
@@ -456,8 +495,8 @@
         <div class="split">
           <div class="card" id="g-form">
             <div class="field">
-              <label>Platform</label>
-              <div class="pills" id="g-platform">
+              <label id="g-platform-lbl">Platform</label>
+              <div class="pills" role="group" aria-labelledby="g-platform-lbl" id="g-platform">
                 <button class="pill-btn on" onclick="pick(this)">YouTube</button>
                 <button class="pill-btn" onclick="pick(this)">TikTok</button>
                 <button class="pill-btn" onclick="pick(this)">Instagram</button>
@@ -467,16 +506,16 @@
               </div>
             </div>
             <div class="field">
-              <label>Video title or topic</label>
+              <label for="g-title">Video title or topic</label>
               <input class="inp" id="g-title" placeholder="e.g. opening a sealed Pokémon booster box hunting a Charizard">
             </div>
             <div class="field">
-              <label>Your current tags <span class="opt">— optional, comma separated</span></label>
+              <label for="g-tags">Your current tags <span class="opt">— optional, comma separated</span></label>
               <textarea class="inp" id="g-tags" oninput="tagMode()" placeholder="pokemon, pokemon cards, booster box opening…"></textarea>
               <p class="modehint" id="g-mode">Empty &rarr; we'll build a full tag set from scratch.</p>
             </div>
             <div class="field">
-              <label>Content type</label>
+              <label for="g-type">Content type</label>
               <select class="inp" id="g-type">
                 <option>Gaming clip</option><option>Unboxing / TCG opening</option><option>Tutorial / how-to</option>
                 <option>Vlog / story</option><option>Funny / reaction</option><option>Challenge</option>
@@ -507,7 +546,7 @@
             <!-- ---------- SCORE MODE ---------- -->
             <div id="th-pane-score">
               <div class="field">
-                <label>Your thumbnail</label>
+                <label for="th-file">Your thumbnail</label>
                 <label class="drop" id="th-drop">
                   <input type="file" id="th-file" accept="image/png,image/jpeg,image/webp" onchange="thumbPick(this)">
                   <span id="th-droptext"><b>Choose an image</b><br>PNG, JPG or WebP &middot; up to 4MB</span>
@@ -516,16 +555,16 @@
                 <p class="modehint" id="th-meta"></p>
               </div>
               <div class="field">
-                <label>Video title <span class="opt">— the thumbnail is judged next to it</span></label>
+                <label for="th-title">Video title <span class="opt">— the thumbnail is judged next to it</span></label>
                 <input class="inp" id="th-title" placeholder="e.g. I Opened a Sealed Booster Box">
               </div>
               <div class="row2">
                 <div class="field">
-                  <label>Platform</label>
+                  <label for="th-platform">Platform</label>
                   <select class="inp" id="th-platform"><option>YouTube</option><option>TikTok</option><option>Instagram</option><option>Facebook</option></select>
                 </div>
                 <div class="field">
-                  <label>Intended emotion</label>
+                  <label for="th-emotion">Intended emotion</label>
                   <select class="inp" id="th-emotion">
                     <option>Curiosity</option><option>Excitement / hype</option><option>Shock / surprise</option>
                     <option>Humour</option><option>Trust / authority</option><option>Urgency</option><option>Satisfaction</option>
@@ -533,7 +572,7 @@
                 </div>
               </div>
               <div class="field">
-                <label>Content type</label>
+                <label for="th-type">Content type</label>
                 <select class="inp" id="th-type">
                   <option>Gaming clip</option><option>Unboxing / TCG opening</option><option>Tutorial / how-to</option>
                   <option>Vlog / story</option><option>Funny / reaction</option><option>Challenge</option>
@@ -546,33 +585,33 @@
             <!-- ---------- PROMPT MODE ---------- -->
             <div id="th-pane-prompt" style="display:none">
               <div class="field">
-                <label>Video title or topic</label>
+                <label for="tp-title">Video title or topic</label>
                 <input class="inp" id="tp-title" placeholder="e.g. I Opened a Sealed Booster Box">
               </div>
               <div class="row2">
                 <div class="field">
-                  <label>Thumbnail style</label>
+                  <label for="tp-style">Thumbnail style</label>
                   <select class="inp" id="tp-style">
                     <option>Bold &amp; high contrast</option><option>Cinematic / dramatic</option><option>Clean &amp; minimal</option>
                     <option>Chaotic / meme energy</option><option>Photoreal</option><option>Illustrated / cartoon</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label>AI tool</label>
+                  <label for="tp-tool">AI tool</label>
                   <select class="inp" id="tp-tool"><option>Midjourney</option><option>DALL·E</option><option>Adobe Firefly</option><option>Stable Diffusion</option><option>Leonardo</option></select>
                 </div>
               </div>
               <div class="field">
-                <label>Main subject</label>
+                <label for="tp-subject">Main subject</label>
                 <input class="inp" id="tp-subject" placeholder="e.g. a sealed booster box under dramatic light">
               </div>
               <div class="row2">
                 <div class="field">
-                  <label>Colour scheme</label>
+                  <label for="tp-colors">Colour scheme</label>
                   <input class="inp" id="tp-colors" placeholder="e.g. electric blue and gold">
                 </div>
                 <div class="field">
-                  <label>Target emotion</label>
+                  <label for="tp-emotion">Target emotion</label>
                   <select class="inp" id="tp-emotion">
                     <option>Curiosity</option><option>Excitement / hype</option><option>Shock / surprise</option>
                     <option>Humour</option><option>Trust / authority</option><option>Urgency</option><option>Satisfaction</option>
@@ -580,7 +619,7 @@
                 </div>
               </div>
               <div class="field">
-                <label>Must-have elements <span class="opt">— optional</span></label>
+                <label for="tp-elements">Must-have elements <span class="opt">— optional</span></label>
                 <input class="inp" id="tp-elements" placeholder="e.g. a Charizard card, sparks, my face on the right">
               </div>
               <button class="gen" id="tp-gen" onclick="generateThumbPrompts()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3v4M3 5h4M6 17v4M4 19h4M13 3l2.5 6.5L22 12l-6.5 2.5L13 21l-2.5-6.5L4 12l6.5-2.5z"/></svg> Generate AI prompts</button>
@@ -607,8 +646,8 @@
             <!-- ---------- IDEAS ---------- -->
             <div id="id-pane-ideas">
               <div class="field">
-                <label>Platform</label>
-                <div class="pills" id="id-platform">
+                <label id="id-platform-lbl">Platform</label>
+                <div class="pills" role="group" aria-labelledby="id-platform-lbl" id="id-platform">
                   <button class="pill-btn on" onclick="pick(this)">YouTube</button>
                   <button class="pill-btn" onclick="pick(this)">TikTok</button>
                   <button class="pill-btn" onclick="pick(this)">Instagram</button>
@@ -618,11 +657,11 @@
                 </div>
               </div>
               <div class="field">
-                <label>What's working for you lately? <span class="opt">— your best recent video, or what you keep making</span></label>
+                <label for="id-working">What's working for you lately? <span class="opt">— your best recent video, or what you keep making</span></label>
                 <textarea class="inp" id="id-working" placeholder="e.g. my booster box openings do 3x my normal views, especially when I pull something rare"></textarea>
               </div>
               <div class="field">
-                <label>How many ideas?</label>
+                <label for="id-count">How many ideas?</label>
                 <select class="inp" id="id-count"><option>5</option><option selected>8</option><option>12</option></select>
               </div>
               <button class="gen" id="id-gen" onclick="generateIdeas()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg> Give me ideas</button>
@@ -630,8 +669,8 @@
             <!-- ---------- CTAs ---------- -->
             <div id="id-pane-ctas" style="display:none">
               <div class="field">
-                <label>Platform</label>
-                <div class="pills" id="ct-platform">
+                <label id="ct-platform-lbl">Platform</label>
+                <div class="pills" role="group" aria-labelledby="ct-platform-lbl" id="ct-platform">
                   <button class="pill-btn on" onclick="pick(this)">YouTube</button>
                   <button class="pill-btn" onclick="pick(this)">TikTok</button>
                   <button class="pill-btn" onclick="pick(this)">Instagram</button>
@@ -641,7 +680,7 @@
                 </div>
               </div>
               <div class="field">
-                <label>What do you want them to do?</label>
+                <label for="ct-goal">What do you want them to do?</label>
                 <select class="inp" id="ct-goal">
                   <option>Subscribe / follow</option><option>Comment</option><option>Like</option>
                   <option>Watch another video</option><option>Join my Discord</option><option>Share it</option>
@@ -650,14 +689,14 @@
               </div>
               <div class="row2">
                 <div class="field">
-                  <label>Tone</label>
+                  <label for="ct-tone">Tone</label>
                   <select class="inp" id="ct-tone">
                     <option>Chill / natural</option><option>Hype / excited</option><option>Funny</option>
                     <option>Direct / no-nonsense</option><option>Warm / grateful</option><option>Cocky / confident</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label>Video format</label>
+                  <label for="ct-format">Video format</label>
                   <select class="inp" id="ct-format">
                     <option>Long-form video</option><option>Short / Reel</option><option>Livestream</option><option>Podcast episode</option>
                   </select>
@@ -687,8 +726,8 @@
             <!-- ---------- BUILD ---------- -->
             <div id="sc-pane-build">
               <div class="field">
-                <label>Platforms <span class="opt">— tap all you post on</span></label>
-                <div class="pills" id="sc-platforms">
+                <label id="sc-platforms-lbl">Platforms <span class="opt">— tap all you post on</span></label>
+                <div class="pills" role="group" aria-labelledby="sc-platforms-lbl" id="sc-platforms">
                   <button class="pill-btn" onclick="ptoggle(this)">YouTube</button>
                   <button class="pill-btn" onclick="ptoggle(this)">TikTok</button>
                   <button class="pill-btn" onclick="ptoggle(this)">Instagram</button>
@@ -701,22 +740,22 @@
               </div>
               <div class="row2">
                 <div class="field">
-                  <label>Posts per week</label>
+                  <label for="sc-frequency">Posts per week</label>
                   <select class="inp" id="sc-frequency">
                     <option>2</option><option selected>3</option><option>4</option><option>5</option><option>7</option><option>10</option><option>14</option>
                   </select>
                 </div>
                 <div class="field">
-                  <label>Your timezone</label>
+                  <label for="sc-timezone">Your timezone</label>
                   <input class="inp" id="sc-timezone" placeholder="e.g. America/Chicago">
                 </div>
               </div>
               <div class="field">
-                <label>Content mix <span class="opt">— what kinds of posts, roughly</span></label>
+                <label for="sc-mix">Content mix <span class="opt">— what kinds of posts, roughly</span></label>
                 <input class="inp" id="sc-mix" placeholder="e.g. 1 long-form opening, 3 Shorts, 1 stream VOD clip">
               </div>
               <div class="field">
-                <label>When are you actually free? <span class="opt">— be honest, this is the whole point</span></label>
+                <label for="sc-availability">When are you actually free? <span class="opt">— be honest, this is the whole point</span></label>
                 <textarea class="inp" id="sc-availability" placeholder="e.g. I work 9–5 weekdays, can film Sunday afternoons and edit an hour most evenings"></textarea>
               </div>
               <button class="gen" id="sc-gen" onclick="buildCalendar()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> Build my week</button>
@@ -724,8 +763,8 @@
             <!-- ---------- RATE ---------- -->
             <div id="sc-pane-rate" style="display:none">
               <div class="field">
-                <label>Platforms</label>
-                <div class="pills" id="sr-platforms">
+                <label id="sr-platforms-lbl">Platforms</label>
+                <div class="pills" role="group" aria-labelledby="sr-platforms-lbl" id="sr-platforms">
                   <button class="pill-btn" onclick="ptoggle(this)">YouTube</button>
                   <button class="pill-btn" onclick="ptoggle(this)">TikTok</button>
                   <button class="pill-btn" onclick="ptoggle(this)">Instagram</button>
@@ -737,16 +776,16 @@
                 </div>
               </div>
               <div class="field">
-                <label>What's your schedule right now?</label>
+                <label for="sr-current">What's your schedule right now?</label>
                 <textarea class="inp" id="sr-current" placeholder="e.g. long video whenever it's ready, usually Saturday night, plus Shorts when I remember"></textarea>
               </div>
               <div class="row2">
                 <div class="field">
-                  <label>Your timezone</label>
+                  <label for="sr-timezone">Your timezone</label>
                   <input class="inp" id="sr-timezone" placeholder="e.g. America/Chicago">
                 </div>
                 <div class="field">
-                  <label>Where's your audience?</label>
+                  <label for="sr-audience">Where's your audience?</label>
                   <select class="inp" id="sr-audience">
                     <option>Mostly US</option><option>Mostly UK / Europe</option><option>US + Europe split</option>
                     <option>Asia-Pacific</option><option>Global / not sure</option>
@@ -754,7 +793,7 @@
                 </div>
               </div>
               <div class="field">
-                <label>What are you optimising for?</label>
+                <label for="sr-goal">What are you optimising for?</label>
                 <select class="inp" id="sr-goal">
                   <option>More views on each post</option><option>Growing subscribers</option>
                   <option>Being consistent without burning out</option><option>Building a live audience</option>
@@ -779,8 +818,8 @@
         <div class="split">
           <div class="card">
             <div class="field">
-              <label>Where are you streaming?</label>
-              <div class="pills" id="lv-platform">
+              <label id="lv-platform-lbl">Where are you streaming?</label>
+              <div class="pills" role="group" aria-labelledby="lv-platform-lbl" id="lv-platform">
                 <button class="pill-btn on" onclick="pickLive(this)">Twitch</button>
                 <button class="pill-btn" onclick="pickLive(this)">Kick</button>
                 <button class="pill-btn" onclick="pickLive(this)">YouTube Live</button>
@@ -791,12 +830,12 @@
               <p class="modehint" id="lv-hint"></p>
             </div>
             <div class="field">
-              <label>What are you streaming?</label>
+              <label for="lv-game">What are you streaming?</label>
               <input class="inp" id="lv-game" placeholder="e.g. Warzone ranked grind, or opening a booster box on stream">
             </div>
             <div class="row2">
               <div class="field">
-                <label>Vibe</label>
+                <label for="lv-vibe">Vibe</label>
                 <select class="inp" id="lv-vibe">
                   <option>Hype / high energy</option><option>Chill / cosy</option><option>Competitive / serious</option>
                   <option>Funny / chaotic</option><option>Community hangout</option><option>Challenge / grind</option>
@@ -804,7 +843,7 @@
                 </select>
               </div>
               <div class="field">
-                <label>Your on-stream personality</label>
+                <label for="lv-personality">Your on-stream personality</label>
                 <select class="inp" id="lv-personality">
                   <option>Loud and reactive</option><option>Dry and sarcastic</option><option>Warm and chatty</option>
                   <option>Focused and technical</option><option>Wholesome</option><option>Unhinged</option>
@@ -812,7 +851,7 @@
               </div>
             </div>
             <div class="field">
-              <label>Anything specific happening? <span class="opt">— optional, but it's what makes a title worth clicking</span></label>
+              <label for="lv-specific">Anything specific happening? <span class="opt">— optional, but it's what makes a title worth clicking</span></label>
               <textarea class="inp" id="lv-specific" placeholder="e.g. going for my first win of the season, or subathon day 3, or my friend is guest hosting"></textarea>
             </div>
             <button class="gen" id="lv-gen" onclick="generateLiveTitles()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19 5a10 10 0 0 1 0 14M5 19A10 10 0 0 1 5 5"/></svg> Write my stream titles</button>
@@ -833,11 +872,11 @@
           <div class="card">
             <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px">Profile</div>
             <div class="row2">
-              <div class="field"><label>First name</label><input class="inp" id="a-first" placeholder="Taylor"></div>
-              <div class="field"><label>Last name</label><input class="inp" id="a-last" placeholder="Jordan"></div>
+              <div class="field"><label for="a-first">First name</label><input class="inp" id="a-first" placeholder="Taylor"></div>
+              <div class="field"><label for="a-last">Last name</label><input class="inp" id="a-last" placeholder="Jordan"></div>
             </div>
-            <div class="field"><label>Username</label><input class="inp" id="a-username" placeholder="taylorplays"></div>
-            <div class="field"><label>Email</label><input class="inp" id="a-email" disabled style="opacity:.6;cursor:not-allowed"><div class="modal-actions" style="margin:0"></div></div>
+            <div class="field"><label for="a-username">Username</label><input class="inp" id="a-username" placeholder="taylorplays"></div>
+            <div class="field"><label for="a-email">Email</label><input class="inp" id="a-email" disabled style="opacity:.6;cursor:not-allowed"><div class="modal-actions" style="margin:0"></div></div>
             <label class="check" style="margin-top:4px"><input type="checkbox" id="a-optin"><span>Send me growth tips &amp; product news. No spam, unsubscribe anytime.</span></label>
             <button class="gen" onclick="saveAccount()">Save account</button>
           </div>
@@ -874,8 +913,8 @@
           <div class="card">
             <p class="auditnote">We can't read your analytics yet &mdash; there's no connection to any platform, so nothing here is pulled from your account. Copy the numbers from your own dashboard. Leave anything you don't have blank and we'll say what's missing.</p>
             <div class="field">
-              <label>Platform</label>
-              <div class="pills" id="au-platform">
+              <label id="au-platform-lbl">Platform</label>
+              <div class="pills" role="group" aria-labelledby="au-platform-lbl" id="au-platform">
                 <button class="pill-btn on" onclick="pick(this)">YouTube</button>
                 <button class="pill-btn" onclick="pick(this)">TikTok</button>
                 <button class="pill-btn" onclick="pick(this)">Instagram</button>
@@ -886,44 +925,44 @@
             </div>
             <div class="row2">
               <div class="field">
-                <label>Reporting period</label>
+                <label for="au-period">Reporting period</label>
                 <select class="inp" id="au-period"><option>Last 28 days</option><option>Last 7 days</option><option>Last 90 days</option><option>Last 12 months</option></select>
               </div>
               <div class="field">
-                <label>Followers / subscribers</label>
+                <label for="au-subs">Followers / subscribers</label>
                 <input class="inp" id="au-subs" inputmode="numeric" placeholder="e.g. 4200">
               </div>
             </div>
             <div class="row2">
               <div class="field">
-                <label>Views this period</label>
+                <label for="au-views">Views this period</label>
                 <input class="inp" id="au-views" inputmode="numeric" placeholder="e.g. 38000">
               </div>
               <div class="field">
-                <label>New followers this period</label>
+                <label for="au-newsubs">New followers this period</label>
                 <input class="inp" id="au-newsubs" inputmode="numeric" placeholder="e.g. 310">
               </div>
             </div>
             <div class="row2">
               <div class="field">
-                <label>Average views per post</label>
+                <label for="au-avgviews">Average views per post</label>
                 <input class="inp" id="au-avgviews" inputmode="numeric" placeholder="e.g. 1900">
               </div>
               <div class="field">
-                <label>Retention <span class="opt">— % or avg duration</span></label>
+                <label for="au-retention">Retention <span class="opt">— % or avg duration</span></label>
                 <input class="inp" id="au-retention" placeholder="e.g. 42% or 3:10">
               </div>
             </div>
             <div class="field">
-              <label>How often do you post?</label>
+              <label for="au-frequency">How often do you post?</label>
               <input class="inp" id="au-frequency" placeholder="e.g. 1 long video and 3 Shorts a week">
             </div>
             <div class="field">
-              <label>Your best recent content <span class="opt">— what did well and roughly how well</span></label>
+              <label for="au-top">Your best recent content <span class="opt">— what did well and roughly how well</span></label>
               <textarea class="inp" id="au-top" placeholder="e.g. 'I Opened a Sealed Booster Box' did 41k, about 20x my normal"></textarea>
             </div>
             <div class="field">
-              <label>What feels hardest right now?</label>
+              <label for="au-challenge">What feels hardest right now?</label>
               <select class="inp" id="au-challenge">
                 <option>Nobody clicks my videos</option><option>People click but don't stay</option>
                 <option>Views are flat no matter what I do</option><option>Views but no subscribers</option>
@@ -948,10 +987,10 @@
     <h2 id="profileTitle">Welcome — let's set up your channel</h2>
     <p class="msub">Two quick things so every tool is personalized to you. Change any of it per-video later.</p>
     <div class="row2">
-      <div class="field"><label>First name</label><input class="inp" id="p-name" placeholder="Taylor"></div>
-      <div class="field"><label>Username</label><input class="inp" id="p-username" placeholder="taylorplays"></div>
+      <div class="field"><label for="p-name">First name</label><input class="inp" id="p-name" placeholder="Taylor"></div>
+      <div class="field"><label for="p-username">Username</label><input class="inp" id="p-username" placeholder="taylorplays"></div>
     </div>
-    <div class="field"><label>What do you mostly make?</label>
+    <div class="field"><label for="p-niche">What do you mostly make?</label>
       <select class="inp" id="p-niche" onchange="toggleGameField()">
         <option value="">Choose one…</option>
         <option>Gaming</option><option>Pokémon / TCG</option><option>Vlogs &amp; lifestyle</option><option>Fitness</option>
@@ -959,9 +998,23 @@
         <option>IRL / a bit of everything</option><option>Other</option>
       </select>
     </div>
-    <div class="field" id="p-game-field" style="display:none"><label>Which game(s)? <span class="opt">optional</span></label><input class="inp" id="p-game" placeholder="e.g. Warzone, Fortnite, Minecraft"></div>
-    <div class="field"><label>Which platforms do you create on?</label>
-      <div class="pills" id="p-platforms">
+    <div class="field" id="p-game-field" style="display:none"><label for="p-game">Which game(s)? <span class="opt">optional</span></label><input class="inp" id="p-game" placeholder="e.g. Warzone, Fortnite, Minecraft"></div>
+    <div class="field"><label id="p-platforms-lbl">Which platforms do you create on?</label>
+      <div class="pills" role="group" aria-labelledby="p-platforms-lbl" id="p-platforms">
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">YouTube</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">TikTok</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Instagram</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Twitch</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Kick</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Facebook</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">X</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Snapchat</button>
+        <button type="button" class="pill-btn" onclick="ptoggle(this)">Rumble</button>
+      </div>
+      <p class="fielderr" id="p-platforms-err" role="alert" hidden>Pick at least one — it's what makes every tool write for the right place.</p>
+    </div>
+    <div class="field"><label id="p-grow-lbl">Want to start on any others? <span class="opt">optional — we'll help you grow there</span></label>
+      <div class="pills" role="group" aria-labelledby="p-grow-lbl" id="p-grow">
         <button type="button" class="pill-btn" onclick="ptoggle(this)">YouTube</button>
         <button type="button" class="pill-btn" onclick="ptoggle(this)">TikTok</button>
         <button type="button" class="pill-btn" onclick="ptoggle(this)">Instagram</button>
@@ -973,23 +1026,10 @@
         <button type="button" class="pill-btn" onclick="ptoggle(this)">Rumble</button>
       </div>
     </div>
-    <div class="field"><label>Want to start on any others? <span class="opt">optional — we'll help you grow there</span></label>
-      <div class="pills" id="p-grow">
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">YouTube</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">TikTok</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">Instagram</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">Twitch</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">Kick</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">Facebook</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">X</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">Snapchat</button>
-        <button type="button" class="pill-btn" onclick="ptoggle(this)">Rumble</button>
-      </div>
-    </div>
-    <div class="field"><label>Channel size</label>
+    <div class="field"><label for="p-size">Channel size</label>
       <select class="inp" id="p-size"><option>Just starting</option><option>Under 1K</option><option>1K–10K</option><option>10K–100K</option><option>100K+</option></select>
     </div>
-    <div class="field"><label>How often do you want to post?</label>
+    <div class="field"><label for="p-cadence">How often do you want to post?</label>
       <select class="inp" id="p-cadence">
         <option>A few times a month</option><option selected>Once a week</option>
         <option>2–3 times a week</option><option>Most days</option><option>Every day</option>
@@ -1015,10 +1055,55 @@
   </div>
 </div>
 
+<!-- PUBLISH MODAL — replaces a native prompt(), which sat outside the design
+     system, couldn't be styled or labelled, and gave no way to explain what was
+     being saved or to reject a bad URL. -->
+<div class="scrim" id="publishScrim">
+  <div class="modal" style="max-width:440px" role="dialog" aria-modal="true" aria-labelledby="pubTitle">
+    <h2 id="pubTitle">Mark this as published</h2>
+    <p class="msub">This records the date so your week and your streak stay accurate. Add the link if you have it — it's optional, and you can always come back.</p>
+    <div class="field">
+      <label for="pubUrl">Link to the published video <span class="opt">— optional</span></label>
+      <input class="inp" id="pubUrl" type="url" inputmode="url" placeholder="https://youtube.com/watch?v=…"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();confirmPublish();}">
+      <p class="fielderr" id="pub-err" role="alert" hidden>That doesn't look like a web link. Use one starting with http:// or https://, or leave it blank.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="confirmPublish()">Mark published</button>
+      <button class="btn-ghost" onclick="closePublish()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
   const WORKER_URL = 'https://creatornexushq-api.tjlangston15.workers.dev/generate';
+
+  /* ---------- routing ----------
+     The Studio is one page with ten destinations. Until now none of them were
+     addressable: switchTool() changed the DOM and nothing else, so Back left
+     the app entirely, a refresh always dumped you on Titles, and no tool could
+     be linked to. On a phone, where Back is the primary gesture, that reads as
+     the app crashing.
+
+     Read the welcome flag BEFORE any history rewriting. Normalising the URL to
+     ?tab=… drops ?welcome=1, and the auth module reads that flag later to open
+     the onboarding survey — rewriting first silently kills onboarding. */
+  const TOOL_IDS = ['week','content','titles','tags','thumbs','ideas','schedule','live','audit','account'];
+  const DEFAULT_TOOL = 'titles';
+  window.__welcomeRequested = new URLSearchParams(location.search).get('welcome') === '1';
+  let __pendingContentId = null;    // ?c=<id> — opened once auth resolves
+  let __routing = false;            // true while applying a popstate, so we don't re-push
+
+  const validTool = (id) => TOOL_IDS.indexOf(id) >= 0 ? id : DEFAULT_TOOL;
+
+  function studioUrl(id, contentId){
+    const p = new URLSearchParams();
+    p.set('tab', id);
+    if(contentId) p.set('c', contentId);
+    return location.pathname + '?' + p.toString();
+  }
 
   /* ---------- context / profile (localStorage; Firestore sync comes next) ---------- */
   function getProfile(){ try{ return JSON.parse(localStorage.getItem('cnx_profile')||'{}'); }catch(e){ return {}; } }
@@ -1045,7 +1130,15 @@
     const nm = document.getElementById('acctName');
     if (p.name && nm && nm.textContent === 'Creator') nm.textContent = p.name;
   }
-  function chipHtml(k,v,empty){ return '<span class="chip'+(empty?' empty':'')+'"><span class="ck">'+esc(k)+'</span>'+esc(v)+'</span>'; }
+  // An empty chip is the only prompt to finish setup, so it has to be operable —
+  // this is the non-punitive path for anyone whose profile predates the
+  // platform requirement, or who used Skip.
+  function chipHtml(k,v,empty){
+    const inner = '<span class="ck">'+esc(k)+'</span>'+esc(v);
+    return empty
+      ? '<button type="button" class="chip empty" onclick="openProfile()">'+inner+'</button>'
+      : '<span class="chip">'+inner+'</span>';
+  }
 
   function openProfile(){ const p=getProfile();
     document.getElementById('p-name').value=p.first||p.name||''; document.getElementById('p-username').value=p.username||'';
@@ -1060,6 +1153,19 @@
   function closeProfile(){ document.getElementById('profileScrim').classList.remove('open'); }
   function toggleGameField(){ document.getElementById('p-game-field').style.display = document.getElementById('p-niche').value==='Gaming' ? 'block':'none'; }
   function saveProfile(){
+    // At least one platform. Without it every tool defaults silently to
+    // YouTube and the context bar reads "set platforms" the moment onboarding
+    // finishes — the setup step telling you it didn't work.
+    const picked = pillsSel('p-platforms');
+    const err = document.getElementById('p-platforms-err');
+    if(!picked.length){
+      err.hidden = false;
+      const row = document.getElementById('p-platforms');
+      row.scrollIntoView({block:'center', behavior:'smooth'});
+      const first = row.querySelector('.pill-btn'); if(first) first.focus();
+      return;
+    }
+    err.hidden = true;
     const p = getProfile();
     p.first=document.getElementById('p-name').value.trim(); p.name=[p.first,p.last||''].join(' ').trim();
     p.username=document.getElementById('p-username').value.trim().replace(/^@/,'');
@@ -1074,7 +1180,12 @@
   }
 
   /* ---------- nav / drawer ---------- */
-  function switchTool(id, btn){
+  // opts.silent  — don't touch history (used when replaying a popstate)
+  // opts.replace — replaceState instead of pushState (initial load)
+  // opts.contentId — carried in the URL so a specific video is linkable
+  function switchTool(id, btn, opts){
+    opts = opts || {};
+    id = validTool(id);
     document.querySelectorAll('.tool').forEach(t=>t.classList.remove('active'));
     const sec=document.getElementById('tool-'+id); if(!sec) return;
     sec.classList.add('active');
@@ -1088,7 +1199,44 @@
     if(id==='week') loadThisWeek();
     closeDrawer();
     window.scrollTo({top:0});
+
+    if(opts.silent || __routing) return;
+    const url = studioUrl(id, opts.contentId);
+    // Re-clicking the tool you're already on must not stack a history entry,
+    // or Back becomes "press it four times to leave the same screen".
+    if(location.pathname + location.search === url) return;
+    const state = { tab:id, c:opts.contentId || null };
+    if(opts.replace) history.replaceState(state, '', url);
+    else history.pushState(state, '', url);
   }
+
+  // Back/Forward: apply the state without pushing a new entry.
+  window.addEventListener('popstate', (e)=>{
+    const st = e.state || {};
+    const params = new URLSearchParams(location.search);
+    const id = validTool(st.tab || params.get('tab') || DEFAULT_TOOL);
+    const cid = st.c || params.get('c') || null;
+    __routing = true;
+    try{
+      switchTool(id, null, {silent:true});
+      if(cid && window.__currentUser) openContent(cid, {silent:true});
+    } finally { __routing = false; }
+  });
+
+  // First paint: honour ?tab= / ?c=, and normalise the URL so every later
+  // entry has the same shape (this also drops ?welcome=1 once it's been read).
+  function initRoute(){
+    const params = new URLSearchParams(location.search);
+    const id = validTool(params.get('tab') || DEFAULT_TOOL);
+    __pendingContentId = params.get('c') || null;
+    switchTool(id, null, {replace:true, contentId:__pendingContentId});
+  }
+
+  // Called by the auth module once a user is known.
+  window.__openPendingContent = function(){
+    const id = __pendingContentId; __pendingContentId = null;
+    if(id) openContent(id, {silent:true});
+  };
 
   /* ---------- account page ---------- */
   function fillAccount(){
@@ -1198,9 +1346,14 @@
     if(!parsed || !window.__contentCreate) return;
     const topic = (body.description||'').trim();
     if(!topic) return;
+    // Store everything the results pane renders, so reopening the video can
+    // rebuild the full view. Storing only the chosen title made the record
+    // look complete while the creator's hooks and hashtags were quietly lost.
     const stage = {
       chosen: parsed.best || '',
       suggested: (parsed.titles||[]).slice(0, 8),
+      hooks: (parsed.hooks||[]).slice(0, 8),
+      sections: parsed.meta || {},
       score: parsed.score,
       keyword: body.keyword || '',
       shortDescription: (parsed.meta||{})['SHORT DESCRIPTION'] || '',
@@ -1229,7 +1382,6 @@
   }
 
   function renderTitles(text, yt, keyword){
-    const res=document.getElementById('t-results');
     const lines=text.split('\n');
     const titles=[], hooks=[], meta={}; let full='';
     for(let i=0;i<lines.length;i++){
@@ -1241,9 +1393,24 @@
       else if(key==='FULL DESCRIPTION'){ const parts=[val]; while(i+1<lines.length && !/^[A-Z][A-Z\s\d]+:\s/.test(lines[i+1].trim())){ i++; parts.push(lines[i]); } full=parts.join('\n').replace(/^\n+|\n+$/g,''); }
       else { meta[key]=val; }
     }
-    const bestTitle=titles[0]||'';
-    const sc=seoScore(bestTitle, full||meta['SHORT DESCRIPTION']||'', keyword);
+    return paintTitles({ titles:titles, hooks:hooks, meta:meta, full:full,
+                         best:titles[0]||'', keyword:keyword }, yt);
+  }
+
+  // Paint the results pane from an ALREADY-PARSED stage. Generation parses the
+  // model's text into this shape; reopening a saved video hands the stored
+  // record straight in. Without this split the record was write-only — the work
+  // was in Firestore but a creator returning to a video saw an empty form and
+  // had to spend a credit regenerating to see titles they already had.
+  function paintTitles(p, yt, savedAt){
+    const res=document.getElementById('t-results');
+    const titles=p.titles||[], hooks=p.hooks||[], meta=p.meta||{}, full=p.full||'';
+    const bestTitle=p.best||titles[0]||'';
+    const sc=seoScore(bestTitle, full||meta['SHORT DESCRIPTION']||'', p.keyword);
     let html='';
+    // Restored view says so plainly, and never re-shows the live ranking panel —
+    // that data was true at generation time and we don't store it.
+    if(savedAt) html+='<p class="tagnote" style="margin:0 0 14px">Saved '+esc(whenText(savedAt))+' — this is your record, not a new generation.</p>';
     // score hero
     const col = sc.score>=80?'var(--good)':sc.score>=55?'var(--warn)':'var(--bad)';
     const verdict = sc.score>=80?'Strong — ready to publish.':sc.score>=55?'Good — a few tweaks lift it.':'Needs work — see the reds.';
@@ -1266,7 +1433,7 @@
     res.innerHTML=html;
     animateRing(document.getElementById('ring'), sc.score, col);
     // handed back so the caller can persist without re-parsing
-    return { titles: titles, best: bestTitle, score: sc.score, meta: meta, full: full };
+    return { titles: titles, hooks: hooks, best: bestTitle, score: sc.score, meta: meta, full: full };
   }
   // ================= Tags & Hashtags =================
   function tagMode(){
@@ -1499,7 +1666,7 @@
     const n=scoreOf(val,10); if(n===null) return '';
     const col = n>=8?'var(--good)':n>=5.5?'var(--warn)':'var(--bad)';
     const why = String(val).replace(/^\s*\d+(?:\.\d+)?\s*\/\s*10\s*[—\-–:]*\s*/,'').trim();
-    return '<div class="bar"><span class="bl">'+esc(label)+(why?' <span style="color:var(--faint)">— '+esc(why)+'</span>':'')+'</span>'+
+    return '<div class="bar"><span class="bl">'+esc(label)+(why?' <span style="color:var(--label)">— '+esc(why)+'</span>':'')+'</span>'+
       '<span class="bv" style="color:'+col+'">'+n+'/10</span>'+
       '<span class="track"><span class="fill" style="width:'+(n*10)+'%;background:'+col+'"></span></span></div>';
   }
@@ -1944,10 +2111,16 @@
         '<div class="mcmeta">'+esc(it.platform||'YouTube')+' · '+s.done+' of '+STAGES.length+' done · '+
           (it.status==='published' ? 'published '+esc(whenText(it.publishedAt)) : esc(whenText(it.updatedAt)))+'</div>'+
         s.html+
+        // The published URL was stored and never shown — so the record knew
+        // where your video lived and wouldn't take you there.
+        (function(){ const u = safeUrl(it.url); return u
+          ? '<a class="mclink" href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="M15 3h6v6"/><path d="M10 14 21 3"/></svg>'+
+            'Watch it on '+esc(it.platform||'the platform')+'</a>' : ''; })()+
         outcomeRow(it)+
         '<div class="mcacts">'+
           '<button class="mcbtn" onclick="openContent(\''+it.id+'\')">Open</button>'+
-          (it.status!=='published' ? '<button class="mcbtn ship" onclick="markPublished(\''+it.id+'\')">Mark published</button>' : '')+
+          (it.status!=='published' ? '<button class="mcbtn ship" onclick="openPublish(\''+it.id+'\',this)">Mark published</button>' : '')+
           '<button class="mcbtn ghost" onclick="removeContent(\''+it.id+'\')">Delete</button>'+
         '</div>'+
       '</div>';
@@ -1968,11 +2141,44 @@
         && daysSince(it.publishedAt) >= OUTCOME_ASK_AFTER_DAYS;
   }
 
-  async function markPublished(id){
-    const url = prompt('Link to the published video? (optional — leave blank to skip)') || '';
+  // Only http(s) becomes a link. Anything else — javascript:, data:, a typo —
+  // is stored as typed but never rendered as an anchor, so a saved string can
+  // never turn into a clickable script.
+  function safeUrl(raw){
+    const s = String(raw||'').trim();
+    if(!s) return '';
+    let u; try{ u = new URL(s); }catch(e){ return ''; }
+    return (u.protocol==='http:' || u.protocol==='https:') ? u.href : '';
+  }
+
+  let __publishId = null, __publishReturnFocus = null;
+  function openPublish(id, btn){
+    __publishId = id; __publishReturnFocus = btn || document.activeElement;
+    const it = document.getElementById('pubUrl');
+    it.value=''; document.getElementById('pub-err').hidden = true;
+    document.getElementById('publishScrim').classList.add('open');
+    setTimeout(()=>it.focus(), 30);
+  }
+  function closePublish(){
+    document.getElementById('publishScrim').classList.remove('open');
+    __publishId = null;
+    if(__publishReturnFocus && __publishReturnFocus.focus) __publishReturnFocus.focus();
+    __publishReturnFocus = null;
+  }
+  async function confirmPublish(){
+    const id = __publishId; if(!id) return;
+    const raw = document.getElementById('pubUrl').value.trim();
+    const url = raw ? safeUrl(raw) : '';
+    if(raw && !url){
+      // Don't silently drop what they typed — say why it wasn't accepted.
+      document.getElementById('pub-err').hidden = false;
+      document.getElementById('pubUrl').focus();
+      return;
+    }
     const ok = await window.__contentUpdate(id, {
-      status:'published', publishedAt:new Date().toISOString(), url:url.trim()
+      status:'published', publishedAt:new Date().toISOString(), url:url
     });
+    closePublish();
     if(ok){ toast('Nice — that\'s one shipped.'); loadMyContent(); }
     else toast('Couldn\'t save that — try again.');
   }
@@ -2050,17 +2256,32 @@
 
   // Opening a piece of content puts you back in the tool with its context
   // restored — the point of storing it in the first place.
-  async function openContent(id){
-    const it = await window.__contentGet(id); if(!it) return;
+  // `id` is only ever read through __contentGet, which is scoped to the signed-in
+  // uid — so a content id in the URL can't reach another creator's record; a
+  // foreign or stale id simply resolves to nothing.
+  async function openContent(id, opts){
+    opts = opts || {};
+    const it = await window.__contentGet(id);
+    if(!it){ if(!opts.silent) toast('That video isn\'t in your library.'); return; }
     activeContentId = it.id; activeContentTopic = it.topic || '';
     setV('t-desc', it.topic || '');
-    if(it.stages && it.stages.title){
-      setV('t-keyword', it.stages.title.keyword || '');
-    }
+    const st = (it.stages||{}).title;
+    if(st) setV('t-keyword', st.keyword || '');
     if(it.contentType) setV('t-type', it.contentType);
     pickPill('t-platform', it.platform || 'YouTube');
-    switchTool('titles');
-    toast('Picked up where you left off.');
+    switchTool('titles', null, {contentId:it.id, silent:opts.silent});
+    // Show the work, not just the inputs. Regenerating to see titles you already
+    // made costs a credit and returns different text — the record exists so that
+    // never has to happen.
+    const hasWork = st && ((st.suggested&&st.suggested.length) || st.fullDescription || st.chosen);
+    if(hasWork){
+      paintTitles({ titles: st.suggested||[], hooks: st.hooks||[], meta: st.sections||{},
+                    full: st.fullDescription||'', best: st.chosen||'',
+                    keyword: st.keyword||'' }, null, st.at);
+      toast('Here\'s what you saved.');
+    }else{
+      toast('Picked up where you left off.');
+    }
   }
 
   async function removeContent(id){
@@ -2446,11 +2667,14 @@
   function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2600); }
   function openSignin(){ document.getElementById('signinScrim').classList.add('open'); }
   function closeSignin(){ document.getElementById('signinScrim').classList.remove('open'); }
-  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeProfile(); closeSignin(); closeDrawer(); } });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeProfile(); closeSignin(); closeDrawer(); closePublish(); } });
 
   function updatePlanBadge(plan, remaining){
     // remember the server's verdict so the rail + account page agree on reload
-    if(plan){ const p=getProfile(); if(p.plan!==plan){ p.plan=plan; localStorage.setItem('cnx_profile', JSON.stringify(p)); } }
+    if(plan){ const p=getProfile();
+      if(p.plan!==plan){ p.plan=plan; localStorage.setItem('cnx_profile', JSON.stringify(p));
+        if(window.__savePlanRemote) window.__savePlanRemote(plan);   // so a new device isn't stale
+      } }
     const el=document.getElementById('acctPlan'); if(!el) return;
     if(plan==='pro'){ el.textContent='★ Pro'; el.classList.add('pro'); }
     else if(plan==='trial'){ el.textContent = (remaining==null?'★ Pro trial':'★ Trial · '+remaining+' left today'); el.classList.add('pro'); }
@@ -2474,6 +2698,7 @@
   // init — render context now; the welcome survey is opened by the auth-gate
   // module once we know the user is signed in (or arrived via ?welcome=1).
   renderContext();
+  initRoute();
 </script>
 
 <!-- Firebase auth-gate + cnxFetch (401 retry) -->
@@ -2489,6 +2714,15 @@
   });
   const auth = getAuth(app);
   const db = getFirestore(app);
+
+  // Mirror the Worker's entitlement verdict into the profile doc so a creator
+  // signing in on a second device still sees their trial rather than "Free".
+  // KV remains the authority; this is only so the badge isn't stale on arrival.
+  window.__savePlanRemote = async (plan)=>{
+    const u=window.__currentUser; if(!u||!plan) return;
+    try{ await setDoc(doc(db,'users',u.uid), { plan:plan, planSeenAt:new Date().toISOString() }, { merge:true }); }
+    catch(e){ /* cosmetic only — never surface */ }
+  };
 
   // Persist the content profile to the durable Firestore user doc (merge).
   window.__saveProfileRemote = async (p)=>{
@@ -2574,14 +2808,31 @@
   onAuthStateChanged(auth, async (u)=>{
     window.__currentUser = u||null; applyAuth(u||null);
     if(!u) return;
+    // The cache belongs to ONE account. If a different uid signs in on this
+    // browser (shared computer, expired session, cache predating sign-out
+    // clearing) drop it wholesale — otherwise the previous creator's channel,
+    // and worse their entitlement, would be read as this one's.
+    let cached={};
+    try{ cached = JSON.parse(localStorage.getItem('cnx_profile')||'{}'); }catch(e){}
+    if(cached.uid && cached.uid !== u.uid){ localStorage.removeItem('cnx_profile'); cached={}; }
+    // An UNSTAMPED cache predates this check and could belong to anyone, so its
+    // entitlement is not trusted either — only a cache stamped for this account
+    // may override the server's copy of the plan.
+    const trustCachedPlan = cached.uid === u.uid;
     // Pull the durable profile and merge it into the local shared context.
     try{
       const snap = await getDoc(doc(db,'users',u.uid));
       if(snap.exists()){
         const r=snap.data(), local=getProfile();
         localStorage.setItem('cnx_profile', JSON.stringify(Object.assign({}, local, {
+          uid:u.uid,   // stamped so the ownership check above can fire
           first:r.first||local.first, last:r.last||local.last, username:r.username||local.username,
-          name:r.name||local.name, email:r.email||u.email||local.email, plan:r.plan||local.plan,
+          // plan: the WORKER is the authority (KV trial/pro state). Firestore's
+          // copy is written once at signup and never updated, so letting it win
+          // made an active trial read "Free plan" on every reload — the app
+          // claiming 5/day while the server metered 50.
+          name:r.name||local.name, email:r.email||u.email||local.email,
+          plan:(trustCachedPlan && local.plan) || r.plan,
           niche:r.niche||local.niche, game:r.game||local.game,
           platforms:(r.platforms&&r.platforms.length)?r.platforms:local.platforms,
           grow:(r.grow&&r.grow.length)?r.grow:local.grow,
@@ -2591,10 +2842,20 @@
       }
     }catch(e){}
     // Welcome survey: right after signup, or if they've never filled it in.
-    const params=new URLSearchParams(location.search);
-    if(params.get('welcome')==='1' || !getProfile().niche) openProfile();
+    // Reads the flag captured at load — the router normalises ?welcome=1 out of
+    // the URL, so re-reading location.search here would never see it.
+    if(window.__welcomeRequested || !getProfile().niche) openProfile();
+    // A ?c=<id> deep link can only be opened once we know who's asking.
+    if(window.__openPendingContent) window.__openPendingContent();
   });
-  window.signOut = async ()=>{ try{ await fbSignOut(auth); } finally { window.location.href='index.html'; } };
+  // Sign-out clears the local cache too. It held name, username, EMAIL, niche,
+  // platforms and channel size — so on a shared computer the next person saw
+  // the previous creator's channel in the context bar. Firestore rehydrates it
+  // on the next sign-in, so nothing durable is lost.
+  window.signOut = async ()=>{
+    try{ await fbSignOut(auth); }
+    finally { try{ localStorage.removeItem('cnx_profile'); }catch(e){} window.location.href='index.html'; }
+  };
   // Worker fetch with a single token-refresh retry on 401 (prevents false sign-outs)
   window.cnxFetch = async (url, body)=>{
     const u=window.__currentUser; const opt=t=>({method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify(body)});

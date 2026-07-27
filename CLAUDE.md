@@ -123,18 +123,26 @@ documentation outlives the conversation that produced it. Open the file first.
     `usage:global:<day>`, `trial:<uid>` (no TTL), `pro:<email>` (value = last
     active day), `yt:q:<query>` (6h cache), `contact:*`.
   - **Firestore `users/<uid>`** = *durable user profile* (as of the Studio work).
-    Fields: `email, name, first, last, username, age, optin, plan,
+    Fields: `email, name, first, last, username, age, optin, plan, planSeenAt,
     profileComplete, createdAt` + content profile `niche, game, platforms[],
-    grow[], size, keyword, updatedAt`. Written at signup (auth page) and
+    grow[], size, keyword, cadence, updatedAt`. Written at signup (auth page) and
     merged from the Studio. This was previously dead data — it now has a job.
-    `localStorage.cnx_profile` is the instant/offline cache in front of it.
+    `localStorage.cnx_profile` is the instant/offline cache in front of it and
+    carries a **`uid` stamp** (see the entitlement gotcha below).
+    ⚠️ **`plan` here is a MIRROR, not the authority** — KV is. It is written by
+    `__savePlanRemote()` whenever the Worker reports a plan, purely so a second
+    device isn't stale on arrival.
   - **Firestore `users/<uid>/content/<id>`** = **the creator's record** (shipped
     2026-07-26). One document per piece of content, carrying every stage
-    decision: `{type, status, platform, topic, contentType, stages:{title:{chosen,
-    suggested[], score, keyword, shortDescription, fullDescription, at}, ...},
-    outcome, createdAt, updatedAt}`. Written by `window.__contentCreate/Update/
-    List/Get/Delete` in the Studio's module script. **This is the moat** — see
-    [PRODUCT.md](PRODUCT.md).
+    decision: `{type, status, platform, topic, contentType, url, publishedAt,
+    stages:{title:{chosen, suggested[], hooks[], sections{}, score, keyword,
+    shortDescription, fullDescription, at}, ...}, outcome, createdAt, updatedAt}`.
+    Written by `window.__contentCreate/Update/List/Get/Delete` in the Studio's
+    module script. **This is the moat** — see [PRODUCT.md](PRODUCT.md).
+    `hooks[]` and `sections{}` (BEST COMBO / SUGGESTED TAGS / HASHTAGS / SHORT
+    DESCRIPTION) were **added 2026-07-26** so reopening a video can rebuild the
+    whole results pane; storing only the chosen title made the record look
+    complete while the creator's hooks and hashtags were silently lost.
   - **Firestore `users/<uid>/weeks/<isoWeek>`** = the weekly review, **immutable
     once written** (enforced in rules, not trusted to the client — a rewritable
     history is worth less than none).
@@ -184,7 +192,16 @@ exists as `ANTHROPIC_API_KEY` reserved for a future paid tier; unused.)
   migrated **Titles & Descriptions** tool. Tools not yet migrated show a card
   linking to their legacy page.
 - `index.html` — landing (pricing, Tools dropdown, contact form, auth-aware nav).
-  All 9 app entry points route to the Studio.
+  **As of 2026-07-27 every public tool link routes to a Studio tab**
+  (`?tab=titles|tags|thumbs|ideas|schedule|live|audit|content`) — verified in the
+  browser as 8 distinct deep links and **zero** links to `app`/`analyze`/
+  `thumbnail`/`streaming`. This file previously claimed that and it was false:
+  the grid still sent people to the legacy pages, and worse, listed **Competitor
+  Research as a "Free" feature card** promising competitor title formulas and
+  **Trend Tracker as "Pro"** promising live trend data. Neither exists; nobody
+  has live TikTok/IG trend data. Those three cards and their nav links are gone,
+  replaced by one plain sentence saying they aren't built. The legacy pages are
+  untouched and still reachable directly — unlinked, not deleted.
 - `creatornexushq-app.html` — legacy tools (Titles & Hooks w/ keyword field +
   live ranking panel, CTAs, Content Ideas; upgrade modal)
 - `creatornexushq-analyze.html` — legacy analyzer page: 6 sub-tools, including
@@ -216,6 +233,48 @@ during the migration.
   `.split` mobile override and will recur in every migrated tool. Same class of
   fix: flex children that ellipsis (`.yt-panel .rowd .v`) need `min-width:0`.
   Always measure `documentElement.scrollWidth` vs `clientWidth` at 375px.
+- **`scrollWidth` vs `clientWidth` does NOT catch content hidden inside an
+  `overflow:auto` child.** The Studio's `.ctx-chips` is a 149px window onto 445px
+  of chips at 375px — 296px sits behind an unmarked horizontal scroll, and the
+  page-level overflow check reports a clean 0. When a row is a scroll container,
+  measure **that element's** `scrollWidth - clientWidth` too.
+- **Entitlement authority is the Worker (KV), never Firestore.** Firestore's
+  `plan` is written once at signup and never updated, so hydrating it over the
+  Worker's verdict made an active trial read "Free plan" on every reload — the UI
+  claiming 5/day while the server metered 50, which the honesty standard forbids.
+  The Studio now prefers the cached verdict, but **only when the cache is stamped
+  with the current `uid`** — an unstamped or foreign cache is discarded, or a
+  previous user's `pro` would be read as this user's.
+- **`localStorage.cnx_profile` is per-account and must be treated that way.** It
+  holds name, username, **email**, niche, platforms and size. It is cleared on
+  sign-out and dropped on a `uid` mismatch at sign-in. Before that, signing out
+  left the previous creator's channel on screen for the next person.
+- **The Studio is routed: `?tab=<id>` is the address of every destination.**
+  `TOOL_IDS` is the allowlist, `switchTool(id, btn, opts)` pushes history,
+  a `popstate` listener replays state with `{silent:true}`, and `initRoute()`
+  normalises the URL on first paint. A specific video is `?tab=titles&c=<id>`;
+  that id is only ever read through `__contentGet`, which is scoped to the
+  signed-in uid, so it cannot reach another creator's record.
+  ⚠️ **Read `?welcome=1` BEFORE normalising the URL.** `initRoute()` replaces
+  the query string, so the auth module can't re-read `location.search` later —
+  the flag is captured once into `window.__welcomeRequested`. Get this wrong and
+  onboarding silently never opens for new signups.
+  ⚠️ Re-clicking the active tool must not push a duplicate entry, or Back
+  becomes "press it four times to leave the same screen".
+- **`prompt()`/`confirm()` are banned in the Studio.** Publishing uses the
+  `#publishScrim` dialog (`role="dialog"`, `aria-modal`, focus moved in on open
+  and returned to the invoking button on close, Escape wired to `closePublish`).
+  `safeUrl()` accepts only `http:`/`https:` — anything else is stored as typed
+  but **never rendered as an anchor**, so a saved string can't become a
+  clickable script. `removeContent()` still uses `confirm()` and is the next one
+  to convert.
+- **The Titles renderer is split: `renderTitles()` parses model text,
+  `paintTitles()` draws.** Reopening a saved video calls `paintTitles()` with the
+  stored record, so the creator sees their work instead of an empty form. The
+  restored view **recomputes** the score from the stored title + description
+  (deterministic, so it matches what was stored) and **never** re-renders the
+  live YouTube ranking panel — that data was true at generation time and is not
+  stored, so re-showing it would be a fabricated "right now".
 - HTML is now served `no-cache` (header in `firebase.json`), but browsers and
   the CDN still hold stale copies — hard-refresh (Ctrl+Shift+R) after deploy.
 - Wrangler KV CLI crashes on this Windows box (libuv assertion) — use the
@@ -264,8 +323,25 @@ during the migration.
 
 - Throwaway auth accounts via Identity Toolkit REST
   (`accounts:signUp` / `accounts:signInWithPassword` / `accounts:delete`)
-  with emails like `x-<ts>@creatornexushq-audit.invalid`. ALWAYS delete after.
+  with emails like `x-<ts>@creatornexushq-audit.invalid`. ALWAYS delete after,
+  and **verify** deletion by re-signing in (expect `INVALID_LOGIN_CREDENTIALS`);
+  ID tokens expire after an hour, so re-authenticate before cleaning up.
+- ⚠️ **Delete the Firestore documents BEFORE the auth account.** The rules key on
+  `request.auth.uid == uid`, so once the account is gone nothing can reach
+  `users/<uid>` or its subcollections from any client — the data is orphaned and
+  needs the Firebase console. This mistake has been made once; see Known debt.
+- **Rules verification is a script, not a code read** — sign in as A, sign up B,
+  and assert 403 for anonymous read/list, B reading/listing/writing/deleting A's
+  content and weeks, and **the owner's own** PATCH/DELETE against a closed week.
+  14 checks, all passing as of 2026-07-26.
 - Local preview: tiny Node static server on :8765 (no Python on this box).
+  Firestore and Auth work from `localhost`; the **Worker does not** (CORS is
+  production-origin only by design), so generation can't be tested locally.
+  To exercise a path that needs saved output, seed a content doc over the
+  Firestore REST API instead of spending a generation.
+- **Seed data must be internally consistent.** A hand-written stage with an
+  invented `score` will disagree with the recomputed one and look like a bug in
+  the product rather than in the fixture.
 
 ## Decisions already made — do not relitigate without new evidence
 
@@ -355,8 +431,16 @@ happened to get written first.
 
 Plus one **external** document, deliberately kept separate because it has a
 different audience: **[TESTER-GUIDE.md](TESTER-GUIDE.md)** — the page handed to a
-beta tester. What's real, what's gated, the known quirks, and the six questions
+beta tester. What's real, what's gated, the known quirks, and the eight questions
 worth asking them. Short and honest; it's the first thing a stranger reads.
+⚠️ **It goes stale in the most damaging direction.** It sat for a while telling
+strangers that Live Titles and Channel Audit "still say soon" *after* both had
+shipped — an external doc understating a finished product. When a tool ships or
+a limitation changes, update this file in the same commit as the others.
+
+`AGENTS.md` is an **untracked mirror of this file** (gitignored) so other agent
+harnesses get the same context. It had drifted 71 lines behind; re-copy CLAUDE.md
+over it whenever CLAUDE.md changes.
 
 *Folded in and deleted 2026-07-26: `ROADMAP.md` (tool status → the consolidation
 table above; Pro-grant runbook → its own section) and `AUDIT.md` (measured unit
@@ -521,6 +605,13 @@ Plus `users/{uid}/weeks/{isoWeek}` — the Weekly Review, **immutable once close
    the thin loop is validated with real creators
 3. ~~My Content (Library)~~ ✅ **done**
 4. ~~This Week + the Weekly Review~~ ✅ **done 2026-07-26**
+4b. ~~**Memory is readable, not just writable**~~ ✅ **done 2026-07-26** —
+   reopening a video repaints the stored titles, hooks, sections and both
+   descriptions. Found by verification: the record was complete in Firestore
+   (5 suggestions, an 816-char description) while `openContent()` restored four
+   input fields and left the results pane blank, so the only way to see work you
+   already owned was to spend a credit regenerating it into different text.
+   **Storage was never the moat — recall is.**
 5. Manual outcome entry (typed-in views/CTR — no API needed)
 6. Weekly Review + shipped streak
 7. Paid inference, or an honest hard cap (Groq free tier ≈ 50 active users)
@@ -672,15 +763,92 @@ each labelled as such. Never present a model's opinion as a measurement.
 - Vision calls take **20–30s**. That's normal; don't "fix" it with a timeout.
 - Failures cost the user nothing — `incrementUsage()` runs only after success.
 
+## Accessibility baseline (shipped 2026-07-26 — keep it)
+
+Verified in the deployed Studio: **58 of 58 form controls carry a programmatic
+name, and all 10 pill rows are labelled groups.** Before this, 55 of 58 were
+orphaned — the markup was `<label>Content type</label><select id="t-type">`,
+which *looks* labelled and gives a screen reader nothing. All 24 `<select>`s
+announced as a bare "combobox". There were **zero** `label[for]` in the file.
+
+- Every `<label>` now carries `for="<control id>"`.
+- The pill rows aren't form controls, so they get `role="group"` +
+  `aria-labelledby` pointing at their label's `id` — they now announce as
+  `group "Platform"` with the buttons inside.
+- A global `:focus-visible { outline: 2px solid var(--violet) }` already existed
+  and is the reason keyboard focus is visible; don't remove it.
+- Every interactive element in the app is a native control **except** the account
+  block (see Open findings).
+
+**Adding a field?** Give the control an `id` and the label a matching `for` in
+the same commit. Verify by asserting zero unnamed controls in the browser, not
+by eye — this class of bug is invisible on screen, which is exactly how 55 of
+them accumulated.
+
+**Colour tokens for text (added 2026-07-27).** `--faint` (#5e5b76) measures
+**2.95:1** and is for genuinely decorative marks only — placeholders and the
+"soon" tag. Functional text a creator has to *read* uses **`--label`**
+(#9a97b0, measured **6.78:1**): goal targets, empty-state instructions, counts,
+stage strips, channel-status labels, and every honesty disclosure such as the
+"this is AI judgement" note. It was introduced as a sibling token rather than by
+lightening `--faint`, because a blanket swap flattens the hierarchy on every
+page. 19 rules were promoted; zero AA failures remain in the rail, context bar
+and This Week.
+
+**Every interactive element is a native control.** The account block was the
+last `div[onclick]`; it's now `<button class="acct-main">` with **sign-out as a
+sibling, not a child** — a button inside a button is invalid and the inner one
+gets dropped. `.nm`/`.pl` are spans now and need explicit `display:block`.
+Empty context chips are `<button class="chip empty">` that open the profile —
+that's the non-punitive route for anyone whose profile predates the platform
+requirement or who used Skip.
+
 ## Known debt / loose ends
 
 - Orphan KV key `trial:XjGieou5cHMbFJivmPcAOYeZJ2t1` from audit testing — inert,
   delete via the Cloudflare dashboard (the CLI crashes here).
+- **Orphaned Firestore docs from the 2026-07-26 verification pass:**
+  `users/T77Zkcs6pCd4mFrcxxl1qWsGk0z2` plus 2 `content` docs and week `2026-W30`.
+  The auth account was deleted before the documents, so no client can reach them
+  — remove via the Firebase console. (The account itself is confirmed deleted.)
 - `og-image.svg` is never rasterized to PNG — most social scrapers won't render it.
 - Landing still carries some fluff stats ("100% Creator Focused", "$0 To Get
   Started") that say nothing; slated for removal.
 - Titles tool still lacks the "adapt this for other platforms" section.
 - No generation history, and no BYO-API-key escape hatch for power users.
+
+### Open findings from the 2026-07-26 verification pass (not yet fixed)
+
+Each was observed in the deployed product, and each is a deliberate *not yet*
+rather than an oversight:
+
+All but one were **fixed on 2026-07-27** — see the Trust & Flow section below.
+The survivor:
+
+- **Only Titles writes a content object.** The other six tools are deliberately
+  waiting until the thin loop is validated with real creators.
+
+## Trust & Flow release (2026-07-27) — what it closed
+
+Six of the seven open findings above, plus one honesty problem on the public
+page that mattered more than any of them:
+
+| Was | Now |
+|---|---|
+| No URL state; Back exited the app | `?tab=<id>` routing, Back/Forward, deep links, `&c=<id>` for one video |
+| Landing sold "all-in-one AI platform" and 3 tools that don't exist | Leads with the loop; unbuilt tools stated plainly, not carded |
+| Publish used a native `prompt()` | Accessible dialog, focus managed, `safeUrl()` validation |
+| Published URL stored, never shown | Outbound link on the card (`rel="noopener noreferrer"`) |
+| Onboarding saved with zero platforms | Required, with an inline `role="alert"` and focus moved to the row |
+| Functional text at 2.95:1 | `--label` token at 6.78:1, applied per-use |
+| Mobile hid 296px of channel context | Context bar wraps under 560px; all chips visible |
+| Account reachable only by mouse | Native `<button>`; zero mouse-only controls app-wide |
+
+**Also fixed in passing:** the landing page could be dragged 115px sideways at
+375px. `body{overflow-x:hidden}` didn't contain it because the scroller is the
+**viewport (html)**, not body — the closed off-canvas menu extended the page.
+`html{overflow-x:hidden}` fixes it. Pre-existing, unrelated to this work, and a
+good reminder that a body-level clip proves nothing.
 
 ## Owner's product principles (stated repeatedly — honour these)
 

@@ -309,6 +309,31 @@ users/{uid}
 **Never deleted:** `content`, `weeks`, `outcome`. These are the moat. Deleting an
 account should be possible; deleting history casually should not.
 
+**A record the creator can't see isn't memory — it's storage.** Learned the hard
+way on 2026-07-26: `title` was being written faithfully (five suggestions, both
+descriptions, the score) while reopening a video restored four *input* fields and
+left the results pane blank. Every number above was correct and the product still
+felt like it had forgotten, because the only way to see work you already owned
+was to spend a credit regenerating it into different text.
+
+The shipped stage is therefore wider than the sketch above — it stores everything
+the results pane renders, so the pane can be rebuilt from the record alone:
+
+```js
+title: { chosen, suggested[], hooks[], sections{}, score, keyword,
+         shortDescription, fullDescription, at }
+```
+
+Two rules follow, and they apply to every stage still to be wired:
+
+1. **Store what you render.** If the UI shows it, the record holds it. Storing
+   only the chosen value makes the record look complete while quietly losing the
+   alternatives — and the alternatives *are* the moat: knowing the four titles
+   they didn't pick is the part no analytics tool can reconstruct.
+2. **Never re-show live data from a record.** The YouTube ranking panel was true
+   at generation time and isn't stored, so the restored view omits it. Replaying
+   it as "ranking right now" would be a fabricated measurement.
+
 **Answering the specific questions asked:**
 
 - *How should AI use previous content?* Every prompt gets a compact "what we know

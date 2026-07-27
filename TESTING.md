@@ -1,7 +1,13 @@
 # CreatorNexusHQ — Manual Testing Checklist
 
 Run this end-to-end before inviting any real user. It covers everything built
-so far. Tick as you go; anything that fails, note the step number.
+so far — **156 steps**. Tick as you go; anything that fails, note the step number.
+
+Sections **V** and **W** were added after the 2026-07-26 verification pass and
+the 2026-07-27 Trust & Flow release. Every check in them corresponds to a bug
+that was live and invisible from the screen; run them even when short on time.
+**Step 143 is the one that matters most** — advertising a tool that doesn't
+exist is the only failure this product treats as unacceptable.
 
 **Test on:** https://creatornexushq-eaf70.web.app
 **Before you start:** hard-refresh (Ctrl+Shift+R). HTML is served `no-cache`,
@@ -38,6 +44,15 @@ Read this first so you don't chase things we already know:
   rewrite isn't a record.
 - **The outcome ask waits 3 days** after publishing, because numbers before then
   don't mean anything.
+- **Reopening a video shows your saved work, not the live ranking panel.** The
+  "Ranking on YouTube right now" list was true at the moment you generated; we
+  don't store it, so we don't re-show it. Absent is correct, not broken.
+- **The Studio doesn't change the URL when you switch tools**, so browser Back
+  leaves the app rather than going to the previous tool, and a refresh returns
+  you to Titles. Known; on the list, not yet fixed.
+- **Some small grey labels are low-contrast** ("goal: 1+", "no history yet").
+  Measured at 2.95:1, below the accessibility floor. Known and deliberate for
+  now — fixing it changes the look of every page, so it's a design decision.
 
 ---
 
@@ -211,7 +226,12 @@ Read this first so you don't chase things we already know:
 78. [ ] **Close the browser entirely, reopen, sign in.** Everything is still
         there. *(This is the whole thesis — if it isn't, stop and tell me.)*
 79. [ ] Hit **Open** on a card. You land back in Titles with the topic, keyword,
-        content type and platform already filled in.
+        content type and platform already filled in — **and your actual work is
+        on screen**: every title, the hooks, the tags and hashtags, and both
+        descriptions, above a line reading *"Saved … — this is your record, not a
+        new generation."* You should never have to regenerate to see what you
+        already made. The live YouTube ranking panel is **absent** here, and that
+        is correct — it was true when you generated and we don't store it.
 80. [ ] **Delete** asks before it deletes, and says what it removes.
 
 ## L. Publishing and outcomes
@@ -314,10 +334,86 @@ Read this first so you don't chase things we already know:
         including the thumbnail size-preview strip (it should scroll on its own).
 126. [ ] Buttons and inputs are comfortably tappable; nothing is clipped.
 
+## V. Recall, entitlement and privacy (added after the 2026-07-26 audit)
+
+Each of these is a bug that shipped and was fixed. They are here because they
+were all invisible from the screen until someone went looking.
+
+127. [ ] Generate, **reload the page**, and reopen the video. Everything you made
+         is still rendered (see step 79). Regenerating to see your own work is
+         the failure this guards against.
+128. [ ] After your first generation the rail shows **"★ Trial · N left today"**.
+         **Reload.** It must still say Trial — not "Free plan". What the rail
+         claims and what the server enforces have to agree.
+129. [ ] Sign out. The **channel context bar is empty** and the previous
+         creator's niche, platforms and size are gone — not still on screen for
+         whoever uses the computer next.
+130. [ ] Sign in as a **different account** on the same browser. You see *their*
+         channel and *their* plan immediately — never the previous account's.
+131. [ ] **Keyboard only, no mouse:** Tab to a tool in the rail, press Enter, Tab
+         through the form, and generate. Focus is visible at every step.
+132. [ ] With a screen reader (or the browser's accessibility inspector), every
+         dropdown announces its name — "Content type", "Tone", "Video length" —
+         and the platform row announces as a **group** called "Platform". A bare
+         "combobox" with no name is a regression.
+
+## W. Routing, landing page and publishing (Trust & Flow release)
+
+Navigation:
+
+135. [ ] Open `creatornexushq-studio.html?tab=tags` directly. **Tags & Hashtags**
+         is showing and the rail highlights it — not Titles.
+136. [ ] Click through Titles → My Content → This Week, then press **Back twice**.
+         You move back through those tools; you do **not** leave the app.
+137. [ ] Press **Forward**. You move forward again.
+138. [ ] Click the tool you're already on four times, then press Back **once**.
+         One press should leave that tool — no stack of duplicate entries.
+139. [ ] **Refresh** on any tool. You stay on that tool.
+140. [ ] Open a saved video, copy the URL (it has `&c=…`), paste it in a new tab.
+         The same video opens with your saved work rendered.
+
+Landing page:
+
+141. [ ] Every tool in the **Tools** menu opens the matching Studio tab.
+142. [ ] Nothing on the page links to `analyze.html`, `thumbnail.html` or
+         `streaming.html`. Those pages still work if you visit them directly.
+143. [ ] **Competitor Research, Collab Finder and Trend Tracker appear nowhere as
+         features.** One sentence says they aren't built. If you find one being
+         sold — especially tagged "Free" — that's the most serious kind of bug
+         this product can have.
+144. [ ] The Free plan's feature list matches what the app actually does.
+
+Publishing:
+
+145. [ ] **Mark published** opens a styled dialog, **not** a browser prompt.
+146. [ ] Reach it by keyboard alone: Tab to the button, Enter, type a link, Enter.
+147. [ ] Type `not a url` → it explains the problem and does **not** save.
+148. [ ] Paste a real link → the card shows **"Watch it on YouTube"** and it opens
+         your video in a new tab.
+149. [ ] Press **Escape** in the dialog — it closes and focus returns to the
+         button you came from.
+
+Setup and readability:
+
+150. [ ] In the channel survey, deselect every platform and press Save. It
+         **refuses**, explains why, and moves focus to the platform row.
+151. [ ] If your channel bar shows a dashed **"set platforms"** chip, clicking it
+         opens the survey. It's reachable by keyboard too.
+152. [ ] On a phone, the channel bar shows **all** of makes / posts on / size —
+         nothing hidden behind a sideways swipe.
+153. [ ] Small grey labels — "goal: 1+", "no history yet" — are comfortably
+         readable, not near-invisible.
+154. [ ] Tab to the account block in the sidebar and press Enter. The Account
+         page opens without touching the mouse.
+
 ## U. Cleanup
 
-127. [ ] **Delete every throwaway account** in the Firebase console
-        (Authentication → Users). Non-negotiable.
+155. [ ] **Delete every throwaway account** in the Firebase console
+         (Authentication → Users). Non-negotiable.
+156. [ ] Delete that account's **Firestore documents too** (`users/<uid>` and its
+         `content` / `weeks` subcollections) — and do it **before** deleting the
+         account. Once the account is gone the rules lock the data away from
+         every client and only the console can reach it.
 
 ---
 
