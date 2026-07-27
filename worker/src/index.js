@@ -18,21 +18,29 @@ const ALLOWED_ORIGIN = 'https://creatornexushq-eaf70.web.app';
 //   A measured titles generation bills ~2,400 total tokens (~390 visible
 //   output; the rest is hidden reasoning — a ~5x multiplier).
 //     200,000 / 2,400  ≈  83 generations/day on Groq before TPD is spent.
-//   GLOBAL_TEXT_DAILY = 60  ->  60 * 2,400 = 144,000 tokens (72% of TPD).
-//   Worst case (every output maxing max_tokens) ≈ 3,800 tok -> 228,000,
+//   GLOBAL_TEXT_DAILY = 75  ->  75 * 2,400 = 180,000 tokens (90% of TPD).
+//   Worst case (every output maxing max_tokens) ≈ 3,800 tok -> 285,000,
 //   which spills to the Gemini fallback (250 RPD) rather than failing.
-//   3 invited creators * 15 = 45, so the global rail sits 33% above the sum
-//   of per-user allowances: it catches runaway usage without ever being the
-//   thing a well-behaved pilot user hits first.
+//
+//   Why 75 and not 60: the pilot is FOUR people (owner + three partners), and
+//   4 * 15 = 60 exactly. At 60 the global rail equalled the sum of legitimate
+//   per-user allowances, so the fourth person to work on a busy day would hit
+//   a site-capacity message while still inside their own allowance — the rail
+//   punishing correct behaviour. 75 puts it 25% above the sum: it still stops
+//   runaway usage, but a well-behaved creator can never be the one it stops.
+//   The trade is a narrower token buffer (28% -> 10%). Accepted, because
+//   overflow degrades to Gemini rather than failing.
+//
 // Vision is Gemini-primary (Groq's vision ids keep getting retired), and
 // Gemini's 250 RPD is ALSO the text fallback pool — so vision is capped
-// tightly to avoid eating the safety net.
+// tightly to avoid eating the safety net. 4 * 3 = 12, well under 20.
 //
-// ⚠️ These are three-person pilot numbers. Revisit the arithmetic above
-// before inviting a fourth creator, and certainly before ten.
+// ⚠️ These are FOUR-person pilot numbers. Revisit the arithmetic above before
+// inviting a fifth creator, and certainly before ten — at ten the sum of
+// per-user allowances (150) is nearly double what Groq can serve in a day.
 const BETA_TEXT_DAILY = 15;
 const BETA_VISION_DAILY = 3;
-const GLOBAL_TEXT_DAILY = 60;
+const GLOBAL_TEXT_DAILY = 75;
 const GLOBAL_VISION_DAILY = 20;
 // Free tier today; ANTHROPIC_MODEL/ANTHROPIC_API_KEY are reserved for a future
 // paid tier once Stripe/plan-tracking exists (see ROADMAP.md).

@@ -179,7 +179,7 @@ verified token's email. Replaced the old Free/Trial/Pro model on 2026-07-27.
 | Entitlement | `beta:<lowercased-email>` = last active day `YYYY-MM-DD` UTC | KV |
 | Per-user text | **15**/day (`BETA_TEXT_DAILY`) | `usage:text:<uid>:<day>` |
 | Per-user vision | **3**/day (`BETA_VISION_DAILY`) | `usage:vision:<uid>:<day>` |
-| Site-wide text | **60**/day (`GLOBAL_TEXT_DAILY`) | `usage:global:text:<day>` |
+| Site-wide text | **75**/day (`GLOBAL_TEXT_DAILY`) | `usage:global:text:<day>` |
 | Site-wide vision | **20**/day (`GLOBAL_VISION_DAILY`) | `usage:global:vision:<day>` |
 
 - **Text and vision are separate lanes** — different providers, wildly
@@ -195,7 +195,7 @@ verified token's email. Replaced the old Free/Trial/Pro model on 2026-07-27.
   consulted during the private beta** — an unmetered account could drain the
   day's supply for everyone else.
 
-### The capacity arithmetic — redo this before inviting a 4th creator
+### The capacity arithmetic — redo this before inviting a 5th creator
 
 **Confirmed from official provider docs (2026-07-27), not assumption:**
 Groq `openai/gpt-oss-120b` free tier — **RPM 30 · RPD 1,000 · TPM 8,000 ·
@@ -208,10 +208,20 @@ figure and was wrong by an order of magnitude.
 ```
 measured spend      ~2,400 tokens per generation (~390 visible; ~5x reasoning)
 Groq TPD 200,000 / 2,400   ≈ 83 generations/day before tokens run out
-GLOBAL_TEXT_DAILY 60 × 2,400 = 144,000  (72% of TPD — 28% buffer)
-worst case 60 × ~3,800       = 228,000  → spills to Gemini, degrades not fails
-3 pilot creators × 15        = 45 ≤ 60  (global sits 33% above the sum)
+GLOBAL_TEXT_DAILY 75 × 2,400 = 180,000  (90% of TPD — 10% buffer)
+worst case 75 × ~3,800       = 285,000  → spills to Gemini, degrades not fails
+4 pilot creators × 15        = 60 ≤ 75  (global sits 25% above the sum)
+4 pilot creators × 3 vision  = 12 ≤ 20
 ```
+
+**Why 75, not 60.** The pilot is **four** people — owner plus three partners —
+and 4 × 15 = 60 exactly. At 60 the site rail equalled the sum of legitimate
+per-user allowances, so on a busy day the fourth person would hit a
+site-capacity message while still inside their own allowance: the safety rail
+punishing correct behaviour. 75 sits 25% above the sum. The cost is a narrower
+token buffer (28% → 10%), accepted because overflow degrades to Gemini rather
+than failing. **A global cap must always exceed `pilot_size × per_user`** — if
+you add a creator, redo this before you send the invite.
 
 Vision is Gemini-primary (Groq keeps retiring its vision ids) and Gemini's
 250 RPD is **also** the text fallback pool — hence the tight vision cap.
