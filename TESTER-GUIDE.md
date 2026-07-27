@@ -137,8 +137,13 @@ Not "it's cool" — I need the awkward stuff:
 
 ## Sending feedback
 
-Use the **Send Feedback** link in the sidebar, or reply wherever I sent you this.
-Screenshots help enormously for anything visual.
+There's a **Send feedback** link at the bottom of the sidebar on every screen.
+It opens an email to me and quietly notes which tool you were on, so you don't
+have to explain where you were — just say what happened. Or reply wherever I
+sent you this, or text me. All of it reaches the same place.
+
+Screenshots help enormously for anything visual. Don't polish it; a half-finished
+sentence sent in the moment is worth more than a considered one sent never.
 
 If something breaks outright, tell me: what you clicked, what you expected, what
 happened, and whether you were on a phone or a computer.

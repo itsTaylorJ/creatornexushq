@@ -250,6 +250,25 @@ quota.** There is nothing to buy, and infrastructure detail isn't the
 creator's problem. Rendered by one shared `accessNotice()` in the Studio so
 no tool can drift out of sync.
 
+### Feedback — one address, one subject, everywhere
+
+Every route into feedback ends in the owner's Gmail:
+
+- **Studio rail** (`#feedbackLink`) — `mailto:` with subject
+  `CreatorNexusHQ Beta Feedback`, body prefilled with the current tool via
+  `updateFeedbackLink()` on every `switchTool`. The Studio previously had **no
+  feedback affordance at all**, so a partner who hit something confusing had to
+  leave the app to say so — i.e. wouldn't.
+- **10 legacy pages** — the same `mailto:` and the **same subject string**.
+- **Landing contact form** → Worker `/contact` → KV (90-day TTL) **and** email,
+  but the email only fires `if (env.RESEND_API_KEY)`. That secret is **not
+  set**, so today those submissions land in KV only and must be read from the
+  Cloudflare dashboard by hand.
+
+⚠️ **Keep the subject byte-identical across all surfaces** — a single Gmail
+filter is the whole delivery mechanism. Only the body may vary.
+**To finish unifying it:** `cd worker && npx wrangler secret put RESEND_API_KEY`.
+
 ## Page map
 
 - **`creatornexushq-studio.html` — THE app home** (new, clean design system).

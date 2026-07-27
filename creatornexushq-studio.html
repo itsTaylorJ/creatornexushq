@@ -56,6 +56,13 @@
   .navitem .live-dot{margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--cyan)}
 
   .rail-foot{margin-top:auto;padding-top:14px}
+  /* Quieter than a nav item — it's always available but never competes with
+     the tools for attention. Same shape so it doesn't read as a foreign object. */
+  .feedback-link{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-bottom:8px;
+                 border-radius:10px;color:var(--label);font-size:12.5px;font-weight:600;
+                 text-decoration:none;transition:background .15s,color .15s}
+  .feedback-link:hover{background:var(--surface-2);color:var(--text-soft)}
+  .feedback-link svg{width:15px;height:15px;stroke:currentColor;flex-shrink:0}
   .acct{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:11px;background:var(--surface-2);border:1px solid var(--border)}
   /* The account entry was a div with an onclick — the one destination in the
      app you couldn't reach without a mouse. It's a button now. Sign-out has to
@@ -376,6 +383,17 @@
       <button class="navitem" data-tool="audit" onclick="switchTool('audit',this)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-4 4"/></svg>Channel Audit</button>
     </nav>
     <div class="rail-foot">
+      <!-- Same mailto and the SAME subject line as the ten legacy pages, so a
+           single Gmail filter catches feedback from anywhere in the product.
+           The Studio had no feedback route at all — a partner who hit something
+           confusing had to leave the app to say so, which is precisely when
+           they wouldn't bother. href is rewritten on each tool switch to name
+           the screen they were on; the subject never changes. -->
+      <a class="feedback-link" id="feedbackLink"
+         href="mailto:tjlangston15@gmail.com?subject=CreatorNexusHQ%20Beta%20Feedback">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Send feedback
+      </a>
       <div class="acct" id="acctLoggedIn" style="display:none">
         <button type="button" class="acct-main" onclick="switchTool('account')">
           <span class="av" id="acctAv">?</span>
@@ -1098,6 +1116,25 @@
 
   const validTool = (id) => TOOL_IDS.indexOf(id) >= 0 ? id : DEFAULT_TOOL;
 
+  // Feedback: one address, one subject, everywhere in the product — the same
+  // pair the ten legacy pages use, so a single Gmail filter catches all of it.
+  // Only the BODY changes, naming the screen they were on. Partners won't think
+  // to mention that, and "it felt off" is far more actionable with it attached.
+  const TOOL_LABELS = {
+    week:'This Week', content:'My Content', titles:'Titles & Descriptions',
+    tags:'Tags & Hashtags', thumbs:'Thumbnails', ideas:'Ideas, Hooks & CTAs',
+    schedule:'Posting Schedule', live:'Live Titles', audit:'Channel Audit',
+    account:'Account'
+  };
+  function updateFeedbackLink(id){
+    const a = document.getElementById('feedbackLink'); if(!a) return;
+    const where = TOOL_LABELS[id] || '';
+    const body = where ? '\n\n\n— sent from: ' + where + ' —' : '';
+    a.href = 'mailto:tjlangston15@gmail.com'
+           + '?subject=' + encodeURIComponent('CreatorNexusHQ Beta Feedback')
+           + (body ? '&body=' + encodeURIComponent(body) : '');
+  }
+
   function studioUrl(id, contentId){
     const p = new URLSearchParams();
     p.set('tab', id);
@@ -1197,6 +1234,7 @@
     if(id==='live') liveHint();
     if(id==='content') loadMyContent();
     if(id==='week') loadThisWeek();
+    updateFeedbackLink(id);
     closeDrawer();
     window.scrollTo({top:0});
 
