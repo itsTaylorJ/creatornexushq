@@ -440,6 +440,17 @@ during the migration.
 - **Seed data must be internally consistent.** A hand-written stage with an
   invented `score` will disagree with the recomputed one and look like a bug in
   the product rather than in the fixture.
+- **`bench/` is the model benchmark harness** (Stage 1 of
+  [IMPLEMENTATION-PLAN.md](IMPLEMENTATION-PLAN.md), per [AI-ROUTING.md](AI-ROUTING.md)).
+  It evaluates the REAL `worker/src/index.js` to get the production prompt
+  builders — never a copy — and measures schema validity, latency,
+  repeatability and graceful failure against pinned candidate models. Calls go
+  straight to the providers with `GROQ_API_KEY`/`GEMINI_API_KEY` from env: no
+  KV allowance is touched, but the shared provider free tier IS spent, so run
+  full benchmarks at a quiet time. `--dry` validates everything with zero API
+  calls; `--discover` lists live model ids so no guessed id ever burns quota.
+  Usefulness is judged by a human from saved transcripts — the harness never
+  asks a model to grade a model. Results land in `bench/results/` (gitignored).
 
 ## Decisions already made — do not relitigate without new evidence
 
