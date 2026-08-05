@@ -1,6 +1,14 @@
 # CreatorNexusHQ — Product Design & Strategy
 
 **Date:** 2026-07-26 · **Supersedes:** the audit-only version of this file
+> ## Direction update — 2026-08-05
+>
+> This document contains valuable product principles and historical reasoning,
+> but its earlier navigation and tool-flow proposals are no longer authoritative.
+> Use [DECISIONS.md](DECISIONS.md) and [UX-ARCHITECTURE.md](UX-ARCHITECTURE.md)
+> for the approved information architecture, standard workflow, Titles/Hooks/
+> Descriptions behavior, Live Titles separation, lifecycle, and brand system.
+
 **Status:** design document. Read before planning work. [CLAUDE.md](CLAUDE.md)
 remains authoritative on *what is currently true*; this file is *where we're going*.
 

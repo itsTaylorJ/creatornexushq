@@ -3,6 +3,13 @@
 **Date:** 2026-07-26 · **Lifespan:** this is the most durable document in the
 repo. Roadmaps expire; this shouldn't.
 
+> ## Current implementation direction — 2026-08-05
+>
+> This is the durable product vision. For approved near-term interaction,
+> information-architecture, feature, lifecycle, and brand decisions, read
+> [DECISIONS.md](DECISIONS.md) and [UX-ARCHITECTURE.md](UX-ARCHITECTURE.md).
+> They supersede older workflow details in this document where they conflict.
+
 Read order for anyone new: [CLAUDE.md](CLAUDE.md) (how to work + what's true) →
 **this file** (what we're building and why) → [STRATEGY.md](STRATEGY.md) (the
 design: journey, IA, memory model, sequencing).

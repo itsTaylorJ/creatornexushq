@@ -1,5 +1,13 @@
 # CreatorNexusHQ — Manual Testing Checklist
 
+> ## Test-plan status — 2026-08-05
+>
+> The detailed checks below describe the current/legacy implementation. They are
+> not acceptance criteria for the approved redesign when they conflict with
+> [DECISIONS.md](DECISIONS.md), [UX-ARCHITECTURE.md](UX-ARCHITECTURE.md), or
+> [AI-ROUTING.md](AI-ROUTING.md). Preserve them as regression evidence until a
+> redesigned replacement test plan is written and verified.
+
 Run this end-to-end before inviting any real user. It covers everything built
 so far — **176 steps**. Tick as you go; anything that fails, note the step number.
 

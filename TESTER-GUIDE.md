@@ -1,5 +1,11 @@
 # You're testing CreatorNexusHQ — start here
 
+> ## Guide status — 2026-08-05
+>
+> This guide describes the currently deployed private-beta build. It will be
+> replaced before the unified workspace redesign reaches testers. Product
+> decisions for that redesign live in [DECISIONS.md](DECISIONS.md).
+
 Thanks for trying this. It's a solo-built tool for creators, and you're seeing
 it before anyone else. This page tells you what's real, what isn't, and what
 would genuinely help me.

@@ -1,5 +1,17 @@
 # CreatorNexusHQ — Project Context
 
+> ## Current authority — 2026-08-05
+>
+> Read [DECISIONS.md](DECISIONS.md) first. It supersedes older direction in this
+> file, `STRATEGY.md`, `TESTING.md`, and `TESTER-GUIDE.md` where they conflict.
+> The approved product direction and brand are in [UX-ARCHITECTURE.md](UX-ARCHITECTURE.md);
+> the required pre-beta AI work is in [AI-ROUTING.md](AI-ROUTING.md); the staged
+> implementation handoff is in [IMPLEMENTATION-PLAN.md](IMPLEMENTATION-PLAN.md).
+>
+> Do not treat the previous Studio navigation, title-generator scoring behavior,
+> old colors, model aliases, legacy-page plan, beta limits, or feature-status
+> claims below as a current product decision without checking those files.
+
 All-in-one AI growth platform for content creators and streamers (all niches:
 gaming-first but explicitly also TCG/card openings, unboxings, vlogs, podcasts,
 beauty, IRL, etc.). Currently in pre-launch beta hardening. The #1 goal is a
