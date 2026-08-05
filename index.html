@@ -887,7 +887,11 @@ footer {
     <a href="#features" class="nav-link">Features</a>
     <a href="#pricing" class="nav-link">Pricing</a>
     <a href="#faq" class="nav-link">FAQ</a>
-    <a href="creatornexushq-auth.html?mode=login" class="nav-login" data-auth="out">Log In</a>
+    <!-- ONE auth action. This was "Log In" + "Sign Up Free →" — two distinct
+         things — until the beta copy sweep renamed the second to "Sign in" and
+         left two buttons meaning the same thing. During an invite-only beta
+         there is only one door: the auth page carries both Create Account and
+         Log In tabs, so a first-timer and a returning creator both land right. -->
     <a href="creatornexushq-auth.html" class="nav-cta" data-auth="out">Sign in</a>
     <div class="nav-account" data-auth="in" data-disp="flex" style="display:none">
       <a href="creatornexushq-studio.html" class="nav-cta" style="margin-left:0">Open App →</a>
@@ -934,7 +938,6 @@ footer {
     <a class="mm-link" href="#pricing" onclick="closeMobileMenu()">Pricing</a>
     <a class="mm-link" href="#faq" onclick="closeMobileMenu()">FAQ</a>
     <div class="mm-divider"></div>
-    <a class="mm-login" href="creatornexushq-auth.html?mode=login" data-auth="out">Log In</a>
     <a class="mm-cta" href="creatornexushq-auth.html" data-auth="out">Sign in</a>
     <div data-auth="in" data-disp="block" style="display:none">
       <div class="mm-acct-email" data-acct-email>&nbsp;</div>
